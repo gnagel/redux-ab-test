@@ -13,32 +13,30 @@
         "test": {
             "plugins": [
                 [
-                    "babel-plugin-webpack-loaders", {
-                        "config": "./test/runtime.webpack.config.js",
-                        "verbose": false
+                    "react-transform",
+                    {
+                      "transforms": [
+                        {
+                          "transform": "react-transform-catch-errors",
+                          "imports": ["react", "redbox-react"]
+                        }
+                      ]
                     }
                 ]
-            ],
-            "plugins": []
+            ]
         },
         "development": {
-            "passPerPreset": true,
             "plugins": [
-                "typecheck",
-                "transform-flow-strip-types",
                 [
-                  "react-transform",
-                  {
-                    "transforms": [
-                      {
-                        "transform": "react-transform-catch-errors",
-                        "imports": [
-                            "react",
-                            "redbox-react"
-                        ]
-                      }
-                    ]
-                  }
+                    "react-transform",
+                    {
+                      "transforms": [
+                        {
+                          "transform": "react-transform-catch-errors",
+                          "imports": ["react", "redbox-react"]
+                        }
+                      ]
+                    }
                 ]
             ]
         }

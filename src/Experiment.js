@@ -1,189 +1,100 @@
 /** @flow */
 import React from "react";
-import warning from 'fbjs/lib/warning';
-import crc32 from "fbjs/lib/crc32";
-
-import emitter from "./emitter";
 import Variant from "./Variant";
 import { actions } from './module';
 
-type ValueType = string | Function
 
 type Props = {
   name: string,
   defaultVariantName: React.PropTypes.string,
-  value: ValueType,
+  variantName: ?string,
   emitActivate: Function,
   emitDeactivate: Function,
   emitWin: Function,
   emitPlay: Function,
 };
 type State = {
-  variants: Object,
-  value: ?string
+  variantElements: Object,
+  variantName: ?string
 };
 
 export class Experiment extends React.Component {
   props: Props;
+  state: State;
 
   constructor(props, context) {
     super(props, context);
-    this.state = { variants: {} };
   }
 
-  win() {
-    const { emitWin, name } = this.props;
-    emitWin(name);
-  }
-
-  play() {
-    const { emitPlay, name } = this.props;
-    emitPlay(name);
-  }
-
-
+  /**
+   * Create the default state
+   */
   getInitialState() {
     return createNewState(this.props);
   }
 
 
-  createNewState(props) {
-    const value = this.resolveClosure(props.value || this.props.value);
-
-    const { children } = props;
-    const variants = {};
-    React.Children.forEach(children, (element) => {
-      // Guarentee this is a Variant component
-      this.ensureElementIsVariant(element);
-
-      const { name } = element.props;
-      variants[name] = element;
-      emitter.addExperimentVariant(this.props.name, element.props.name);
-    });
-    emitter.emit("variants-loaded", this.props.name);
-
-    return { variants, value };
-  }
-
-
-  ensureElementIsVariant(element) {
-    if(!React.isValidElement(element) || element.type.displayName !== "Variant") {
-      throw new Error("The children of an Experiment must be Variant components");
-    }
-  }
-
-
-  getLocalStorageValue() {
-    const activeValue = emitter.getActiveVariant(this.props.name);
-    if(typeof activeValue === "string") {
-      return activeValue;
-    }
-    const storedValue = store.getItem('PUSHTELL-' + this.props.name);
-    if(typeof storedValue === "string") {
-      emitter.setActiveVariant(this.props.name, storedValue, true);
-      return storedValue;
-    }
-    if(typeof this.props.defaultVariantName === 'string') {
-      emitter.setActiveVariant(this.props.name, this.props.defaultVariantName);
-      return this.props.defaultVariantName;
-    }
-    const variants = emitter.getSortedVariants(this.props.name);
-    const weights = emitter.getSortedVariantWeights(this.props.name);
-    const weightSum = weights.reduce((a, b) => {return a + b;}, 0);
-    let weightedIndex = typeof this.props.userIdentifier === 'string' ? Math.abs(crc32(this.props.userIdentifier) % weightSum) : Math.floor(Math.random() * weightSum);
-    let randomValue = variants[variants.length - 1];
-    for (let index = 0; index < weights.length; index++) {
-      weightedIndex -= weights[index];
-      if (weightedIndex < 0) {
-        randomValue = variants[index];
-        break;
-      }
-    }
-    emitter.setActiveVariant(this.props.name, randomValue);
-    return randomValue;
-  }
-
-
+  /**
+   * Update the component's state with the new properties
+   */
   componentWillReceiveProps(nextProps) {
     this.setState(this.createNewState(nextProps));
   }
 
-  resolveClosure(value) {
-    return value === "function" ? value() : value;
-  }
 
-
+  /**
+   * Activate the input variant
+   */
   componentWillMount() {
-    let value = resolveClosure(this.props.value);
-    if(!this.state.variants[value]) {
-      if ("production" !== process.env.NODE_ENV) {
-        warning(true, 'Experiment “' + this.props.name + '” does not contain variant “' + value + '”');
-      }
-    }
-    const { name, store } = this.props;
-    const { }
-    store.dispatch(actions.activate(name));
-
-    emitter.setActiveVariant(this.props.name, value);
-    emitter._emitPlay(this.props.name, value);
-    this.setState({
-      value: value
-    });
-    this.valueSubscription = emitter.addActiveVariantListener(this.props.name, (experimentName, variantName) => {
-      this.setState({
-        value: variantName
-      });
-    });
+    const { name, variantName, store } = this.props;
+    store.dispatch(actions.activate(name, variantName));
+    store.dispatch(actions.play(name, variantName));
+    this.setState(this.createNewState({ variantName }));
   }
 
+
+  /**
+   * Deactivate the variant from the state
+   */
   componentWillUnmount() {
-    const { emitDeactivate, name } = this.props;
-    emitDeactivate(name);
-    // TODO: remove me
-    this.valueSubscription.remove();
+    const { name, store } = this.props;
+    store.dispatch(actions.deactivate(name));
   }
 
+
+  /**
+   * Render one of the variants or `null`
+   */
   render() {
-    const { value, variants } = this.state;
-    return variants[value] || null;
+    const { variantName, variantElements } = this.state;
+    return variantElements[variantName] || null;
   }
-}
 
 
+  createNewState(props) {
+    let variantElements = Immutable.Map({});
+    const { children } = props;
+    React.Children.forEach(children, ensureElementIsVariant);
+    React.Children.forEach(children, element => { variantElements = variantElements.set(element.props.name, element) });
 
-
-
-
-
-let store;
-
-const noopStore = {
-  getItem: function(){},
-  setItem: function(){}
-};
-
-if(typeof window !== 'undefined' && 'localStorage' in window && window['localStorage'] !== null) {
-  try {
-    let key = '__pushtell_react__';
-    window.localStorage.setItem(key, key);
-    if (window.localStorage.getItem(key) !== key) {
-      store = noopStore;
-    } else {
-      window.localStorage.removeItem(key);
-      store = window.localStorage;
+    const variantName = props.variantName || this.props.variantName;
+    if (variantName && !variantElements[variantName]) {
+      throw new Error(`The variantName: '${variantName}' was not found in variantElements=${ variantName.keys() }`);
     }
-  } catch(e) {
-    store = noopStore;
+
+    return { variantElements, variantName };
   }
-} else {
-  store = noopStore;
+
 }
 
-emitter.addActiveVariantListener(function(experimentName, variantName, skipSave){
-  if(skipSave) {
-    return;
-  }
-  store.setItem('PUSHTELL-' + experimentName, variantName);
-});
 
-});
+
+//
+// Helpers:
+//
+
+const ensureElementIsVariant = (element) => {
+  if(!React.isValidElement(element) || element.type.displayName !== "Variant") {
+    throw new Error("The children of an Experiment must be Variant components");
+  }
+}

@@ -1,7 +1,7 @@
 /** @flow */
 import React        from 'react';
 import Immutable    from 'immutable';
-import reduxHelpers from 'redux/helpers';
+import { createAction, handleActions } from 'redux-actions';
 
 export type VariationType = {
   id: ?string,
@@ -33,24 +33,24 @@ const payloadExperimentAndVariation = (experiment:ExperimentType, variation:Vari
 };
 
 export const actions = {
-  reset: reduxHelpers.createAction(constants.RESET),
-  load: reduxHelpers.createAction(constants.LOAD, payloadExperiments),
-  activate: reduxHelpers.createAction(constants.ACTIVATE, experimentName => experimentName),
-  deactivate: reduxHelpers.createAction(constants.DEACTIVATE, payloadExperimentAndVariation),
-  play: reduxHelpers.createAction(constants.PLAY, payloadExperimentAndVariation),
-  win: reduxHelpers.createAction(constants.WIN, payloadExperimentAndVariation)
+  reset: createAction(constants.RESET),
+  load: createAction(constants.LOAD, payloadExperiments),
+  activate: createAction(constants.ACTIVATE, experimentName => experimentName),
+  deactivate: createAction(constants.DEACTIVATE, payloadExperimentAndVariation),
+  play: createAction(constants.PLAY, payloadExperimentAndVariation),
+  win: createAction(constants.WIN, payloadExperimentAndVariation)
 };
 
 
 export const initialState = Immutable.fromJS({
-  experiments: {};
+  experiments: [ /** Array of ExperimentType objects */ ],
   active: { /** "experiment name" => "variation name" */ },
   played: { /** "experiment name" => "variation name" */ },
   winners: { /** "experiment name" => "variation name" */ },
 });
 
 
-export const reducer = reduxHelpers.createReducer(initialState, {
+const reducers = {
   /**
    * RESET the experiments state.
    */
@@ -111,7 +111,9 @@ export const reducer = reduxHelpers.createReducer(initialState, {
     const winners = state.get('winners').set(experimentName, variationName);
     return state.set('winners', winners);
   },
-});
+};
+
+export default handleActions(reducers, initialState);
 
 
 //
@@ -122,3 +124,33 @@ export const reducer = reduxHelpers.createReducer(initialState, {
 export const recordEvent = (eventName, experimentName, variationName) => {
   ana.trackEvent(false, eventName, { Experiment: experimentName, Variation: variationName });
 }
+
+const getLocalStorageValue = () => {
+  const activeValue = emitter.getActiveVariant(this.props.name);
+  if(typeof activeValue === "string") {
+    return activeValue;
+  }
+  const storedValue = store.getItem('PUSHTELL-' + this.props.name);
+  if(typeof storedValue === "string") {
+    emitter.setActiveVariant(this.props.name, storedValue, true);
+    return storedValue;
+  }
+  if(typeof this.props.defaultVariantName === 'string') {
+    emitter.setActiveVariant(this.props.name, this.props.defaultVariantName);
+    return this.props.defaultVariantName;
+  }
+  const variants = emitter.getSortedVariants(this.props.name);
+  const weights = emitter.getSortedVariantWeights(this.props.name);
+  const weightSum = weights.reduce((a, b) => {return a + b;}, 0);
+  let weightedIndex = typeof this.props.userIdentifier === 'string' ? Math.abs(crc32(this.props.userIdentifier) % weightSum) : Math.floor(Math.random() * weightSum);
+  let randomValue = variants[variants.length - 1];
+  for (let index = 0; index < weights.length; index++) {
+    weightedIndex -= weights[index];
+    if (weightedIndex < 0) {
+      randomValue = variants[index];
+      break;
+    }
+  }
+  emitter.setActiveVariant(this.props.name, randomValue);
+  return randomValue;
+};
