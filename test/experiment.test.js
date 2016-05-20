@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOMServer from "react-dom/server";
 import Experiment from "../../src/experiment.js";
 import Variant from "../../src/variant.js";
-import emitter from "../../src/emitter.jsx";
+import emitter from "../../src/emitter.js";
 import assert from "assert";
 import co from "co";
 import UUID from "node-uuid";

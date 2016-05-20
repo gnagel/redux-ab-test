@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Experiment from "../../src/CoreExperiment.jsx";
-import Variant from "../../src/variant.js";
-import emitter from "../../src/emitter.jsx";
+import Experiment from "../src/CoreExperiment.js";
+import Variant from "../src/variant.js";
+import emitter from "../src/emitter.js";
 import assert from "assert";
 import co from "co";
 import UUID from "node-uuid";
@@ -104,4 +104,3 @@ describe("Core Experiment", function() {
     ReactDOM.unmountComponentAtNode(container);
   }));
 });
-

@@ -62,7 +62,7 @@
     "webpack": "^1.12.14"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
+    "test": " NODE_PATH=src ./node_modules/.bin/mocha",
     "test:watch": "./node_modules/.bin/mocha --watch",
     "build": "doctoc . --github --title '<h1>Table of Contents</h1>'; ./node_modules/babel-cli/bin/babel.js --presets es2015,stage-1,react --plugins add-module-exports ./src --out-dir ./lib; ./node_modules/webpack/bin/webpack.js --config webpack.standalone.config.js"
   },
