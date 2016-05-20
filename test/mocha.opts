@@ -1,4 +1,4 @@
 --require babel-core/register
 --require babel-polyfill
 --require test/test_setup.js
-test/*.test.js
+src/**/*.test.js

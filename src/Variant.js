@@ -2,7 +2,7 @@
 import React from 'react';
 
 type Props = {
-  name: string
+  name: string,
 };
 
 export default class Variant extends React.Component {
