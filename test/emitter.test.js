@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Experiment from "../../src/CoreExperiment.jsx";
-import Variant from "../../src/variant.js";
-import emitter from "../../src/emitter.js";
+import Experiment from "../src/CoreExperiment";
+import Variant from "../src/variant";
+import emitter from "../src/emitter";
 import assert from "assert";
 import co from "co";
 import UUID from "node-uuid";
@@ -10,7 +10,7 @@ import TestUtils from 'react/lib/ReactTestUtils';
 import ES6Promise from 'es6-promise';
 ES6Promise.polyfill();
 
-describe("Emitter", function() {
+describe.skip("Emitter", function() {
   let container;
   before(function(){
     container = document.createElement("div");
@@ -261,4 +261,3 @@ describe("Emitter", function() {
     ReactDOM.unmountComponentAtNode(container);
   }));
 });
-

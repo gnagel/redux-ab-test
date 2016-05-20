@@ -1,3 +1,46 @@
 {
-  "presets": ["stage-1", "es2015", "react"]
+    "presets": [
+        "react",
+        "es2015",
+        "stage-0"
+    ],
+    "plugins": [
+        "transform-runtime",
+        "add-module-exports",
+        "transform-react-display-name"
+    ],
+    "env": {
+        "test": {
+            "plugins": [
+                [
+                    "babel-plugin-webpack-loaders", {
+                        "config": "./test/runtime.webpack.config.js",
+                        "verbose": false
+                    }
+                ]
+            ],
+            "plugins": []
+        },
+        "development": {
+            "passPerPreset": true,
+            "plugins": [
+                "typecheck",
+                "transform-flow-strip-types",
+                [
+                  "react-transform",
+                  {
+                    "transforms": [
+                      {
+                        "transform": "react-transform-catch-errors",
+                        "imports": [
+                            "react",
+                            "redbox-react"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+            ]
+        }
+    }
 }

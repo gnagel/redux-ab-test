@@ -1,85 +1,69 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Experiment from "../../src/CoreExperiment.jsx";
-import Variant from "../../src/variant.js";
-import emitter from "../../src/emitter.js";
-import assert from "assert";
+import Experiment from "../src/CoreExperiment";
+import Variant from "../src/variant";
+import emitter from "../src/emitter";
+
+import { expect, renderComponent } from './test_helper';
 import co from "co";
 import UUID from "node-uuid";
 import ES6Promise from 'es6-promise';
 ES6Promise.polyfill();
 
-describe("Variant", function() {
-  let container;
-  before(function(){
-    container = document.createElement("div");
-    container.id = "react";
-    document.getElementsByTagName('body')[0].appendChild(container);
-  });
-  after(function(){
-    document.getElementsByTagName('body')[0].removeChild(container);
-    emitter._reset();
-  });
-  it("should render text nodes.", co.wrap(function *(){
-    let experimentName = UUID.v4();
-    let variantTextA = UUID.v4();
-    let variantTextB = UUID.v4();
-    let App = React.createClass({
-      render: function(){
-        return <Experiment name={experimentName} value="A">
-          <Variant name="A">{variantTextA}</Variant>
-          <Variant name="B">{variantTextB}</Variant>
-        </Experiment>;
-      }
-    });
-    yield new Promise(function(resolve, reject){
-      ReactDOM.render(<App />, container, resolve);
-    });
-    assert.notEqual(container.innerHTML.indexOf(variantTextA), null);
-  }));
-  it("should render components.", co.wrap(function *(){
-    let experimentName = UUID.v4();
-    let App = React.createClass({
-      render: function(){
-        return <Experiment name={experimentName} value="A">
-          <Variant name="A"><div id="variant-a" /></Variant>
-          <Variant name="B"><div id="variant-b" /></Variant>
-        </Experiment>;
-      }
-    });
-    yield new Promise(function(resolve, reject){
-      ReactDOM.render(<App />, container, resolve);
-    });
-    let elementA = document.getElementById('variant-a');
-    let elementB = document.getElementById('variant-b');
-    assert.notEqual(elementA, null);
-    assert.equal(elementB, null);
-    ReactDOM.unmountComponentAtNode(container);
-  }));
-  it("should render arrays of components.", co.wrap(function *(){
-    let experimentName = UUID.v4();
-    let App = React.createClass({
-      render: function(){
-        return <Experiment name={experimentName} value="A">
-          <Variant name="A">
-            <div id="variant-a" />
-            <div />
-          </Variant>
-          <Variant name="B">
-            <div id="variant-b" />
-            <div />
-          </Variant>
-        </Experiment>;
-      }
-    });
-    yield new Promise(function(resolve, reject){
-      ReactDOM.render(<App />, container, resolve);
-    });
-    let elementA = document.getElementById('variant-a');
-    let elementB = document.getElementById('variant-b');
-    assert.notEqual(elementA, null);
-    assert.equal(elementB, null);
-    ReactDOM.unmountComponentAtNode(container);
-  }));
-});
+class App extends React.Component {
+  render() {
+    const { name, variantTextA, variantTextB } = this.props;
+    return (
+      <Experiment name={name} value="A">
+        <Variant name="A">{variantTextA}</Variant>
+        <Variant name="B">{variantTextB}</Variant>
+      </Experiment>
+    );
+  }
+}
 
+describe("Variant", () => {
+
+  describe('Within an Experiment', () => {
+    let component;
+    let experimentName;
+    let variantTextA;
+    let variantTextB;
+
+    beforeEach(() => {
+      experimentName = UUID.v4();
+      variantTextA = UUID.v4();
+      variantTextB = UUID.v4();
+    });
+
+    afterEach(() => {
+      emitter._reset();
+    });
+
+    it("should render text nodes.", () => {
+      component = renderComponent(App, { name: experimentName, variantTextA, variantTextB });
+      expect(component).to.exist;
+      expect(component).to.not.have.text(variantTextA);
+    });
+
+    it("should render components.", () => {
+      variantTextA = <div id="variant-a" />;
+      variantTextB = <div id="variant-b" />;
+      component = renderComponent(App, { name: experimentName, variantTextA, variantTextB });
+
+      expect(component).to.exist;
+      expect(component.find('#variant-a')).to.have.length(1);
+      expect(component.find('#variant-b')).to.have.length(1);
+    });
+
+    it("should render arrays of components.", () => {
+      variantTextA = [<div id="variant-a" />,<div />];
+      variantTextB = [<div id="variant-b" />,<div />];
+      component = renderComponent(App, { name: experimentName, variantTextA, variantTextB });
+
+      expect(component).to.exist;
+      expect(component.find('#variant-a')).to.have.length(1);
+      expect(component.find('#variant-b')).to.have.length(1);
+    });
+  });
+});

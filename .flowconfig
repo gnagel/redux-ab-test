@@ -1,0 +1,50 @@
+[libs]
+./node_modules/flow-interfaces/interfaces/
+./app/interfaces/
+
+[include]
+./node_modules/
+
+[ignore]
+.*/test/*
+.*/blueprints/*
+.*/node_modules/fbjs/lib/*
+.*/node_modules/babylon/lib/parser/*
+.*/node_modules/babel-types/lib/*
+.*/node_modules/babel-register/src/node.js
+.*/node_modules/babel-generator/lib/*
+.*/node_modules/babel-core/lib/util.js
+.*/node_modules/babel-core/lib/transformation/*
+.*/node_modules/babel-helper-regex/lib/index.js
+.*/node_modules/react-side-effect/*
+.*/node_modules/react-infinite/*
+.*/node_modules/redux-devtools-filterable-log-monitor/**/*
+.*/docs-app/
+.*.json
+
+[options]
+module.system=haste
+esproposal.class_static_fields=enable
+esproposal.class_instance_fields=enable
+esproposal.decorators=ignore
+
+suppress_type=$FlowIssue
+suppress_type=$FlowFixMe
+suppress_type=$FixMe
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(1[0-6]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*www[a-z,_]*\\)?)\\)
+suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(1[0-6]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*www[a-z,_]*\\)?)\\)? #[0-9]+
+suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
+
+module.name_mapper='.*\.\(scss\|css\)$' -> 'CSSModule'
+module.name_mapper='.*\.\(jpg\|jpeg\|gif\|svg\|png\)$' -> 'Image'
+module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
+module.name_mapper='^views\/\(.*\)$' -> '<PROJECT_ROOT>/app/views/\1'
+module.name_mapper='^redux\/\(.*\)$' -> '<PROJECT_ROOT>/app/redux/\1'
+module.name_mapper='^lib\/\(.*\)$' -> '<PROJECT_ROOT>/app/lib/\1'
+module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/app/utils/\1'
+module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
+
+
+
+[version]
+0.24.0

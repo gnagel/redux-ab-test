@@ -5,7 +5,7 @@ type Props = {
   name: string
 };
 
-export default class Variant React.Component {
+export default class Variant extends React.Component {
   props: Props;
 
   render() {

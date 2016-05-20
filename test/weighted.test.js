@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Experiment from "../../src/experiment.js";
-import Variant from "../../src/variant.js";
-import emitter from "../../src/emitter.js";
+import Experiment from "../src/experiment";
+import Variant from "../src/variant";
+import emitter from "../src/emitter";
 import assert from "assert";
 import co from "co";
 import UUID from "node-uuid";
@@ -39,7 +39,7 @@ function add(a, b) {
   return a + b;
 }
 
-describe("Weighted Experiment", function() {
+describe.skip("Weighted Experiment", function() {
   this.timeout(10000);
   let container;
   before(function(){

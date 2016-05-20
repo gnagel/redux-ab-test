@@ -28,5 +28,6 @@ node_modules
 
 run-browserstack-tests.sh
 
+standalone.min.js
 bundle.js
 ./lib
