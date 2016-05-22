@@ -11,7 +11,7 @@ import co from "co";
 import UUID from "node-uuid";
 
 
-describe.skip("Experiment", () => {
+describe("Experiment", () => {
   let component;
   let props;
   let store;
@@ -24,40 +24,26 @@ describe.skip("Experiment", () => {
       ]
     };
     store = {
-      reduxAbTest: initialState.set(
-        'experiments',
-        Immutable.fromJS([
-          {
-            name: 'Test-experimentName',
-            variations: [
-              { name: 'Original', weight: 5000 },
-              { name: 'Variation B', weight: 5000 },
-            ]
-          }
-        ])
-      )
+      reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
+        name: 'Test-experimentName',
+        variations: [
+          { name: 'Original', weight: 10000 },
+          { name: 'Variation B', weight: 0 },
+        ]
+      }])).set('active', Immutable.fromJS({ 'Test-experimentName': 'Variation B' }))
     };
     component = renderContainer(Experiment, props, store);
   });
 
   it('exists', () => {
     expect(component).to.exist;
+    expect(component.html()).to.be.present;
   });
 
-  it('has the correct props', () => {
-    expect(component).to.have.prop('name', 'Test-name');
-    expect(component).to.have.prop('children', props.children);
-  });
-
-  it('has the correct text', () => {
-    expect(component).to.have.text('Test-children');
-  });
-
-  it('has the correct div+text', () => {
-    props = { ...props, children: (<div id="test-id">Test-children</div>) };
-    component = renderComponent(Variation, props);
-    expect(component.find('#test-id')).to.have.length(1);
-    expect(component.find('#test-id')).to.have.text('Test-children');
+  it('is the Variation\'s contents', () => {
+    expect(component).to.not.have.prop('name', 'Variation B');
+    expect(component).to.have.tagName('span');
+    expect(component).to.have.text('Test Variation B');
   });
 
 });

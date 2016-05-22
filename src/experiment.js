@@ -20,13 +20,6 @@ type Props = {
    */
   defaultVariationName: ?string,
   /**
-   * Distinct user identifier.
-   * >  When defined, this value is hashed to choose a variation
-   * >  if `defaultVariationName` or a stored value is not present.
-   * >  Useful for server side rendering.
-   */
-  userIdentifier: ?string,
-  /**
    * Redux State:
    * ```js
    *   reduxAbTest = {
@@ -92,37 +85,47 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { name, defaultVariationName, userIdentifier, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
+    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
     const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectors.selectVariation({
       experiment,
       defaultVariationName,
-      userIdentifier,
       reduxAbTest
     });
 
     // These will trigger `componentWillReceiveProps`
-    dispatchActivate(name, variation);
-    dispatchPlay(name, variation);
+    dispatchActivate({experiment});
+    dispatchPlay({experiment, variation});
     // Update the state
     this.setState({ variationElements, experiment, variation });
+
+    console.log('---');
+    console.log('componentWillMount', 'variationElements:', Object.keys(variationElements.toJS()));
+    console.log('componentWillMount', 'experiment:', experiment);
+    console.log('componentWillMount', 'variation:', variation);
+    console.log('---');
   }
 
   /**
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps) {
-    const { name, defaultVariationName, userIdentifier, reduxAbTest, children } = nextProps;
+    const { name, defaultVariationName, reduxAbTest, children } = nextProps;
     const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectors.selectVariation({
       experiment,
       defaultVariationName,
-      userIdentifier,
       reduxAbTest
     });
-    this.setState({ variationElements, experiment, variation });
+    const newState = { variationElements, experiment, variation };
+    console.log('---');
+    console.log('componentWillReceiveProps', 'variationElements:', Object.keys(variationElements.toJS()));
+    console.log('componentWillReceiveProps', 'experiment:', experiment);
+    console.log('componentWillReceiveProps', 'variation:', variation);
+    console.log('---');
+    this.setState(newState);
   }
 
   /**
@@ -131,6 +134,9 @@ export default class Experiment extends React.Component {
   componentWillUnmount() {
     const { dispatchDeactivate } = this.props;
     const { experiment } = this.state;
+    console.log('---');
+    console.log('componentWillUnmount', 'experiment:', experiment);
+    console.log('---');
     dispatchDeactivate(experiment);
   }
 
@@ -139,7 +145,16 @@ export default class Experiment extends React.Component {
    */
   render() {
     const { experiment, variation, variationElements } = this.state;
-    return variationElements[variation.name] || null;
+    const variationName = variation.get('name');
+    const variationElement = variationElements.toJS()[variation.get('name')] || null;
+    console.log('---');
+    console.log('render', 'variationElements:', Object.keys(variationElements.toJS()));
+    console.log('render', 'experiment:', experiment);
+    console.log('render', 'variation:', variation);
+    console.log('render', 'variationName:', variationName);
+    console.log('render', 'variationElement:', variationElement);
+    console.log('---');
+    return variationElement;
   }
 }
 

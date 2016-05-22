@@ -72,7 +72,7 @@ describe('reduxAbTest', () => {
 
 
     const sharedActionExamples = ({action, type, args, payload}) => {
-      describe(type, () => {
+      describe(type.split('/')[1], () => {
         it('exists', () => {
           expect(action).to.exist;
           expect(action).to.be.a('function');
@@ -181,7 +181,7 @@ describe('reduxAbTest', () => {
   //
   describe('reducer', () => {
     const sharedReducerExamples = ({type, state, payload, newState}) => {
-      describe(type, () => {
+      describe(type.split('/')[1], () => {
         it('exists', () => {
           expect(reduxAbTest).to.exist;
           expect(reduxAbTest).to.be.a('function');
