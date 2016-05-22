@@ -61,18 +61,6 @@ export default class Debugger extends React.Component {
     this.setState({ visible: !visible });
   }
 
-  updateExperiments() {
-    this.setState({
-      experiments: emitter.getActiveExperiments()
-    });
-  }
-
-  setActiveVariation({experiment, variation}) {
-    const { setActivevariation } = this.props;
-    setActivevariation({experiment, variation});
-  }
-
-
   render() {
     if (disabled) {
       return null;
@@ -80,7 +68,8 @@ export default class Debugger extends React.Component {
 
     const { reduxAbTest } = this.props;
     const { visible } = this.state;
-    const experimentNames = reduxAbTest.get('experiments').map( experiment => experiment.get('name') ).toJS();
+    const experiments = reduxAbTest.get('experiments');
+    const experimentNames = experiments.map( experiment => experiment.get('name') ).toJS();
     const experimentNamesCount = experimentNames.length;
     const toggleVisibility = this.toggleVisibility.bind(this);
 
@@ -88,7 +77,7 @@ export default class Debugger extends React.Component {
       return (
         <div styles={ {...styles_container, ...styles_panel} }>
           <div onClick={toggleVisibility} styles={styles_close}>×</div>
-          <div>{ experimentNames.map(this.renderExperiment.bind(this)) }</div>
+          <div>{ experiments.map(this.renderExperiment.bind(this)) }</div>
           <div styles={ styles_production_build_note }>This panel is hidden on production builds.</div>
         </div>
       );
@@ -127,11 +116,11 @@ export default class Debugger extends React.Component {
   }
 
   renderVariation(experiment, variation) {
-    const { reduxAbTest } = this.props;
+    const { reduxAbTest, dispatchActivate } = this.props;
     const experimentName = experiment.get('name');
     const variationName = variation.get('name');
     const active = reduxAbTest.get('active').get(experiment.get('name'), null) === variation.get('name');
-    const setActivevariation = this.setActivevariation.bind(this, {experiment, variation});
+    const setActivevariation = () => dispatchActivate({experiment, variation});
     return (
       <li key={variationName}>
         <label onClick={setActivevariation} styles={ active ? styles_label_active : styles_label }>

@@ -38,10 +38,12 @@ describe("Debugger", () => {
     expect(component).to.have.text('1 Active Experiment');
   });
 
-  it('updates store.reduxAbTest.running');
-  it('updates store.reduxAbTest.active');
-  it('updates store.reduxAbTest.winners');
-  it('creates Ad-hoc experiments');
+  it('has the visible experiments', () => {
+    props = { visible: true };
+    component = renderContainer(Debugger, props, store);
+    expect(component.find('label')).to.have.length(2);
+    expect(component.find('label').first()).to.have.text('Original');
+    expect(component.find('label').last()).to.have.text('Variation B');
+  });
 
-  it("should update on componentWillReceiveProps");
 });
