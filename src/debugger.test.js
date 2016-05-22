@@ -1,27 +1,18 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import Immutable from 'immutable';
-import Experiment, { RawExperiment } from "./experiment";
-import Variation from "./variation";
+import Debugger from "./debugger";
 import { initialState } from './module';
 
 import { expect, renderContainer } from '../test/test_helper';
-import co from "co";
-import UUID from "node-uuid";
 
 
-describe("Experiment", () => {
+describe("Debugger", () => {
   let component;
   let props;
   let store;
   beforeEach(() => {
-    props = {
-      name: 'Test-experimentName',
-      children: [
-        <Variation name="Original">Test Original</Variation>,
-        <Variation name="Variation B">Test Variation B</Variation>,
-      ]
-    };
+    props = {};
     store = {
       reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
         name: 'Test-experimentName',
@@ -31,7 +22,7 @@ describe("Experiment", () => {
         ]
       }])).set('active', Immutable.fromJS({ 'Test-experimentName': 'Variation B' }))
     };
-    component = renderContainer(Experiment, props, store);
+    component = renderContainer(Debugger, props, store);
   });
 
   it('exists', () => {
@@ -39,10 +30,12 @@ describe("Experiment", () => {
     expect(component.html()).to.be.present;
   });
 
-  it('is the Variation\'s contents', () => {
-    expect(component).to.not.have.prop('name', 'Variation B');
-    expect(component).to.have.tagName('span');
-    expect(component).to.have.text('Test Variation B');
+  it('has the correct tagName', () => {
+    expect(component).to.have.tagName('div');
+  });
+
+  it('has the correct text', () => {
+    expect(component).to.have.text('1 Active Experiment');
   });
 
   it('updates store.reduxAbTest.running');

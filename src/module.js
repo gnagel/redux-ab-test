@@ -61,7 +61,6 @@ const reducers = {
    * RESET the experiments state.
    */
   [constants.RESET]: (state, { type }) => {
-    // console.log('type:', type);
     cacheStore().clear();
     return initialState;
   },
@@ -70,7 +69,6 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [constants.LOAD]: (state, { type, payload }) => {
-    // console.log('type:', type, 'payload:', payload);
     return initialState.set('experiments', payload.get('experiments')).set('active', payload.get('active'));
   },
 
@@ -78,7 +76,6 @@ const reducers = {
    * ACTIVATE the available experiments. and reset the state of the server
    */
   [constants.ACTIVATE]: (state, { type, payload }) => {
-    // console.log('type:', type, 'payload:', payload);
     const experimentName = payload.get('experiment').get('name');
     const counter = (state.get('running').get(experimentName) || 0) + 1;
     const running = state.get('running').set(experimentName, counter);
@@ -89,7 +86,6 @@ const reducers = {
    * DEACTIVATE the available experiments. and reset the state of the server
    */
   [constants.DEACTIVATE]: (state, { type, payload }) => {
-    // console.log('type:', type, 'payload:', payload);
     const experimentName = payload.get('experiment').get('name');
     const counter = (state.get('running').get(experimentName) || 0) - 1;
     let running;
@@ -106,7 +102,6 @@ const reducers = {
    * @payload { experiment:ExperimentType, variation:VariationType }
    */
   [constants.PLAY]: (state, { type, payload }) => {
-    // console.log('type:', type, 'payload:', payload);
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const active = state.get('active').set(experimentName, variationName);
@@ -118,7 +113,6 @@ const reducers = {
    * @payload { experiment:ExperimentType, variation:VariationType }
    */
   [constants.WIN]: (state, { type, payload, meta, error }) => {
-    // console.log('type:', type, 'payload:', payload);
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const winners = state.get('winners').set(experimentName, variationName);
