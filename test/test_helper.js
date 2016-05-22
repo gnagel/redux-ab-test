@@ -13,17 +13,17 @@ import sinon, { spy } from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
 chai.use(chaiEnzyme()); // Note the invocation at the end
 
-// import * as reducers from '../app/redux/reducers';
-// const reducer = combineReducers(reducers);
+import reduxAbTest from '../src/module';
+const reducer = combineReducers({reduxAbTest});
 
 
 function renderContainer(ComponentClass, props, state) {
-  // const store = createStore(reducer, state);
-  // return mount(
-  //   <Provider store={store}>
-  //     <ComponentClass {...props} />
-  //   </Provider>
-  // );
+  const store = createStore(reducer, state);
+  return mount(
+    <Provider store={store}>
+      <ComponentClass {...props} />
+    </Provider>
+  );
   return null;
 }
 

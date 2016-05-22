@@ -129,6 +129,7 @@
     "webpack": "^1.12.14"
   },
   "scripts": {
+    "postinstall": "npm run test",
     "test": "npm run test:js && npm run test:lint && npm run test:flow",
     "test:js": " NODE_PATH=src ./node_modules/.bin/mocha",
     "test:js:watch": "./node_modules/.bin/mocha --watch",

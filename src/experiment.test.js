@@ -1,34 +1,43 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
+import Immutable from 'immutable';
 import Experiment from "./experiment";
-import Variant from "./variant";
+import Variation from "./variation";
+import { initialState } from './module';
 import emitter from "./emitter";
 
-import { expect, renderComponent } from '../test/test_helper';
+import { expect, renderContainer } from '../test/test_helper';
 import co from "co";
 import UUID from "node-uuid";
-
-
-class App extends React.Component {
-  render() {
-    const { name } = this.props;
-    return (
-      <Experiment name={name}>
-        <Variant name="A"><div id="variant-a" /></Variant>
-        <Variant name="B"><div id="variant-b" /></Variant>
-      </Experiment>
-    );
-  }
-}
-
 
 
 describe("Experiment", () => {
   let component;
   let props;
+  let store;
   beforeEach(() => {
-    props = { name: 'Test-name', children: 'Test-children' };
-    component = renderComponent(Variant, props);
+    props = {
+      name: 'Test-experimentName',
+      children: [
+        <Variation name="Original">Test Original</Variation>,
+        <Variation name="Variation B">Test Variation B</Variation>,
+      ]
+    };
+    store = {
+      reduxAbTest: initialState.set(
+        'experiments',
+        Immutable.fromJS([
+          {
+            name: 'Test-experimentName',
+            variations: [
+              { name: 'Original', weight: 5000 },
+              { name: 'Variation B', weight: 5000 },
+            ]
+          }
+        ])
+      )
+    };
+    component = renderContainer(Experiment, props, store);
   });
 
   it('exists', () => {
@@ -37,7 +46,7 @@ describe("Experiment", () => {
 
   it('has the correct props', () => {
     expect(component).to.have.prop('name', 'Test-name');
-    expect(component).to.have.prop('children', 'Test-children');
+    expect(component).to.have.prop('children', props.children);
   });
 
   it('has the correct text', () => {
@@ -46,7 +55,7 @@ describe("Experiment", () => {
 
   it('has the correct div+text', () => {
     props = { ...props, children: (<div id="test-id">Test-children</div>) };
-    component = renderComponent(Variant, props);
+    component = renderComponent(Variation, props);
     expect(component.find('#test-id')).to.have.length(1);
     expect(component.find('#test-id')).to.have.text('Test-children');
   });
@@ -58,39 +67,34 @@ describe("Experiment", () => {
 describe.skip("Experiment", () => {
   let component;
 
-  it("should render to a string.", co.wrap(function *(){
-    const name = UUID.v4();
-    component = renderComponent(App, { name });
-    expect(component).to.exist;
-  }));
 
-  it("should choose the same variant when a user identifier is defined.", co.wrap(function *(){
+  it("should choose the same Variation when a user identifier is defined.", co.wrap(function *(){
     let userIdentifier = UUID.v4();
     let experimentName = UUID.v4();
-    let variantNames = [];
+    let variationNames = [];
     for(let i = 0; i < 100; i++) {
-      variantNames.push(UUID.v4());
+      variationNames.push(UUID.v4());
     }
     let App = React.createClass({
       render: () =>{
         return <Experiment name={experimentName} userIdentifier={userIdentifier}>
-          {variantNames.map(name => {
-            return <Variant key={name} name={name}><div id={'variant-' + name}></div></Variant>
+          {variationNames.map(name => {
+            return <Variation key={name} name={name}><div id={'variation-' + name}></div></Variation>
           })}
         </Experiment>;
       }
     });
-    let chosenVariant;
-    emitter.once("play", function(experimentName, variantName){
-      chosenVariant = variantName;
+    let chosenVariation;
+    emitter.once("play", function(experimentName, variationName){
+      chosenVariation = variationName;
     });
     let result = ReactDOMServer.renderToString(<App />);
-    assert(chosenVariant);
-    assert.notEqual(result.indexOf(chosenVariant), -1);
+    assert(chosenVariation);
+    assert.notEqual(result.indexOf(chosenVariation), -1);
     for(let i = 0; i < 100; i++) {
       emitter._reset();
       result = ReactDOMServer.renderToString(<App />);
-      assert.notEqual(result.indexOf(chosenVariant), -1);
+      assert.notEqual(result.indexOf(chosenVariation), -1);
     }
   }));
 });

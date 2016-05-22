@@ -1,100 +1,161 @@
 /** @flow */
 import React from "react";
-import Variant from "./Variant";
-import { actions } from './module';
+import Immutable from 'immutable';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux'
+
+import Variation from "./variation";
+import { ExperimentType, VariationType, actions, selectors } from './module';
 
 
 type Props = {
+  /**
+   * Name of the experiment
+   */
   name: string,
-  defaultVariantName: React.PropTypes.string,
-  variantName: ?string,
-  emitActivate: Function,
-  emitDeactivate: Function,
-  emitWin: Function,
-  emitPlay: Function,
-};
-type State = {
-  variantElements: Object,
-  variantName: ?string
+  /**
+   * Name of the default variation.
+   * >  When defined, this value is used to choose a variation if a stored value is not present.
+   * >  This property may be useful for server side rendering but is otherwise not recommended.
+   */
+  defaultVariationName: ?string,
+  /**
+   * Distinct user identifier.
+   * >  When defined, this value is hashed to choose a variation
+   * >  if `defaultVariationName` or a stored value is not present.
+   * >  Useful for server side rendering.
+   */
+  userIdentifier: ?string,
+  /**
+   * Redux State:
+   * ```js
+   *   reduxAbTest = {
+   *     experiments: [],
+   *     active: {
+   *       "experiment.name" => "variation.name",
+   *       ...
+   *     }
+   *     ...
+   *   }
+   * ```
+   */
+  reduxAbTest: Immutable.Map,
+  /**
+   * Bound Action Creator: actions.activate(experimentName:string)
+   */
+  dispatchActivate: Function,
+  /**
+   * Bound Action Creator: actions.deactivate(experimentName:string)
+   */
+  dispatchDeactivate: Function,
+  /**
+  * Bound Action Creator: actions.play(experimentName:string, variationName:string)
+   */
+  dispatchPlay: Function,
+  /**
+   * Bound Action Creator: actions.win(experimentName:string, variationName:string)
+   */
+  dispatchWin: Function,
 };
 
-export class Experiment extends React.Component {
+
+type State = {
+  /**
+   * Hash of "name" => Variation element
+   */
+  variationElements: Object,
+  /**
+   * The currenly active experiment
+   */
+  experiment: ?ExperimentType,
+  /**
+   * The currenly active variation
+   */
+  variation: ?VariationType,
+};
+
+
+export default class Experiment extends React.Component {
   props: Props;
   state: State;
 
   constructor(props, context) {
     super(props, context);
+    this.state = {
+      variationElements: {},
+      variation: null,
+      experiment: null
+    };
   }
 
   /**
-   * Create the default state
+   * Activate the variation
    */
-  getInitialState() {
-    return createNewState(this.props);
-  }
+  componentWillMount() {
+    const { name, defaultVariationName, userIdentifier, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
+    const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
+    const variationElements = selectors.mapChildrenToVariationElements(children);
+    const variation = selectors.selectVariation({
+      experiment,
+      defaultVariationName,
+      userIdentifier,
+      reduxAbTest
+    });
 
+    // These will trigger `componentWillReceiveProps`
+    dispatchActivate(name, variation);
+    dispatchPlay(name, variation);
+    // Update the state
+    this.setState({ variationElements, experiment, variation });
+  }
 
   /**
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps) {
-    this.setState(this.createNewState(nextProps));
+    const { name, defaultVariationName, userIdentifier, reduxAbTest, children } = nextProps;
+    const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
+    const variationElements = selectors.mapChildrenToVariationElements(children);
+    const variation = selectors.selectVariation({
+      experiment,
+      defaultVariationName,
+      userIdentifier,
+      reduxAbTest
+    });
+    this.setState({ variationElements, experiment, variation });
   }
 
-
   /**
-   * Activate the input variant
-   */
-  componentWillMount() {
-    const { name, variantName, store } = this.props;
-    store.dispatch(actions.activate(name, variantName));
-    store.dispatch(actions.play(name, variantName));
-    this.setState(this.createNewState({ variantName }));
-  }
-
-
-  /**
-   * Deactivate the variant from the state
+   * Deactivate the variation from the state
    */
   componentWillUnmount() {
-    const { name, store } = this.props;
-    store.dispatch(actions.deactivate(name));
+    const { dispatchDeactivate } = this.props;
+    const { experiment } = this.state;
+    dispatchDeactivate(experiment);
   }
-
 
   /**
-   * Render one of the variants or `null`
+   * Render one of the variations or `null`
    */
   render() {
-    const { variantName, variantElements } = this.state;
-    return variantElements[variantName] || null;
-  }
-
-
-  createNewState(props) {
-    let variantElements = Immutable.Map({});
-    const { children } = props;
-    React.Children.forEach(children, ensureElementIsVariant);
-    React.Children.forEach(children, element => { variantElements = variantElements.set(element.props.name, element) });
-
-    const variantName = props.variantName || this.props.variantName;
-    if (variantName && !variantElements[variantName]) {
-      throw new Error(`The variantName: '${variantName}' was not found in variantElements=${ variantName.keys() }`);
-    }
-
-    return { variantElements, variantName };
-  }
-
-}
-
-
-
-//
-// Helpers:
-//
-
-const ensureElementIsVariant = (element) => {
-  if(!React.isValidElement(element) || element.type.displayName !== "Variant") {
-    throw new Error("The children of an Experiment must be Variant components");
+    const { experiment, variation, variationElements } = this.state;
+    return variationElements[variation.name] || null;
   }
 }
+
+
+export const mapStateToProps = (state) => {
+  const { reduxAbTest } = state;
+  return { reduxAbTest };
+}
+
+export const mapDispatchToProps = (dispatch) => {
+  return {
+    dispatchActivate: bindActionCreators(actions.activate, dispatch),
+    dispatchDeactivate: bindActionCreators(actions.deactivate, dispatch),
+    dispatchPlay: bindActionCreators(actions.play, dispatch),
+    dispatchWin: bindActionCreators(actions.win, dispatch),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Experiment);
