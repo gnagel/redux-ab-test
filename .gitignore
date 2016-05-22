@@ -31,3 +31,4 @@ run-browserstack-tests.sh
 standalone.min.js
 bundle.js
 ./lib
+/lib

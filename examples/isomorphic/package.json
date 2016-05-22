@@ -7,9 +7,9 @@
     "express": "^4.13.3",
     "envify": "^3.4.0",
     "express-session": "^1.11.3",
-    "react": "^0.14.0",
-    "react-dom": "^0.14.0",
-    "webpack": "^1.12.2",
+    "react": "15.0.1",
+    "react-dom": "15.0.1",
+    "webpack": "^1.12.14",
     "ejs": "^2.3.4"
   },
   "devDependencies": {},
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pushtell/react-ab-test.git"
+    "url": "git+https://github.com/gnagel/redux-ab-test.git"
   },
   "author": "",
   "license": "MIT"

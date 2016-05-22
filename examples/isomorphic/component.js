@@ -1,6 +1,6 @@
 var React = require("react");
-var Experiment = require("../../lib/Experiment");
-var Variant = require("../../lib/Variant");
+var Experiment = require("../../lib/experiment");
+var Variation = require("../../lib/variation");
 
 module.exports = React.createClass({
   propTypes: {
@@ -9,12 +9,12 @@ module.exports = React.createClass({
   render: function(){
     return <div>
       <Experiment ref="experiment" name="My Example" userIdentifier={this.props.userIdentifier}>
-        <Variant name="A">
+        <Variation name="A">
           <div>Section A</div>
-        </Variant>
-        <Variant name="B">
+        </Variation>
+        <Variation name="B">
           <div>Section B</div>
-        </Variant>
+        </Variation>
       </Experiment>
     </div>;
   }

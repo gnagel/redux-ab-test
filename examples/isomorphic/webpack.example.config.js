@@ -3,7 +3,7 @@ var path = require("path");
 
 module.exports = {
   entry: {
-    index: path.resolve(__dirname, './www/app.jsx')
+    index: path.resolve(__dirname, './www/app.js')
   },
   output: {
     path: path.resolve(__dirname, './www'),

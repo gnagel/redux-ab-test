@@ -135,16 +135,20 @@
     "test:js:watch": "./node_modules/.bin/mocha --watch",
     "test:lint": "./node_modules/.bin/eslint ./src",
     "test:flow": "./node_modules/.bin/flow check --show-all-errors",
-    "build": "doctoc . --github --title '<h1>Table of Contents</h1>'; ./node_modules/babel-cli/bin/babel.js --presets es2015,stage-1,react --plugins add-module-exports ./src --out-dir ./lib; ./node_modules/webpack/bin/webpack.js --config webpack.standalone.config.js"
+    "demo:isomorphic": "npm run build && cd ./examples/isomorphic && npm run startt",
+    "build": "npm run build:lib",
+    "build:lib": "rm -rf ./index.js; ./node_modules/babel-cli/bin/babel.js ./src/index.js --out-dir ./dist && mv ./dist/index.js .",
+    "build:docs": "doctoc . --github --title '<h1>Table of Contents</h1>'",
+    "build:standalone": "./node_modules/.bin/webpack --config webpack.standalone.config.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pushtell/react-ab-test.git"
+    "url": "git+https://github.com/gnagel/redux-ab-test.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pushtell/react-ab-test/issues"
+    "url": "https://github.com/gnagel/redux-ab-test/issues"
   },
-  "homepage": "https://github.com/pushtell/react-ab-test#readme"
+  "homepage": "https://github.com/gnagel/redux-ab-test#readme"
 }

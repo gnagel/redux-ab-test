@@ -1,9 +1,9 @@
 # A/B Testing React Components
 
 [![NPM Version](https://badge.fury.io/js/react-ab-test.svg)](https://www.npmjs.com/package/react-ab-test)
-[![Circle CI](https://circleci.com/gh/pushtell/react-ab-test.svg?style=shield)](https://circleci.com/gh/pushtell/react-ab-test)
-[![Coverage Status](https://coveralls.io/repos/pushtell/react-ab-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/pushtell/react-ab-test?branch=master)
-[![Dependency Status](https://david-dm.org/pushtell/react-ab-test.svg)](https://david-dm.org/pushtell/react-ab-test)
+[![Circle CI](https://circleci.com/gh/gnagel/redux-ab-test.svg?style=shield)](https://circleci.com/gh/gnagel/redux-ab-test)
+[![Coverage Status](https://coveralls.io/repos/gnagel/redux-ab-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/gnagel/redux-ab-test?branch=master)
+[![Dependency Status](https://david-dm.org/gnagel/redux-ab-test.svg)](https://david-dm.org/gnagel/redux-ab-test)
 [![NPM Downloads](https://img.shields.io/npm/dm/react-ab-test.svg?style=flat)](https://www.npmjs.com/package/react-ab-test)
 
 Wrap components in [`<Variant />`](#variant-) and nest in [`<Experiment />`](#experiment-). A variant is chosen randomly and saved to local storage.
@@ -27,7 +27,7 @@ emitter.addPlayListener(function(experimentName, variantName){
 });
 ```
 
-Please [★ on GitHub](https://github.com/pushtell/react-ab-test)!
+Please [★ on GitHub](https://github.com/gnagel/redux-ab-test)!
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -91,8 +91,8 @@ Try it [on JSFiddle](https://jsfiddle.net/pushtell/m14qvy7r/)
 
 ```js
 
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
+var Experiment = require("react-ab-test/lib/experiment");
+var Variant = require("react-ab-test/lib/variation");
 var emitter = require("react-ab-test/lib/emitter");
 
 var App = React.createClass({
@@ -240,7 +240,7 @@ The [debugger](#experimentdebugger) attaches a fixed-position panel to the botto
 
 The debugger is wrapped in a conditional `if(process.env.NODE_ENV === "production") {...}` and will not display on production builds using [envify](https://github.com/hughsk/envify).
 
-<img src="https://cdn.rawgit.com/pushtell/react-ab-test/master/documentation-images/debugger-animated-2.gif" width="325" height="325" />
+<img src="https://cdn.rawgit.com/gnagel/redux-ab-test/master/documentation-images/debugger-animated-2.gif" width="325" height="325" />
 
 Try it [on JSFiddle](http://jsfiddle.net/pushtell/vs9kkxLd/)
 
@@ -272,11 +272,11 @@ var App = React.createClass({
 
 A [`<Experiment />`](#experiment-) with a `userIdentifier` property will choose a consistent [`<Variant />`](#variant-) suitable for server side rendering.
 
-See [`./examples/isomorphic`](https://github.com/pushtell/react-ab-test/tree/develop/examples/isomorphic) for a working example.
+See [`./examples/isomorphic`](https://github.com/gnagel/redux-ab-test/tree/develop/examples/isomorphic) for a working example.
 
 #### Example
 
-The component in [`Component.jsx`](https://github.com/pushtell/react-ab-test/blob/master/examples/isomorphic/Component.jsx):
+The component in [`Component.jsx`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/Component.jsx):
 
 ```js
 
@@ -304,7 +304,7 @@ module.exports = React.createClass({
 
 ```
 
-We use a session ID for the `userIdentifier` property in this example, although a long-lived user ID would be preferable. See [`server.js`](https://github.com/pushtell/react-ab-test/blob/master/examples/isomorphic/server.js):
+We use a session ID for the `userIdentifier` property in this example, although a long-lived user ID would be preferable. See [`server.js`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/server.js):
 
 ```js
 require("babel/register")({only: /jsx/});
@@ -339,7 +339,7 @@ app.use(express.static('www'));
 app.listen(8080);
 ```
 
-An [EJS](https://github.com/mde/ejs) template in [`template.ejs`](https://github.com/pushtell/react-ab-test/blob/master/examples/isomorphic/views/template.ejs):
+An [EJS](https://github.com/mde/ejs) template in [`template.ejs`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/views/template.ejs):
 
 ```html
 <!doctype html>
@@ -357,7 +357,7 @@ An [EJS](https://github.com/mde/ejs) template in [`template.ejs`](https://github
 </html>
 ```
 
-On the client in [`app.jsx`](https://github.com/pushtell/react-ab-test/blob/master/examples/isomorphic/www/app.jsx):
+On the client in [`app.jsx`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/www/app.jsx):
 
 ```js
 var React = require('react');
@@ -371,14 +371,14 @@ ReactDOM.render(<Component userIdentifier={SESSION_ID} />, container);
 
 ### With Babel
 
-Code from [`./src`](https://github.com/pushtell/react-ab-test/tree/master/src) is written in [JSX](https://facebook.github.io/jsx/) and transpiled into [`./lib`](https://github.com/pushtell/react-ab-test/tree/master/lib) using [Babel](https://babeljs.io/). If your project uses Babel you may want to include files from [`./src`](https://github.com/pushtell/react-ab-test/tree/master/src) directly.
+Code from [`./src`](https://github.com/gnagel/redux-ab-test/tree/master/src) is written in [JSX](https://facebook.github.io/jsx/) and transpiled into [`./lib`](https://github.com/gnagel/redux-ab-test/tree/master/lib) using [Babel](https://babeljs.io/). If your project uses Babel you may want to include files from [`./src`](https://github.com/gnagel/redux-ab-test/tree/master/src) directly.
 
 ## Alternative Libraries
 * [**react-experiments**](https://github.com/HubSpot/react-experiments) - “A JavaScript library that assists in defining and managing UI experiments in React” by [Hubspot](https://github.com/HubSpot). Uses Facebook's [PlanOut framework](http://facebook.github.io/planout/) via [Hubspot's javascript port](https://github.com/HubSpot/PlanOut.js).
 * [**react-ab**](https://github.com/olahol/react-ab) - “Simple declarative and universal A/B testing component for React” by [Ola Holmström](https://github.com/olahol)
 * [**react-native-ab**](https://github.com/lwansbrough/react-native-ab/) - “A component for rendering A/B tests in React Native” by [Loch Wansbrough](https://github.com/lwansbrough)
 
-Please [let us know](https://github.com/pushtell/react-ab-test/issues/new) about alternate libraries not included here.
+Please [let us know](https://github.com/gnagel/redux-ab-test/issues/new) about alternate libraries not included here.
 
 ## Resources for A/B Testing with React
 
@@ -387,7 +387,7 @@ Please [let us know](https://github.com/pushtell/react-ab-test/issues/new) about
 * [Simple Sequential A/B Testing](http://www.evanmiller.org/sequential-ab-testing.html)
 * [A/B Testing Rigorously (without losing your job)](http://elem.com/~btilly/ab-testing-multiple-looks/part1-rigorous.html)
 
-Please [let us know](https://github.com/pushtell/react-ab-test/issues/new) about React A/B testing resources not included here.
+Please [let us know](https://github.com/gnagel/redux-ab-test/issues/new) about React A/B testing resources not included here.
 
 ## API Reference
 
@@ -567,7 +567,7 @@ Debugging tool. Attaches a fixed-position panel to the bottom of the `<body>` el
 
 The debugger is wrapped in a conditional `if(process.env.NODE_ENV === "production") {...}` and will not display on production builds using [envify](https://github.com/hughsk/envify).
 
-<img src="https://cdn.rawgit.com/pushtell/react-ab-test/master/documentation-images/debugger-animated-2.gif" width="325" height="325" />
+<img src="https://cdn.rawgit.com/gnagel/redux-ab-test/master/documentation-images/debugger-animated-2.gif" width="325" height="325" />
 
 #### `experimentDebugger.enable()`
 
@@ -719,7 +719,7 @@ Remove `win` and `play` listeners and stop reporting results to Segment.
 
 [Mocha](https://mochajs.org/) tests are performed on the latest version of [Node](https://nodejs.org/en/).
 
-Please [let us know](https://github.com/pushtell/react-ab-test/issues/new) if a different configuration should be included here.
+Please [let us know](https://github.com/gnagel/redux-ab-test/issues/new) if a different configuration should be included here.
 
 ### Running Tests
 

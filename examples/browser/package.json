@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pushtell/react-ab-test.git"
+    "url": "git+https://github.com/gnagel/redux-ab-test.git"
   },
   "author": "",
   "license": "MIT"
