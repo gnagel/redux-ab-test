@@ -94,7 +94,7 @@ export default class Experiment extends React.Component {
   componentWillMount() {
     const { name, defaultVariationName, userIdentifier, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
     const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
-    const variationElements = selectors.mapChildrenToVariationElements(children);
+    const variationElements = mapChildrenToVariationElements(children);
     const variation = selectors.selectVariation({
       experiment,
       defaultVariationName,
@@ -115,7 +115,7 @@ export default class Experiment extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { name, defaultVariationName, userIdentifier, reduxAbTest, children } = nextProps;
     const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
-    const variationElements = selectors.mapChildrenToVariationElements(children);
+    const variationElements = mapChildrenToVariationElements(children);
     const variation = selectors.selectVariation({
       experiment,
       defaultVariationName,
@@ -142,6 +142,16 @@ export default class Experiment extends React.Component {
     return variationElements[variation.name] || null;
   }
 }
+
+
+/**
+ * Helper function: Convert `children` to a hash of { `name` => variation }
+ */
+const mapChildrenToVariationElements = (children) => {
+  const variationElements = {};
+  React.Children.forEach(children, element => variationElements[element.props.name] = element);
+  return Immutable.fromJS(variationElements);
+};
 
 
 export const mapStateToProps = (state) => {

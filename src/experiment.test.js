@@ -11,7 +11,7 @@ import co from "co";
 import UUID from "node-uuid";
 
 
-describe("Experiment", () => {
+describe.skip("Experiment", () => {
   let component;
   let props;
   let store;

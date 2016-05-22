@@ -29,91 +29,29 @@ export const constants = {
 
 
 export const actions = {
-  reset: createAction(constants.RESET),
-  load: createAction(constants.LOAD, (experiments:Array<ExperimentType>) => {
-    return Immutable.fromJS({experiments})
+  reset: createAction(constants.RESET, () => Immutable.fromJS({})),
+  load: createAction(constants.LOAD, ({experiments, active}) => {
+    return Immutable.fromJS({experiments, active})
   }),
-  activate: createAction(constants.ACTIVATE, (experiment:ExperimentType) => {
+  activate: createAction(constants.ACTIVATE, ({experiment}) => {
     return Immutable.fromJS({experiment})
   }),
-  deactivate: createAction(constants.DEACTIVATE, (experiment:ExperimentType) => {
+  deactivate: createAction(constants.DEACTIVATE, ({experiment}) => {
     return Immutable.fromJS({experiment})
   }),
-  play: createAction(constants.PLAY, (experiment:ExperimentType, variation:VariationType) => {
+  play: createAction(constants.PLAY, ({experiment, variation}) => {
     return Immutable.fromJS({experiment, variation})
   }),
-  win: createAction(constants.WIN, (experiment:ExperimentType, variation:VariationType) => {
+  win: createAction(constants.WIN, ({experiment, variation}) => {
     return Immutable.fromJS({experiment, variation})
   })
 };
 
 
-export const selectors = {
-  /**
-   * Helper function: Convert `children` to a hash of { `name` => variation }
-   */
-  mapChildrenToVariationElements: (children) => {
-    const variationElements = {};
-    React.Children.forEach(children, element => variationElements[element.props.name] = element);
-    return Immutable.fromJS(variationElements);
-  },
-  /**
-   * Find the experiment by name, raises an Error if not-found
-   */
-  findExperiment: ({reduxAbTest, experimentName}) => {
-    const experiment = reduxAbTest.get('experiments').find( experiment => experiment.get('name') == experimentName );
-    if (!experiment) {
-      throw new Error(`The experimentName: '${experimentName}' was not found in experiments=${ reduxAbTest.get('experiments') }`);
-    }
-    return experiment;
-  },
-  /**
-   * Select a variation from the given input variables
-   */
-  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => {
-    // Hash of variation.name => VariationType
-    const variationsMap = {};
-    experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
-    // Total weight of the variations
-    const weightSum = experiment.get('variations').reduce(
-      (total, variant) => { return total + variant.get('weight'); },
-      0
-    );
-
-    // Match against the redux state
-    const activeVariationName = reduxAbTest.get('active').get(experiment.name);
-    if (activeVariationName && variationsMap[activeVariationName]) {
-      return variationsMap[activeVariationName];
-    }
-
-    // Match against the localstore/cookie state
-    const storeVariationName = store.getItem('redux-ab-test--' + experiment.get('name'));
-    if (storeVariationName && variationsMap[storeVariationName]) {
-      return variationsMap[storeVariationName];
-    }
-
-    // Randomly assign a varation:
-    const weightedIndex = Math.floor(Math.abs(Math.random(weightSum) * weightSum));
-    let randomValue = experiment.get('variations').last();
-    for (let index = 0; index < weights.length; index++) {
-      weightedIndex -= weights[index];
-      if (weightedIndex < 0) {
-        randomValue = variants[index];
-        break;
-      }
-    }
-    emitter.setActiveVariant(experimentName, randomValue);
-    return randomValue;
-
-    return null;
-  }
-}
-
-
 export const initialState = Immutable.fromJS({
   experiments: [ /** Array of ExperimentType objects */ ],
+  running: { /** "experiment name" => number */ },
   active: { /** "experiment name" => "variation name" */ },
-  played: { /** "experiment name" => "variation name" */ },
   winners: { /** "experiment name" => "variation name" */ },
 });
 
@@ -123,6 +61,7 @@ const reducers = {
    * RESET the experiments state.
    */
   [constants.RESET]: (state, {}) => {
+    cacheStore().clear();
     return initialState;
   },
 
@@ -130,32 +69,32 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [constants.LOAD]: (state, { payload }) => {
-    return initialState.set('experiments', payload.get('experiments'));
+    return initialState.set('experiments', payload.get('experiments')).set('active', payload.get('active'));
   },
 
   /**
    * ACTIVATE the available experiments. and reset the state of the server
    */
   [constants.ACTIVATE]: (state, { payload }) => {
-    const { experimentName } = payload;
-    const counter = (state.get('active').get(experimentName) || 0) + 1;
-    const active = state.get('active').set(experimentName, counter);
-    return state.set('active', active);
+    const experimentName = payload.get('experiment').get('name');
+    const counter = (state.get('running').get(experimentName) || 0) + 1;
+    const running = state.get('running').set(experimentName, counter);
+    return state.set('running', running);
   },
 
   /**
    * DEACTIVATE the available experiments. and reset the state of the server
    */
   [constants.DEACTIVATE]: (state, { payload }) => {
-    const { experimentName } = payload;
-    const counter = (state.get('active').get(experimentName) || 0) - 1;
-    let active;
+    const experimentName = payload.get('experiment').get('name');
+    const counter = (state.get('running').get(experimentName) || 0) - 1;
+    let running;
     if (counter <= 0) {
-      active = state.get('active').delete(experimentName);
+      running = state.get('running').delete(experimentName);
     } else {
-      active = state.get('active').set(experimentName, counter);
+      running = state.get('running').set(experimentName, counter);
     }
-    return state.set('active', active);
+    return state.set('running', running);
   },
 
   /**
@@ -184,28 +123,94 @@ const reducers = {
 export default handleActions(reducers, initialState);
 
 
+
 //
-// Helpers:
+// Selectors for querying the Redux/Compoenet state:
 //
-const noopStore = () => {
-  return {
-    getItem: () => null,
-    setItem: () => null
+export const selectors = {
+  /**
+   * Find the experiment by name, raises an Error if not-found
+   */
+  findExperiment: ({reduxAbTest, experimentName}) => {
+    const experiment = reduxAbTest.get('experiments').find( experiment => experiment.get('name') == experimentName );
+    if (!experiment) {
+      throw new Error(`The experimentName: '${experimentName}' was not found in experiments=${ reduxAbTest.get('experiments') }`);
+    }
+    return experiment;
+  },
+  /**
+   * Select a variation from the given input variables
+   */
+  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => {
+    const experimentName = experiment.get('name');
+    // Hash of variation.name => VariationType
+    const variationsMap = {};
+    experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
+
+    // Match against the redux state
+    const activeVariationName = reduxAbTest.get('active').get(experimentName);
+    if (activeVariationName && variationsMap[activeVariationName]) {
+      return variationsMap[activeVariationName];
+    }
+
+    // Match against the localstore state.
+    // This is used as a in-memory cache to prevent multiple instances of the same experiment from getting differient variations.
+    const storeVariationName = cacheStore().getItem('redux-ab-test--' + experimentName);
+    if (storeVariationName && variationsMap[storeVariationName]) {
+      return variationsMap[storeVariationName];
+    }
+
+    // Match against the defaultVariationName
+    if (defaultVariationName && variationsMap[defaultVariationName]) {
+      return variationsMap[defaultVariationName];
+    }
+
+    //
+    // Pick a variation ramdomly
+    //
+
+    let totalWeights = 0;
+    let variationRanges = [];
+    experiment.get('variations').filterNot( variation => variation.get('weight') <= 0 ).forEach((variation) => {
+      const start = totalWeights;
+      const end = totalWeights + variation.get('weight');
+      variationRanges.push(Immutable.Range(start, end));
+      totalWeights = end;
+    });
+    const variationWeight = Math.floor(Math.abs(Math.random() * totalWeights));
+    const variationIndex = variationRanges.findIndex( range => range.includes(variationWeight) );
+    const variation = experiment.get('variations').get(variationIndex) || experiment.get('variations').last();
+    cacheStore().setItem('redux-ab-test--' + experimentName, variation.get('name'));
+
+    return variation;
   }
 };
 
-let store = noopStore();
-if(window && window.localStorage) {
-  try {
-    const key = '__redux-ab-test__';
-    window.localStorage.setItem(key, key);
-    if (window.localStorage.getItem(key) !== key) {
-      store = noopStore();
-    } else {
-      window.localStorage.removeItem(key);
-      store = window.localStorage;
+
+//
+// Helpers:
+//
+let cache = {};
+const noopStore = {
+  cache,
+  getItem: (key) => cache[key],
+  setItem: (key, value) => { cache[key] = value; },
+  removeItem: (key) => { delete cache[key]; },
+  clear: () => { cache = {}; }
+};
+
+export const cacheStore = () => {
+  let store = noopStore;
+  if(window && window.localStorage && window.localStorage.setItem) {
+    try {
+      const key = '__redux-ab-test__';
+      window.localStorage.setItem(key, key);
+      if (window.localStorage.getItem(key) === key) {
+        window.localStorage.removeItem(key);
+        store = window.localStorage;
+      }
+    } catch(e) {
     }
-  } catch(e) {
-    store = noopStore();
   }
-}
+  return store;
+};
