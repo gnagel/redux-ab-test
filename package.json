@@ -13,8 +13,8 @@
     "A/B test"
   ],
   "main": "index.js",
-  "version": "2.0.1",
-  "description": "A/B testing React components with Redux and debug tools. Isomorphic with a simple, universal interface. Well documented and lightweight. Tested in popular browsers and Node.js. Includes helpers for Mixpanel and Segment.com.",
+  "version": "2.0.2",
+  "description": "A/B testing React components with Redux and debug tools. Isomorphic with a simple, universal interface. Well documented and lightweight. Tested in popular browsers and Node.js. Includes helpers for React, Redux, and Segment.io",
   "directories": {
     "test": "test"
   },
@@ -83,7 +83,6 @@
     "webpack-merge": "^0.7.3"
   },
   "scripts": {
-    "postinstall": "npm run test:js",
     "test": "npm run test:js && npm run test:lint && npm run test:flow",
     "test:js": " NODE_PATH=src:./test ./node_modules/.bin/mocha",
     "test:js:watch": "./node_modules/.bin/mocha --watch",
