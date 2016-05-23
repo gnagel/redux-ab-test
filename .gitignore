@@ -32,3 +32,4 @@ standalone.min.js
 bundle.js
 ./lib
 /lib
+/dist

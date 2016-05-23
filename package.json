@@ -32,7 +32,7 @@
     "babel-cli": "6.8.0",
     "babel-core": "6.5.2",
     "babel-eslint": "6.0.0-beta.5",
-    "babel-loader": "6.2.1",
+    "babel-loader": "6.2.2",
     "babel-plugin-add-module-exports": "0.1.2",
     "babel-plugin-react-transform": "2.0.0",
     "babel-plugin-transform-decorators-legacy": "1.3.4",
@@ -49,6 +49,10 @@
     "babel-preset-es2015": "6.3.13",
     "babel-preset-react": "6.3.13",
     "babel-preset-stage-0": "6.3.13",
+    "babel-preset-react-hmre": "^1.1.0",
+    "css-loader": "^0.23.1",
+    "npm-install-webpack-plugin": "^2.0.2",
+    "style-loader": "^0.13.0",
     "babel-register": "6.3.13",
     "babel-runtime": "6.3.19",
     "chai": "3.5.0",
@@ -126,7 +130,13 @@
     "regenerator-loader": "^2.0.0",
     "sinon": "1.17.4",
     "transform-loader": "^0.2.3",
-    "webpack": "^1.12.14"
+    "webpack": "^1.12.14",
+    "webpack-dev-server": "^1.14.1",
+    "webpack-merge": "^0.7.3",
+    "express": "^4.13.3",
+    "envify": "^3.4.0",
+    "express-session": "^1.11.3",
+    "ejs": "^2.3.4"
   },
   "scripts": {
     "postinstall": "",
@@ -135,11 +145,9 @@
     "test:js:watch": "./node_modules/.bin/mocha --watch",
     "test:lint": "./node_modules/.bin/eslint ./src",
     "test:flow": "./node_modules/.bin/flow check --show-all-errors",
-    "demo:isomorphic": "npm run build && cd ./examples/isomorphic && npm run startt",
-    "build": "npm run build:lib",
-    "build:lib": "rm -rf ./index.js; ./node_modules/babel-cli/bin/babel.js ./src/index.js --out-dir ./dist && mv ./dist/index.js .",
-    "build:docs": "doctoc . --github --title '<h1>Table of Contents</h1>'",
-    "build:standalone": "./node_modules/.bin/webpack --config webpack.standalone.config.js"
+    "demo:isomorphic": "npm run build && cd ./examples/isomorphic && npm run start",
+    "build": "./node_modules/.bin/webpack",
+    "start": "./node_modules/.bin/webpack-dev-server"
   },
   "repository": {
     "type": "git",
