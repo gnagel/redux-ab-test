@@ -92,7 +92,6 @@
     "clean": "rm -rf ./dist",
     "build": "babel --out-dir=./dist/ --ignore=./src/__test__ src/",
     "shipit": "npm run build && npm publish && npm clean",
-    "prepublish": "npm run compile"
   },
   "repository": {
     "type": "git",
