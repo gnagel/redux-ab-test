@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"; // eslint-disable-line no-unused-vars
 import ReactDOM from "react-dom";
 import Experiment from "../../src/experiment.js";
 import Variant from "../../src/variant.js";

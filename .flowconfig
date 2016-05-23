@@ -1,26 +1,11 @@
 [libs]
 ./node_modules/flow-interfaces/interfaces/
-./app/interfaces/
 
 [include]
-./node_modules/
+./src/**/*.js
 
 [ignore]
-.*/test/*
-.*/blueprints/*
-.*/node_modules/fbjs/lib/*
-.*/node_modules/babylon/lib/parser/*
-.*/node_modules/babel-types/lib/*
-.*/node_modules/babel-register/src/node.js
-.*/node_modules/babel-generator/lib/*
-.*/node_modules/babel-core/lib/util.js
-.*/node_modules/babel-core/lib/transformation/*
-.*/node_modules/babel-helper-regex/lib/index.js
-.*/node_modules/react-side-effect/*
-.*/node_modules/react-infinite/*
-.*/node_modules/redux-devtools-filterable-log-monitor/**/*
-.*/docs-app/
-.*.json
+.*/*test*/*
 
 [options]
 module.system=haste
@@ -43,8 +28,6 @@ module.name_mapper='^redux\/\(.*\)$' -> '<PROJECT_ROOT>/app/redux/\1'
 module.name_mapper='^lib\/\(.*\)$' -> '<PROJECT_ROOT>/app/lib/\1'
 module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/app/utils/\1'
 module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
-
-
 
 [version]
 0.24.0

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import { expect } from 'test_helper';
 
@@ -7,15 +7,15 @@ import reduxAbTest, { VariationType, ExperimentType, constants, actions, selecto
 
 const variation_original:VariationType = {
   name: "Original",
-  weight: 5000,
+  weight: 5000
 };
 const variation_a:VariationType = {
   name: "Variation #A",
-  weight: 5000,
+  weight: 5000
 };
 const variation_b:VariationType = {
   name: "Variation #B",
-  weight: 0,
+  weight: 0
 };
 const experiment:ExperimentType = {
   name: "Test-Name",
@@ -23,7 +23,7 @@ const experiment:ExperimentType = {
     variation_original,
     variation_a,
     variation_b
-  ],
+  ]
 };
 
 
@@ -120,10 +120,10 @@ describe('reduxAbTest', () => {
       action: actions.activate,
       type: constants.ACTIVATE,
       args: {
-        experiment: experiment,
+        experiment: experiment
       },
       payload: Immutable.fromJS({
-        experiment: experiment,
+        experiment: experiment
       })
     });
 
@@ -131,10 +131,10 @@ describe('reduxAbTest', () => {
       action: actions.deactivate,
       type: constants.DEACTIVATE,
       args: {
-        experiment: experiment,
+        experiment: experiment
       },
       payload: Immutable.fromJS({
-        experiment: experiment,
+        experiment: experiment
       })
     });
 
@@ -228,7 +228,7 @@ describe('reduxAbTest', () => {
       type: constants.ACTIVATE,
       state: initialState,
       payload: Immutable.fromJS({
-        experiment,
+        experiment
       }),
       newState: initialState.set('running', Immutable.fromJS({ "Test-Name": 1 }))
     });

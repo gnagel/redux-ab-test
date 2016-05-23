@@ -1,13 +1,9 @@
-import React from "react";
-import ReactDOMServer from "react-dom/server";
+import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Experiment, { RawExperiment } from "../experiment";
+import Experiment from "../experiment";
 import Variation from "../variation";
 import { initialState } from '../module';
-
 import { expect, renderContainer } from 'test_helper';
-import co from "co";
-import UUID from "node-uuid";
 
 
 describe("Experiment", () => {
@@ -19,7 +15,7 @@ describe("Experiment", () => {
       name: 'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
-        <Variation name="Variation B">Test Variation B</Variation>,
+        <Variation name="Variation B">Test Variation B</Variation>
       ]
     };
     store = {
@@ -27,7 +23,7 @@ describe("Experiment", () => {
         name: 'Test-experimentName',
         variations: [
           { name: 'Original', weight: 10000 },
-          { name: 'Variation B', weight: 0 },
+          { name: 'Variation B', weight: 0 }
         ]
       }])).set('active', Immutable.fromJS({ 'Test-experimentName': 'Variation B' }))
     };

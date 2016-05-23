@@ -2,9 +2,8 @@
 import React from "react";
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux';
 
-import Variation from "./variation";
 import { ExperimentType, VariationType, actions, selectors } from './module';
 
 
@@ -128,9 +127,9 @@ class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
-    const { experiment, variation, variationElements } = this.state;
+    const { variation, variationElements } = this.state;
     const variationName = variation.get('name');
-    const variationElement = variationElements.toJS()[variation.get('name')] || null;
+    const variationElement = variationElements.toJS()[variationName] || null;
     return variationElement;
   }
 }
@@ -149,14 +148,14 @@ const mapChildrenToVariationElements = (children) => {
 export const mapStateToProps = (state) => {
   const { reduxAbTest } = state;
   return { reduxAbTest };
-}
+};
 
 export const mapDispatchToProps = (dispatch) => {
   return {
     dispatchActivate: bindActionCreators(actions.activate, dispatch),
     dispatchDeactivate: bindActionCreators(actions.deactivate, dispatch),
     dispatchPlay: bindActionCreators(actions.play, dispatch),
-    dispatchWin: bindActionCreators(actions.win, dispatch),
+    dispatchWin: bindActionCreators(actions.win, dispatch)
   };
 };
 

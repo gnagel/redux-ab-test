@@ -1,6 +1,5 @@
 /** @flow */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 import Immutable from 'immutable';
 import { connect } from 'react-redux';
@@ -130,21 +129,21 @@ export default class Debugger extends React.Component {
      </li>
     );
   }
-};
+}
 
 
 
 export const mapStateToProps = (state) => {
   const { reduxAbTest } = state;
   return { reduxAbTest };
-}
+};
 
 export const mapDispatchToProps = (dispatch) => {
   return {
     dispatchActivate: bindActionCreators(actions.activate, dispatch),
     dispatchDeactivate: bindActionCreators(actions.deactivate, dispatch),
     dispatchPlay: bindActionCreators(actions.play, dispatch),
-    dispatchWin: bindActionCreators(actions.win, dispatch),
+    dispatchWin: bindActionCreators(actions.win, dispatch)
   };
 };
 
@@ -158,40 +157,38 @@ const styles = {
   position: "fixed",
   transform: "translateX(-50%)",
   bottom: "0",
-  left: "50%",
+  left: "50%"
 };
 const styles_ul = {
   margin: "0",
-  padding: "0 0 0 20px",
+  padding: "0 0 0 20px"
 };
 const styles_li = {
   margin: "0",
   padding: "0",
   fontSize: "14px",
-  lineHeight: "14px",
+  lineHeight: "14px"
 };
 const styles_input = {
   float: "left",
-  margin: "0 10px 0 0",
   padding: "0",
-  cursor: "pointer",
   color: "#999999",
   margin: "0 0 10px 0",
   cursor: "pointer",
-  fontWeight: "normal",
+  fontWeight: "normal"
 };
 const styles_label = {
-  transition: "all .25s",
+  transition: "all .25s"
 };
 const styles_label_active = {
   ...styles_label,
-  color: "#000000",
+  color: "#000000"
 };
 const styles_experiment = {};
 const styles_experiment_name = {
   fontSize: "16px",
   color: "#000000",
-  margin: "0 0 10px 0",
+  margin: "0 0 10px 0"
 };
 const styles_production_build_note = {
   fontSize: "10px",
@@ -199,14 +196,14 @@ const styles_production_build_note = {
   textAlign: "center",
   margin: "10px -40px 0 -10px",
   borderTop: "1px solid #b3b3b3",
-  padding: "10px 10px 5px 10px",
+  padding: "10px 10px 5px 10px"
 };
 const styles_handle = {
   cursor: "pointer",
-  padding: "5px 10px 5px 10px",
+  padding: "5px 10px 5px 10px"
 };
 const styles_panel = {
-  padding: "15px 40px 5px 10px",
+  padding: "15px 40px 5px 10px"
 };
 const styles_container = {
   fontSize: "11px",
@@ -217,7 +214,7 @@ const styles_container = {
   borderLeft: "1px solid #b3b3b3",
   borderRight: "1px solid #b3b3b3",
   borderTopLeftRadius: "2px",
-  borderTopRightRadius: "2px",
+  borderTopRightRadius: "2px"
 };
 const styles_close = {
   cursor: "pointer",
@@ -227,9 +224,9 @@ const styles_close = {
   // position: "absolute",
   top: "0px",
   right: "7px",
-  transition: "all .25s",
+  transition: "all .25s"
 };
 const styles_close_hover = {
   ...styles_close,
-  color: "#FF0000",
+  color: "#FF0000"
 };

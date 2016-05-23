@@ -1,6 +1,4 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import Experiment from "../experiment";
+import React from "react"; // eslint-disable-line no-unused-vars
 import Variation from "../variation";
 
 import { expect, renderComponent } from 'test_helper';

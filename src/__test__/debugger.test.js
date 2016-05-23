@@ -1,5 +1,4 @@
-import React from "react";
-import ReactDOMServer from "react-dom/server";
+import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import Debugger from "../debugger";
 import { initialState } from '../module';
@@ -18,7 +17,7 @@ describe("Debugger", () => {
         name: 'Test-experimentName',
         variations: [
           { name: 'Original', weight: 10000 },
-          { name: 'Variation B', weight: 0 },
+          { name: 'Variation B', weight: 0 }
         ]
       }])).set('active', Immutable.fromJS({ 'Test-experimentName': 'Variation B' }))
     };
