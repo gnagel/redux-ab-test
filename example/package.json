@@ -72,5 +72,6 @@
     "webpack-merge": "^0.7.3"
   },
   "dependencies": {
+    "fbjs": "^0.8.2"
   }
 }

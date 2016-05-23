@@ -4,18 +4,27 @@ import Experiment from './experiment';
 
 import Variation from './variation';
 
-import reactAbTest, { VariationType, ExperimentType, constants, actions, initialState, reducers, selectors } from './module';
+import reduxAbTest, { VariationType, ExperimentType, constants, actions, initialState, reducers, selectors } from './module';
 
 export default {
-  reactAbTest,
-  Debugger,
+  /**
+   * React Connected components
+   */
   Experiment,
   Variation,
+  Debugger,
+  /**
+   * Flow type annotations:
+   */
   VariationType,
   ExperimentType,
-  constants,
-  actions,
-  initialState,
-  reducers,
-  selectors
+  /**
+   * Redux Reducer
+   */
+  reduxAbTest,
+  reduxAbTestConstants: constants,
+  reduxAbTestActions: actions,
+  reduxAbTestInitialState: initialState,
+  reduxAbTestReducers: reducers,
+  reduxAbTestSelectors: selectors
 };

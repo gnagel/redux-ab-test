@@ -3,16 +3,19 @@ import React from 'react';
 
 type Props = {
   name: string,
+  handleWin: ?Function
 };
 
 export default class Variation extends React.Component {
   props: Props;
 
   render() {
-    const { children } = this.props;
+    const { children, handleWin } = this.props;
     if (!React.isValidElement(children)) {
-      return <span>{children}</span>;
+      return <span handleWin={ handleWin }>{children}</span>;
     }
-    return children;
+
+    // Inject the helper `handleWin` into the child element
+    return React.cloneElement(children, { handleWin });
   }
 }

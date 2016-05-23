@@ -3,20 +3,33 @@ import Immutable from 'immutable';
 import Experiment from "../experiment";
 import Variation from "../variation";
 import { initialState } from '../module';
-import { expect, renderContainer } from 'test_helper';
+import { expect, renderContainer, spy } from 'test_helper';
 
 
 describe("Experiment", () => {
   let component;
   let props;
   let store;
+  let onActivate;
+  let onDeactivate;
+  let onPlay;
+  let onWin;
   beforeEach(() => {
+    onActivate = spy();
+    onDeactivate = spy();
+    onPlay = spy();
+    onWin = spy();
+
     props = {
       name: 'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B">Test Variation B</Variation>
-      ]
+      ],
+      onActivate,
+      onDeactivate,
+      onPlay,
+      onWin
     };
     store = {
       reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
@@ -41,9 +54,38 @@ describe("Experiment", () => {
     expect(component).to.have.text('Test Variation B');
   });
 
-  it('updates store.reduxAbTest.running');
-  it('updates store.reduxAbTest.active');
-  it('updates store.reduxAbTest.winners');
+  it('calls onActivate', () => {
+    expect(onActivate).to.have.been.called;
+  });
+
+  it('calls onPlay', () => {
+    expect(onPlay).to.have.been.called;
+  });
+
+  it('didnt call onWin', () => {
+    expect(onWin).to.not.have.been.called;
+  });
+
+  it('did call onWin', () => {
+    props = {
+      name: 'Test-experimentName',
+      children: [
+        <Variation name="Original">Test Original</Variation>,
+        <Variation name="Variation B"><button onClick={ () => { this.props.handleWin(); } }>Variation B</button></Variation>
+      ],
+      onActivate,
+      onDeactivate,
+      onPlay,
+      onWin
+    };
+    component = renderContainer(Experiment, props, store);
+    expect(component).to.have.prop('handleWin');
+    expect(component.find('button')).to.have.length(1);
+    expect(component.find('button')).to.have.text('Variation B');
+    component.simulate('click');
+    // expect(onWin).to.not.have.been.called;
+  });
+
   it('creates Ad-hoc experiments');
 
   it("should update on componentWillReceiveProps");

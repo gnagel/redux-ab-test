@@ -6,6 +6,15 @@ import { bindActionCreators } from 'redux';
 
 import { ExperimentType, VariationType, actions, selectors } from './module';
 
+type WrapsExperimentType = {
+  experiment: ExperimentType
+};
+type WrapsExperimentVariationType = {
+  experiment: ExperimentType,
+  variation: VariationType
+};
+function recievesExperiment(opts:WrapsExperimentType) {}
+function recievesExperimentVariation(opts:WrapsExperimentVariationType) {}
 
 type Props = {
   /**
@@ -18,6 +27,23 @@ type Props = {
    * >  This property may be useful for server side rendering but is otherwise not recommended.
    */
   defaultVariationName: ?string,
+  /**
+   * Optional Callback, occurs after the Bound Action Creator is called
+   */
+  onActivate: ?recievesExperiment,
+  /**
+   * Optional Callback, occurs after the Bound Action Creator is called
+   */
+  onDeactivate: ?recievesExperiment,
+  /**
+   * Optional Callback, occurs after the Bound Action Creator is called
+   */
+  onPlay: ?recievesExperimentVariation,
+  /**
+   * Optional Callback, occurs after the Bound Action Creator is called
+   */
+  onWin: ?recievesExperimentVariation,
+
   /**
    * Redux State:
    * ```js
@@ -80,11 +106,14 @@ class Experiment extends React.Component {
     };
   }
 
+
   /**
    * Activate the variation
    */
   componentWillMount() {
     const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
+    const onActivate = (this.props.onActivate || recievesExperiment);
+    const onPlay = (this.props.onPlay || recievesExperimentVariation);
     const experiment = selectors.findExperiment({reduxAbTest, experimentName: name});
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectors.selectVariation({
@@ -96,8 +125,12 @@ class Experiment extends React.Component {
     // These will trigger `componentWillReceiveProps`
     dispatchActivate({experiment});
     dispatchPlay({experiment, variation});
+    // Trigger the callbacks (if any were supplied)
+    onActivate({experiment});
+    onPlay({experiment, variation});
     this.setState({ variationElements, experiment, variation });
   }
+
 
   /**
    * Update the component's state with the new properties
@@ -114,14 +147,29 @@ class Experiment extends React.Component {
     this.setState({ variationElements, experiment, variation });
   }
 
+
   /**
    * Deactivate the variation from the state
    */
   componentWillUnmount() {
     const { dispatchDeactivate } = this.props;
     const { experiment } = this.state;
-    dispatchDeactivate(experiment);
+    const onDeactivate = (this.props.onDeactivate || recievesExperiment);
+    // Dispatch the deactivation event
+    dispatchDeactivate({experiment})
+    // Trigger the callbacks (if any were supplied)
+    onDeactivate({experiment});
   }
+
+
+  handleWin() {
+    const { dispatchWin, onWin } = this.props;
+    const { experiment, variation } = this.state;
+
+    dispatchWin({experiment, variation});
+    (this.props.onWin || recievesExperimentVariation)({experiment, variation});
+  }
+
 
   /**
    * Render one of the variations or `null`
@@ -129,8 +177,13 @@ class Experiment extends React.Component {
   render() {
     const { variation, variationElements } = this.state;
     const variationName = variation.get('name');
-    const variationElement = variationElements.toJS()[variationName] || null;
-    return variationElement;
+    const child = variationElements.toJS()[variationName];
+    if (!child) {
+      return null;
+    }
+
+    // Inject the helper `handleWin` into the child element
+    return React.cloneElement(child, { handleWin: this.handleWin.bind(this) });
   }
 }
 
