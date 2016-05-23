@@ -7,11 +7,11 @@ import { bindActionCreators } from 'redux';
 import { ExperimentType, VariationType, actions, selectors } from './module';
 
 type WrapsExperimentType = {
-  experiment: ExperimentType
+  experiment: Immutable.Map
 };
 type WrapsExperimentVariationType = {
-  experiment: ExperimentType,
-  variation: VariationType
+  experiment: Immutable.Map,
+  variation: Immutable.Map
 };
 function recievesExperiment(opts:WrapsExperimentType) {}
 function recievesExperimentVariation(opts:WrapsExperimentVariationType) {}
@@ -161,13 +161,15 @@ class Experiment extends React.Component {
     onDeactivate({experiment});
   }
 
-
+  /**
+   * Notify the client of the `WIN` event
+   */
   handleWin() {
-    const { dispatchWin, onWin } = this.props;
+    const { dispatchWin } = this.props;
     const { experiment, variation } = this.state;
-
+    const onWin = (this.props.onWin || recievesExperimentVariation);
     dispatchWin({experiment, variation});
-    (this.props.onWin || recievesExperimentVariation)({experiment, variation});
+    onWin({experiment, variation});
   }
 
 
@@ -177,13 +179,13 @@ class Experiment extends React.Component {
   render() {
     const { variation, variationElements } = this.state;
     const variationName = variation.get('name');
-    const child = variationElements.toJS()[variationName];
-    if (!child) {
+    const variationChildElement = variationElements.toJS()[variationName];
+    if (!variationChildElement) {
       return null;
     }
 
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(child, { handleWin: this.handleWin.bind(this) });
+    return React.cloneElement(variationChildElement, { handleWin: this.handleWin.bind(this) });
   }
 }
 

@@ -326,7 +326,7 @@ describe('reduxAbTest', () => {
       });
 
       it('chooses the active variation from localcache', () => {
-        cacheStore().setItem('redux-ab-test--' + experiment.name, variation_b.name);
+        cacheStore().setItem(experiment.name, variation_b.name);
         const output = selectors.selectVariation({
           reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
           experiment: Immutable.fromJS(experiment),

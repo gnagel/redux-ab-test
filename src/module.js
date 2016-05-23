@@ -104,6 +104,7 @@ const reducers = {
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const active = state.get('active').set(experimentName, variationName);
+    cacheStore().removeItem(experimentName);
     return state.set('active', active);
   },
 
@@ -152,9 +153,10 @@ export const selectors = {
       return variationsMap[activeVariationName];
     }
 
-    // Match against the localstore state.
+    // Match against the instance state.
     // This is used as a in-memory cache to prevent multiple instances of the same experiment from getting differient variations.
-    const storeVariationName = cacheStore().getItem('redux-ab-test--' + experimentName);
+    // It is wiped out with each pass of the RESET/LOAD/PLAY cycle
+    const storeVariationName = cacheStore().getItem(experimentName);
     if (storeVariationName && variationsMap[storeVariationName]) {
       return variationsMap[storeVariationName];
     }
@@ -164,25 +166,29 @@ export const selectors = {
       return variationsMap[defaultVariationName];
     }
 
-    //
     // Pick a variation ramdomly
-    //
-
-    let totalWeights = 0;
-    let variationRanges = [];
-    experiment.get('variations').filterNot( variation => variation.get('weight') <= 0 ).forEach((variation) => {
-      const start = totalWeights;
-      const end = totalWeights + variation.get('weight');
-      variationRanges.push(Immutable.Range(start, end));
-      totalWeights = end;
-    });
-    const variationWeight = Math.floor(Math.abs(Math.random() * totalWeights));
-    const variationIndex = variationRanges.findIndex( range => range.includes(variationWeight) );
-    const variation = experiment.get('variations').get(variationIndex) || experiment.get('variations').last();
-    cacheStore().setItem('redux-ab-test--' + experimentName, variation.get('name'));
-
+    const variation = randomVariation(experiment);
+    // Record the choice in the tmp cache
+    cacheStore().setItem(experimentName, variation.get('name'));
+    // Return the chosen variation
     return variation;
   }
+};
+
+export const randomVariation = (experiment) => {
+  const getWeight = (variation) => variation.get('weight', 0);
+  const variations = experiment.get('variations').filterNot( variation => getWeight(variation) <= 0 ).sortBy( variation => getWeight(variation) );
+  const ranges = variations.reduce(
+    (list, variation) => list.push(Immutable.Range(0, getWeight(variation))),
+    Immutable.List([])
+  );
+  const scoreTotal = variations.reduce( (total, variation) => total + getWeight(variation), 0);
+  // Find the range that contains our score
+  const score = Math.floor(Math.abs(Math.random() * scoreTotal));
+  const variationIndex = ranges.findIndex( range => range.includes(score) );
+  // Retrieve the selected variation
+  const variation = variations.get(variationIndex, variations.last());
+  return variation;
 };
 
 
@@ -199,17 +205,5 @@ const noopStore = {
 };
 
 export const cacheStore = () => {
-  let store = noopStore;
-  if(window && window.localStorage && window.localStorage.setItem) {
-    try {
-      const key = '__redux-ab-test__';
-      window.localStorage.setItem(key, key);
-      if (window.localStorage.getItem(key) === key) {
-        window.localStorage.removeItem(key);
-        store = window.localStorage;
-      }
-    } catch(e) {
-    }
-  }
-  return store;
+  return noopStore;
 };

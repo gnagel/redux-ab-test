@@ -13,7 +13,7 @@
     "A/B test"
   ],
   "main": "dist/index.js",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "A/B testing React components with Redux and debug tools. Isomorphic with a simple, universal interface. Well documented and lightweight. Tested in popular browsers and Node.js. Includes helpers for React, Redux, and Segment.io",
   "directories": {
     "test": "test"
