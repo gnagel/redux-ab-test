@@ -1,10 +1,10 @@
 # A/B Testing React Components
 
-[![NPM Version](https://badge.fury.io/js/react-ab-test.svg)](https://www.npmjs.com/package/react-ab-test)
+[![NPM Version](https://badge.fury.io/js/redux-ab-test.svg)](https://www.npmjs.com/package/redux-ab-test)
 [![Circle CI](https://circleci.com/gh/gnagel/redux-ab-test.svg?style=shield)](https://circleci.com/gh/gnagel/redux-ab-test)
 [![Coverage Status](https://coveralls.io/repos/gnagel/redux-ab-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/gnagel/redux-ab-test?branch=master)
 [![Dependency Status](https://david-dm.org/gnagel/redux-ab-test.svg)](https://david-dm.org/gnagel/redux-ab-test)
-[![NPM Downloads](https://img.shields.io/npm/dm/react-ab-test.svg?style=flat)](https://www.npmjs.com/package/react-ab-test)
+[![NPM Downloads](https://img.shields.io/npm/dm/redux-ab-test.svg?style=flat)](https://www.npmjs.com/package/redux-ab-test)
 
 Wrap components in [`<Variant />`](#variant-) and nest in [`<Experiment />`](#experiment-). A variant is chosen randomly and saved to local storage.
 
@@ -77,10 +77,10 @@ Please [★ on GitHub](https://github.com/gnagel/redux-ab-test)!
 
 ## Installation
 
-`react-ab-test` is compatible with React 0.14.x and 0.15.x.
+`redux-ab-test` is compatible with React 0.15.x.
 
 ```bash
-npm install react-ab-test
+npm install redux-ab-test
 ```
 
 ## Usage
@@ -91,9 +91,9 @@ Try it [on JSFiddle](https://jsfiddle.net/pushtell/m14qvy7r/)
 
 ```js
 
-var Experiment = require("react-ab-test/lib/experiment");
-var Variant = require("react-ab-test/lib/variation");
-var emitter = require("react-ab-test/lib/emitter");
+var Experiment = require("redux-ab-test/src/experiment");
+var Variant = require("redux-ab-test/src/variation");
+var emitter = require("redux-ab-test/src/emitter");
 
 var App = React.createClass({
   onButtonClick: function(e){
@@ -132,9 +132,9 @@ Try it [on JSFiddle](http://jsfiddle.net/pushtell/pcutps9q/)
 
 ```js
 
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
-var emitter = require("react-ab-test/lib/emitter");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var emitter = require("redux-ab-test/src/emitter");
 
 // Define variants in advance.
 emitter.defineVariants("My Example", ["A", "B", "C"]);
@@ -207,9 +207,9 @@ Use [emitter.defineVariants()](#emitterdefinevariantsexperimentname-variantnames
 
 ```js
 
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
-var emitter = require("react-ab-test/lib/emitter");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var emitter = require("redux-ab-test/src/emitter");
 
 // Define variants and weights in advance.
 emitter.defineVariants("My Example", ["A", "B", "C"], [10, 40, 40]);
@@ -246,9 +246,9 @@ Try it [on JSFiddle](http://jsfiddle.net/pushtell/vs9kkxLd/)
 
 ```js
 
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
-var experimentDebugger = require("react-ab-test/lib/debugger");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var experimentDebugger = require("redux-ab-test/src/debugger");
 
 experimentDebugger.enable();
 
@@ -281,8 +281,8 @@ The component in [`Component.jsx`](https://github.com/gnagel/redux-ab-test/blob/
 ```js
 
 var React = require("react");
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
 
 module.exports = React.createClass({
   propTypes: {
@@ -595,9 +595,9 @@ Try it [on JSFiddle](https://jsfiddle.net/pushtell/hwtnzm35/)
 
 ```js
 
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
-var mixpanelHelper = require("react-ab-test/lib/helpers/mixpanel");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var mixpanelHelper = require("redux-ab-test/src/helpers/mixpanel");
 
 // window.mixpanel has been set by Mixpanel's embed snippet.
 mixpanelHelper.enable();
@@ -655,9 +655,9 @@ Try it [on JSFiddle](https://jsfiddle.net/pushtell/ae1jeo2k/)
 
 ```js
 
-var Experiment = require("react-ab-test/lib/Experiment");
-var Variant = require("react-ab-test/lib/Variant");
-var segmentHelper = require("react-ab-test/lib/helpers/segment");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var segmentHelper = require("redux-ab-test/src/helpers/segment");
 
 // window.segment has been set by Segment's embed snippet.
 segmentHelper.enable();
