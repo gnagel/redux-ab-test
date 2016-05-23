@@ -6,6 +6,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import reduxAbTest, { initialState } from '../../../src/module';
 import Experiment  from '../../../src/experiment';
 import Variation  from '../../../src/variation';
+import Debugger  from '../../../src/debugger';
 import Note from './Note.jsx';
 
 const reducer = combineReducers({reduxAbTest});
@@ -53,6 +54,7 @@ export default class App extends React.Component {
               <h2>Variation Y</h2>
             </Variation>
           </Experiment>
+          <Debugger visible={true} />
         </div>
       </Provider>
     );

@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import Immutable from 'immutable';
-import Experiment, { RawExperiment } from "./experiment";
-import Variation from "./variation";
-import { initialState } from './module';
+import Experiment, { RawExperiment } from "../experiment";
+import Variation from "../variation";
+import { initialState } from '../module';
 
-import { expect, renderContainer } from '../test/test_helper';
+import { expect, renderContainer } from 'test_helper';
 import co from "co";
 import UUID from "node-uuid";
 

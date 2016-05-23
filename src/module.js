@@ -2,7 +2,6 @@
 import React        from 'react';
 import Immutable    from 'immutable';
 import { createAction, handleActions } from 'redux-actions';
-import crc32 from "fbjs/lib/crc32";
 
 
 export type VariationType = {

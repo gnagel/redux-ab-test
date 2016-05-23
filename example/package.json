@@ -1,7 +1,7 @@
 {
-  "name": "Redux A/B Test Example",
+  "name": "redux-ab-test-example",
   "version": "0.0.0",
-  "description": "Webpack demo app",
+  "description": "Redux A/B Test example app",
   "main": "index.js",
   "scripts": {
     "build": "webpack",
@@ -29,10 +29,12 @@
   },
   "dependencies": {
     "babel-runtime": "^6.9.0",
+    "fbjs": "^0.8.2",
     "immutable": "^3.8.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-redux": "^4.4.5",
-    "redux": "^3.5.2"
+    "redux": "^3.5.2",
+    "redux-actions": "^0.9.1"
   }
 }

@@ -1,8 +1,8 @@
 import React from 'react';
 import Immutable from 'immutable';
-import { expect } from '../test/test_helper';
+import { expect } from 'test_helper';
 
-import reduxAbTest, { VariationType, ExperimentType, constants, actions, selectors, initialState, cacheStore } from './module';
+import reduxAbTest, { VariationType, ExperimentType, constants, actions, selectors, initialState, cacheStore } from '../module';
 
 
 const variation_original:VariationType = {

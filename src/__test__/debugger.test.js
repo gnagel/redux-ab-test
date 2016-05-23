@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import Immutable from 'immutable';
-import Debugger from "./debugger";
-import { initialState } from './module';
+import Debugger from "../debugger";
+import { initialState } from '../module';
 
-import { expect, renderContainer } from '../test/test_helper';
+import { expect, renderContainer } from 'test_helper';
 
 
 describe("Debugger", () => {

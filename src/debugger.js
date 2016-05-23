@@ -75,10 +75,10 @@ export default class Debugger extends React.Component {
 
     if (visible) {
       return (
-        <div styles={ {...styles_container, ...styles_panel} }>
-          <div onClick={toggleVisibility} styles={styles_close}>×</div>
+        <div style={ {...styles_container, ...styles_panel} }>
+          <div onClick={toggleVisibility} style={styles_close}>×</div>
           <div>{ experiments.map(this.renderExperiment.bind(this)) }</div>
-          <div styles={ styles_production_build_note }>This panel is hidden on production builds.</div>
+          <div style={ styles_production_build_note }>This panel is hidden on production builds.</div>
         </div>
       );
     }
@@ -87,7 +87,7 @@ export default class Debugger extends React.Component {
     if (experimentNamesCount > 0) {
       const text = `${experimentNamesCount} Active Experiment${experimentNamesCount > 1 ? "s" : ""}`;
       return (
-        <div onClick={toggleVisibility} styles={ {...styles_container, ...styles_handle} }>
+        <div onClick={toggleVisibility} style={ {...styles_container, ...styles_handle} }>
           {text}
         </div>
       );
@@ -106,8 +106,8 @@ export default class Debugger extends React.Component {
     }
 
     return (
-      <div styles={styles_experiment} key={experimentName}>
-        <div styles={styles_experiment_name}>{experimentName}</div>
+      <div style={styles_experiment} key={experimentName}>
+        <div style={styles_experiment_name}>{experimentName}</div>
         <ul>
           { variations.map(this.renderVariation.bind(this, experiment)) }
         </ul>
@@ -123,7 +123,7 @@ export default class Debugger extends React.Component {
     const setActivevariation = () => dispatchActivate({experiment, variation});
     return (
       <li key={variationName}>
-        <label onClick={setActivevariation} styles={ active ? styles_label_active : styles_label }>
+        <label onClick={setActivevariation} style={ active ? styles_label_active : styles_label }>
           <input type="radio" name={experimentName} value={variationName} defaultChecked={active} />
           {variationName}
         </label>
@@ -224,7 +224,7 @@ const styles_close = {
   fontSize: "16px",
   fontWeight: "bold",
   color: "#CC0000",
-  position: "absolute",
+  // position: "absolute",
   top: "0px",
   right: "7px",
   transition: "all .25s",

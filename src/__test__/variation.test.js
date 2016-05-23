@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Experiment from "./experiment";
-import Variation from "./variation";
+import Experiment from "../experiment";
+import Variation from "../variation";
 
-import { expect, renderComponent } from '../test/test_helper';
+import { expect, renderComponent } from 'test_helper';
 
 describe("Variation", () => {
   let component;
