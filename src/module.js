@@ -4,7 +4,10 @@ import Immutable                       from 'immutable';
 import { createAction, handleActions } from 'redux-actions';
 import findExperiment                  from './utils/find-experiment';
 import randomVariation                 from './utils/random-variation';
+import selectVariation                 from './utils/select-variation';
+import createCacheStore                from './utils/create-cache-store';
 
+export const cacheStore = createCacheStore();
 
 export type VariationType = {
   id: ?string,
@@ -62,7 +65,7 @@ const reducers = {
    * RESET the experiments state.
    */
   [constants.RESET]: (state, { }) => {
-    cacheStore().clear();
+    cacheStore.clear();
     return initialState;
   },
 
@@ -137,53 +140,5 @@ export const selectors = {
   /**
    * Select a variation from the given input variables
    */
-  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => {
-    const experimentName = experiment.get('name');
-    // Hash of variation.name => VariationType
-    const variationsMap = {};
-    experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
-
-    // Match against the redux state
-    const activeVariationName = reduxAbTest.get('active').get(experimentName);
-    if (activeVariationName && variationsMap[activeVariationName]) {
-      return variationsMap[activeVariationName];
-    }
-
-    // Match against the instance state.
-    // This is used as a in-memory cache to prevent multiple instances of the same experiment from getting differient variations.
-    // It is wiped out with each pass of the RESET/LOAD/PLAY cycle
-    const storeVariationName = cacheStore().getItem(experimentName);
-    if (storeVariationName && variationsMap[storeVariationName]) {
-      return variationsMap[storeVariationName];
-    }
-
-    // Match against the defaultVariationName
-    if (defaultVariationName && variationsMap[defaultVariationName]) {
-      return variationsMap[defaultVariationName];
-    }
-
-    // Pick a variation ramdomly
-    const variation = randomVariation(experiment);
-    // Record the choice in the tmp cache
-    cacheStore().setItem(experimentName, variation.get('name'));
-    // Return the chosen variation
-    return variation;
-  }
-};
-
-
-//
-// Helpers:
-//
-let cache = {};
-const noopStore = {
-  cache,
-  getItem: (key) => cache[key],
-  setItem: (key, value) => { cache[key] = value; },
-  removeItem: (key) => { delete cache[key]; },
-  clear: () => { cache = {}; }
-};
-
-export const cacheStore = () => {
-  return noopStore;
+  selectVariation
 };
