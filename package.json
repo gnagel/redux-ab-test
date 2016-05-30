@@ -13,7 +13,7 @@
     "A/B test"
   ],
   "main": "dist/index.js",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "A/B testing React components with Redux and debug tools. Isomorphic with a simple, universal interface. Well documented and lightweight. Tested in popular browsers and Node.js. Includes helpers for React, Redux, and Segment.io",
   "directories": {
     "test": "test"
@@ -92,7 +92,7 @@
     "test:flow": "./node_modules/.bin/flow check --show-all-errors",
     "start": "cd example && ./node_modules/.bin/webpack-dev-server",
     "clean": "rm -rf ./dist",
-    "build": "babel --out-dir=./dist/ --ignore=./src/__test__ src/",
+    "build": "babel --out-dir=./dist src",
     "shipit": "npm run build && npm publish && npm run clean"
   },
   "repository": {
