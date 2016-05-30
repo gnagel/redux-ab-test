@@ -57,7 +57,7 @@
     "eslint-loader": "^1.1.1",
     "eslint-plugin-react": "^3.11.2",
     "flow": "^0.2.3",
-    "flow-bin": "^0.24.0",
+    "flow-bin": "^0.24.2",
     "flow-interfaces": "^0.6.1",
     "immutable": "^3.8.1",
     "mocha": "^2.4.5",

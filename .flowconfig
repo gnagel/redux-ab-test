@@ -30,4 +30,4 @@ module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/app/utils/\1'
 module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
 
 [version]
-0.24.0
+0.24.2
