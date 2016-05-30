@@ -2,6 +2,8 @@
 import React                           from "react"; // eslint-disable-line no-unused-vars
 import Immutable                       from 'immutable';
 import { createAction, handleActions } from 'redux-actions';
+import findExperiment                  from './utils/find-experiment';
+import randomVariation                 from './utils/random-variation';
 
 
 export type VariationType = {
@@ -131,13 +133,7 @@ export const selectors = {
   /**
    * Find the experiment by name, raises an Error if not-found
    */
-  findExperiment: ({reduxAbTest, experimentName}) => {
-    const experiment = reduxAbTest.get('experiments').find( experiment => experiment.get('name') == experimentName );
-    if (!experiment) {
-      throw new Error(`The experimentName: '${experimentName}' was not found in experiments=${ reduxAbTest.get('experiments') }`);
-    }
-    return experiment;
-  },
+  findExperiment,
   /**
    * Select a variation from the given input variables
    */
@@ -173,22 +169,6 @@ export const selectors = {
     // Return the chosen variation
     return variation;
   }
-};
-
-export const randomVariation = (experiment) => {
-  const getWeight = (variation) => variation.get('weight', 0);
-  const variations = experiment.get('variations').filterNot( variation => getWeight(variation) <= 0 ).sortBy( variation => getWeight(variation) );
-  const ranges = variations.reduce(
-    (list, variation) => list.push(Immutable.Range(0, getWeight(variation))),
-    Immutable.List([])
-  );
-  const scoreTotal = variations.reduce( (total, variation) => total + getWeight(variation), 0);
-  // Find the range that contains our score
-  const score = Math.floor(Math.abs(Math.random() * scoreTotal));
-  const variationIndex = ranges.findIndex( range => range.includes(score) );
-  // Retrieve the selected variation
-  const variation = variations.get(variationIndex, variations.last());
-  return variation;
 };
 
 
