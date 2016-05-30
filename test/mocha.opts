@@ -2,4 +2,5 @@
 --require babel-polyfill
 --require test/test_setup.js
 --reporter=progress
-src/**/__test__/*.test.js
+--bail
+src/**/*.test.js
