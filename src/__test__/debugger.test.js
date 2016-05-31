@@ -6,7 +6,7 @@ import { initialState } from '../module';
 import { expect, renderContainer } from 'test_helper';
 
 
-describe("Debugger", () => {
+describe("__TEST__/Debugger", () => {
   let component;
   let props;
   let store;
@@ -31,18 +31,6 @@ describe("Debugger", () => {
 
   it('has the correct tagName', () => {
     expect(component).to.have.tagName('div');
-  });
-
-  it('has the correct text', () => {
-    expect(component).to.have.text('1 Active Experiment');
-  });
-
-  it('has the visible experiments', () => {
-    props = { visible: true };
-    component = renderContainer(Debugger, props, store);
-    expect(component.find('label')).to.have.length(2);
-    expect(component.find('label').first()).to.have.text('Original');
-    expect(component.find('label').last()).to.have.text('Variation B');
   });
 
 });

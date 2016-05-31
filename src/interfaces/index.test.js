@@ -3,7 +3,7 @@ import { expect } from 'test_helper';
 
 import { VariationType, ExperimentType, WrapsExperimentType, WrapsExperimentVariationType, recievesExperiment, recievesExperimentVariation } from "./index";
 
-describe("index.js", () => {
+describe("(Flowtype) interfaces/index.js", () => {
 
   it('VariationType exists', () => {
     expect(VariationType).to.be.undefined;

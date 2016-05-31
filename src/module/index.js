@@ -132,5 +132,5 @@ export const selectors = {
   /**
    * Select a variation from the given input variables
    */
-  selectVariation
+  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => selectVariation({reduxAbTest, experiment, defaultVariationName, cacheStore})
 };

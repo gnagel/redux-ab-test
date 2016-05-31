@@ -6,7 +6,7 @@ import { initialState } from '../module';
 import { expect, renderContainer, spy } from 'test_helper';
 
 
-describe("Experiment", () => {
+describe("__TEST__/Experiment", () => {
   let component;
   let props;
   let store;

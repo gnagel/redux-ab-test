@@ -5,7 +5,7 @@ import { expect } from 'test_helper';
 
 import createCacheStore from './create-cache-store';
 
-describe('createCacheStore', () => {
+describe('utils/create-cache-store.js', () => {
   it('exists', () => {
     expect(createCacheStore).to.exist;
   });

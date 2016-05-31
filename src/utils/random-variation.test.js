@@ -4,7 +4,7 @@ import { expect } from 'test_helper';
 
 import randomVariation, { toWeight, toTotal, toRange, toRanges } from './random-variation';
 
-describe('random-variation.js', () => {
+describe('utils/random-variation.js', () => {
   describe('toWeight', () => {
     it('exists', () => {
       expect(toWeight).to.exist;

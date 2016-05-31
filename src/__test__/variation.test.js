@@ -3,7 +3,7 @@ import Variation from "../variation";
 
 import { expect, renderComponent } from 'test_helper';
 
-describe("Variation", () => {
+describe("__TEST__/Variation", () => {
   let component;
   let props;
   beforeEach(() => {

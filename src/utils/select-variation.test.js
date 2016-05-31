@@ -6,7 +6,7 @@ import createCacheStore from './create-cache-store';
 import selectVariation from './select-variation';
 
 
-describe('selectVariation', () => {
+describe('utils/select-variation.js', () => {
   const initialState = Immutable.fromJS({
     experiments: [],
     plays: {},
