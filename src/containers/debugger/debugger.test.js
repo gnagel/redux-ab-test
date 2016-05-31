@@ -1,12 +1,12 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Debugger from "../debugger";
-import { initialState } from '../module';
+import Debugger from "./debugger";
+import { initialState } from '../../module';
 
 import { expect, renderContainer } from 'test_helper';
 
 
-describe("__TEST__/Debugger", () => {
+describe('(Container) src/container/debugger/debugger.js', () => {
   let component;
   let props;
   let store;

@@ -1,3 +1,6 @@
+/** @flow */
+import React from "react"; // eslint-disable-line no-unused-vars
+
 /**
  * Find the experiment by name, raises an Error if not-found
  */
@@ -7,4 +10,4 @@ export default function findExperiment({reduxAbTest, experimentName}) {
     throw new Error(`The experimentName: '${experimentName}' was not found in experiments=${ reduxAbTest.get('experiments') }`);
   }
   return experiment;
-};
+}

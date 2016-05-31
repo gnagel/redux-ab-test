@@ -1,12 +1,12 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Experiment from "../experiment";
+import Experiment from "./experiment";
 import Variation from "../variation";
-import { initialState } from '../module';
+import { initialState } from '../../module';
 import { expect, renderContainer, spy } from 'test_helper';
 
 
-describe("__TEST__/Experiment", () => {
+describe('(Container) src/container/experiment/experiment.js', () => {
   let component;
   let props;
   let store;

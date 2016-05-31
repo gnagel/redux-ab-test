@@ -4,7 +4,7 @@ import { expect } from 'test_helper';
 
 import randomVariation, { toWeight, toTotal, toRange, toRanges } from './random-variation';
 
-describe('random-variation.js', () => {
+describe('utils/random-variation.js', () => {
   describe('toWeight', () => {
     it('exists', () => {
       expect(toWeight).to.exist;
@@ -18,7 +18,7 @@ describe('random-variation.js', () => {
     it('has the default weight', () => {
       expect(toWeight(Immutable.Map({}))).to.equal(0);
       expect(toWeight(Immutable.Map({weight: undefined}))).to.equal(0);
-    })
+    });
   });
 
   describe('toTotal', () => {
@@ -34,7 +34,7 @@ describe('random-variation.js', () => {
 
     it('has the default total', () => {
       expect(toTotal(Immutable.fromJS([]))).to.equal(0);
-    })
+    });
   });
 
   describe('toRange', () => {
@@ -67,7 +67,7 @@ describe('random-variation.js', () => {
     it('has the correct range[2]', () => {
       let list = Immutable.List([
         Immutable.Range(0, 5000),
-        Immutable.Range(5000, 10000),
+        Immutable.Range(5000, 10000)
       ]);
       list = toRange(list, 10000);
       expect(list).to.exist;
@@ -81,7 +81,7 @@ describe('random-variation.js', () => {
       let list = Immutable.List([
         Immutable.Range(0, 5000),
         Immutable.Range(5000, 10000),
-        Immutable.Range(10000, 20000),
+        Immutable.Range(10000, 20000)
       ]);
       list = toRange(list, 0);
       expect(list).to.exist;
@@ -102,7 +102,7 @@ describe('random-variation.js', () => {
         { weight: 5000 },
         { weight: 5000 },
         { weight: 10000 },
-        { weight: 0 },
+        { weight: 0 }
       ]);
       const ranges = toRanges(weights);
       expect(ranges).to.exist;
@@ -125,7 +125,7 @@ describe('random-variation.js', () => {
         { weight: 10000 },
         { weight: 0 },
         { weight: 0 },
-        { weight: 0 },
+        { weight: 0 }
       ]);
       const ranges = toRanges(weights);
       expect(ranges).to.exist;
@@ -149,20 +149,18 @@ describe('random-variation.js', () => {
       const weights = Immutable.fromJS([]);
       const ranges = toRanges(weights);
       expect(ranges.count()).to.equal(0);
-    })
+    });
   });
 
   describe('randomVariation', () => {
     const experiment = Immutable.fromJS({
       variations: [
-          { name: 'Variation A',        weight:  5000 },
-          { name: 'Variation B',        weight:  5000 },
-          { name: 'Original',           weight: 10000 },
-          { name: 'Variation Disabled', weight:     0 },
+          { name: 'Variation A', weight: 5000 },
+          { name: 'Variation B', weight: 5000 },
+          { name: 'Original', weight: 10000 },
+          { name: 'Variation Disabled', weight: 0 }
       ]
     });
-    let variation;
-    let random;
 
     it('exists', () => {
       expect(randomVariation).to.exist;

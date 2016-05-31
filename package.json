@@ -13,7 +13,7 @@
     "A/B test"
   ],
   "main": "dist/index.js",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "A/B testing React components with Redux and debug tools. Isomorphic with a simple, universal interface. Well documented and lightweight. Tested in popular browsers and Node.js. Includes helpers for React, Redux, and Segment.io",
   "directories": {
     "test": "test"
@@ -21,7 +21,6 @@
   "peerDependencies": {
     "react": "^15.0.1",
     "react-redux": "^3.1.0",
-    "redux": "^3.5.2",
     "redux": "^3.5.2",
     "redux-actions": "^0.9.1"
   },
@@ -50,7 +49,6 @@
     "chai-enzyme": "^0.4.2",
     "chai-immutable": "^1.5.4",
     "chai-spies": "^0.7.1",
-    "css-loader": "^0.23.1",
     "enzyme": "^2.3.0",
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^0.1.0",
@@ -67,6 +65,7 @@
     "react": "^15.0.1",
     "react-addons-create-fragment": "^15.0.1",
     "react-addons-test-utils": "^15.0.1",
+    "react-css-modules": "^3.7.6",
     "react-dom": "^15.0.1",
     "react-hot-loader": "^1.2.8",
     "react-redux": "^3.1.0",
@@ -79,7 +78,6 @@
     "redux-mock-store": "^1.0.2",
     "redux-raven-middleware": "^0.3.0",
     "sinon": "^1.17.4",
-    "style-loader": "^0.13.0",
     "webpack": "^1.12.14",
     "webpack-dev-server": "^1.14.1",
     "webpack-merge": "^0.7.3"

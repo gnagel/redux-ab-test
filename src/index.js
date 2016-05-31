@@ -1,7 +1,5 @@
 import Debugger from './debugger';
-
 import Experiment from './experiment';
-
 import Variation from './variation';
 
 import reduxAbTest, { VariationType, ExperimentType, constants, actions, initialState, reducers, selectors } from './module';

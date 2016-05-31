@@ -1,26 +1,49 @@
 import React from "react"; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
-import Experiment from "../experiment";
+import Experiment from "./experiment";
 import Variation from "../variation";
-import { initialState } from '../module';
-import { expect, renderContainer, spy } from 'test_helper';
+import { initialState } from '../../module';
+import { expect, renderComponent, spy } from 'test_helper';
 
 
-describe("__TEST__/Experiment", () => {
+const reduxAbTest = initialState.merge({
+  'experiments': [{
+    name: 'Test-experimentName',
+    variations: [
+      { name: 'Original', weight: 10000 },
+      { name: 'Variation B', weight: 0 }
+    ]
+  }],
+  'active': { 'Test-experimentName': 'Variation B' }
+});
+
+describe('(Component) src/components/experiment/experiment.js', () => {
   let component;
   let props;
-  let store;
   let onActivate;
   let onDeactivate;
   let onPlay;
   let onWin;
+  // Action Creator callback: Function({experiment:ExperimentType})
+  let dispatchActivate;
+  // Action Creator callback: Function({experiment:ExperimentType})
+  let dispatchDeactivate;
+  // Action Creator callback: Function({experiment:ExperimentType, variation:VariationType})
+  let dispatchPlay;
+  // Action Creator callback: Function({experiment:ExperimentType, variation:VariationType})
+  let dispatchWin;
+
   beforeEach(() => {
     onActivate = spy();
     onDeactivate = spy();
     onPlay = spy();
     onWin = spy();
+    dispatchActivate = spy();
+    dispatchDeactivate = spy();
+    dispatchPlay = spy();
+    dispatchWin = spy();
 
     props = {
+      reduxAbTest,
       name: 'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
@@ -29,18 +52,13 @@ describe("__TEST__/Experiment", () => {
       onActivate,
       onDeactivate,
       onPlay,
-      onWin
+      onWin,
+      dispatchActivate,
+      dispatchDeactivate,
+      dispatchPlay,
+      dispatchWin
     };
-    store = {
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
-        name: 'Test-experimentName',
-        variations: [
-          { name: 'Original', weight: 10000 },
-          { name: 'Variation B', weight: 0 }
-        ]
-      }])).set('active', Immutable.fromJS({ 'Test-experimentName': 'Variation B' }))
-    };
-    component = renderContainer(Experiment, props, store);
+    component = renderComponent(Experiment, props);
   });
 
   it('exists', () => {
@@ -68,21 +86,17 @@ describe("__TEST__/Experiment", () => {
 
   it('did call onWin', () => {
     props = {
-      name: 'Test-experimentName',
+      ...props,
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B"><button onClick={ () => { this.props.handleWin(); } }>Variation B</button></Variation>
-      ],
-      onActivate,
-      onDeactivate,
-      onPlay,
-      onWin
+      ]
     };
-    component = renderContainer(Experiment, props, store);
+    component = renderComponent(Experiment, props);
     expect(component.find('button')).to.have.length(1);
     expect(component.find('button')).to.have.text('Variation B');
     // TODO: simulate the onClick event
-    //   component.simulate('click');
+    // component.find('button').simulate('click');
     //   expect(onWin).to.have.been.called;
   });
 

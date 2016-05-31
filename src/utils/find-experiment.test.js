@@ -4,7 +4,7 @@ import { expect } from 'test_helper';
 
 import findExperiment from './find-experiment';
 
-describe('findExperiment', () => {
+describe('utils/find-experiment.js', () => {
   const initialState = Immutable.fromJS({
     experiments: [],
     plays: {},

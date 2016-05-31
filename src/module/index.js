@@ -1,27 +1,17 @@
 /** @flow */
-import React                           from "react"; // eslint-disable-line no-unused-vars
-import Immutable                       from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
-import findExperiment                  from './utils/find-experiment';
-import randomVariation                 from './utils/random-variation';
+import React                             from "react"; // eslint-disable-line no-unused-vars
+import Immutable                         from 'immutable';
+import { createAction, handleActions }   from 'redux-actions';
+import findExperiment                    from '../utils/find-experiment';
+import selectVariation                   from '../utils/select-variation';
+import createCacheStore                  from '../utils/create-cache-store';
 
-
-export type VariationType = {
-  id: ?string,
-  name: string,
-  weight: number,
-};
-
-export type ExperimentType = {
-  id: ?string,
-  name: string,
-  variations: Array<VariationType>,
-};
-
+export const cacheStore = createCacheStore();
 
 export const constants = {
   RESET: 'redux-ab-test/RESET',
   LOAD: 'redux-ab-test/LOAD',
+  REGISTER_ADHOC: 'redux-ab-test/REGISTER_ADHOC',
   ACTIVATE: 'redux-ab-test/ACTIVATE',
   DEACTIVATE: 'redux-ab-test/DEACTIVATE',
   PLAY: 'redux-ab-test/PLAY',
@@ -35,6 +25,9 @@ export const actions = {
     return Immutable.fromJS({experiments, active});
   }),
   activate: createAction(constants.ACTIVATE, ({experiment}) => {
+    return Immutable.fromJS({experiment});
+  }),
+  registerAdhoc: createAction(constants.REGISTER_ADHOC, ({experiment}) => {
     return Immutable.fromJS({experiment});
   }),
   deactivate: createAction(constants.DEACTIVATE, ({experiment}) => {
@@ -62,7 +55,7 @@ const reducers = {
    * RESET the experiments state.
    */
   [constants.RESET]: (state, { }) => {
-    cacheStore().clear();
+    cacheStore.clear();
     return initialState;
   },
 
@@ -106,7 +99,7 @@ const reducers = {
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const active = state.get('active').set(experimentName, variationName);
-    cacheStore().removeItem(experimentName);
+    cacheStore.removeItem(experimentName);
     return state.set('active', active);
   },
 
@@ -137,53 +130,5 @@ export const selectors = {
   /**
    * Select a variation from the given input variables
    */
-  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => {
-    const experimentName = experiment.get('name');
-    // Hash of variation.name => VariationType
-    const variationsMap = {};
-    experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
-
-    // Match against the redux state
-    const activeVariationName = reduxAbTest.get('active').get(experimentName);
-    if (activeVariationName && variationsMap[activeVariationName]) {
-      return variationsMap[activeVariationName];
-    }
-
-    // Match against the instance state.
-    // This is used as a in-memory cache to prevent multiple instances of the same experiment from getting differient variations.
-    // It is wiped out with each pass of the RESET/LOAD/PLAY cycle
-    const storeVariationName = cacheStore().getItem(experimentName);
-    if (storeVariationName && variationsMap[storeVariationName]) {
-      return variationsMap[storeVariationName];
-    }
-
-    // Match against the defaultVariationName
-    if (defaultVariationName && variationsMap[defaultVariationName]) {
-      return variationsMap[defaultVariationName];
-    }
-
-    // Pick a variation ramdomly
-    const variation = randomVariation(experiment);
-    // Record the choice in the tmp cache
-    cacheStore().setItem(experimentName, variation.get('name'));
-    // Return the chosen variation
-    return variation;
-  }
-};
-
-
-//
-// Helpers:
-//
-let cache = {};
-const noopStore = {
-  cache,
-  getItem: (key) => cache[key],
-  setItem: (key, value) => { cache[key] = value; },
-  removeItem: (key) => { delete cache[key]; },
-  clear: () => { cache = {}; }
-};
-
-export const cacheStore = () => {
-  return noopStore;
+  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => selectVariation({reduxAbTest, experiment, defaultVariationName, cacheStore})
 };

@@ -1,9 +1,9 @@
 import React from "react"; // eslint-disable-line no-unused-vars
-import Variation from "../variation";
+import Variation from "./variation";
 
 import { expect, renderComponent } from 'test_helper';
 
-describe("__TEST__/Variation", () => {
+describe('(Component) src/components/variation/variation.js', () => {
   let component;
   let props;
   beforeEach(() => {
