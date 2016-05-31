@@ -1,6 +1,5 @@
 /** @flow */
 import React from "react"; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
 import { expect } from 'test_helper';
 
 import createCacheStore from './create-cache-store';
@@ -11,7 +10,7 @@ describe('utils/create-cache-store.js', () => {
   });
 
   it('has the correct keys', () => {
-      expect(createCacheStore()).to.have.keys('cache', 'getItem', 'setItem', 'removeItem', 'clear');
+    expect(createCacheStore()).to.have.keys('cache', 'getItem', 'setItem', 'removeItem', 'clear');
   });
 
   it('sets the item', () => {

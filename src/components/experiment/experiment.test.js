@@ -1,5 +1,4 @@
 import React from "react"; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
 import Experiment from "./experiment";
 import Variation from "../variation";
 import { initialState } from '../../module';
@@ -57,7 +56,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
       dispatchActivate,
       dispatchDeactivate,
       dispatchPlay,
-      dispatchWin,
+      dispatchWin
     };
     component = renderComponent(Experiment, props);
   });

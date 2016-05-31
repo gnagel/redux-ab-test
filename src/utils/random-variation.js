@@ -30,4 +30,4 @@ export default function randomVariation(experiment, random = Math.random) {
   // Return the matching variation.  Returns variations.last() if random() was out of range [0, 1)
   const variation = variations.get(index, variations.last());
   return variation;
-};
+}

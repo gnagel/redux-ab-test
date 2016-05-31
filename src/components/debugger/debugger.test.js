@@ -1,5 +1,4 @@
 import React from "react"; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
 import { expect, renderComponent } from 'test_helper';
 
 import { initialState } from '../../module';
@@ -9,7 +8,6 @@ import Debugger from "./debugger";
 describe('(Component) src/components/debugger/debugger.js', () => {
   let component;
   let props;
-  let store;
   beforeEach(() => {
     props = {
       reduxAbTest: initialState.merge(

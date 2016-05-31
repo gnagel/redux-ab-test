@@ -10,4 +10,4 @@ export default function findExperiment({reduxAbTest, experimentName}) {
     throw new Error(`The experimentName: '${experimentName}' was not found in experiments=${ reduxAbTest.get('experiments') }`);
   }
   return experiment;
-};
+}

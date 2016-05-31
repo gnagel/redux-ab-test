@@ -3,10 +3,8 @@ import React                             from "react"; // eslint-disable-line no
 import Immutable                         from 'immutable';
 import { createAction, handleActions }   from 'redux-actions';
 import findExperiment                    from '../utils/find-experiment';
-import randomVariation                   from '../utils/random-variation';
 import selectVariation                   from '../utils/select-variation';
 import createCacheStore                  from '../utils/create-cache-store';
-import { VariationType, ExperimentType } from '../interfaces';
 
 export const cacheStore = createCacheStore();
 

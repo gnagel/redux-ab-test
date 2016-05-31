@@ -145,7 +145,7 @@ export default class Experiment extends React.Component {
     const { experiment } = this.state;
     const onDeactivate = (this.props.onDeactivate || recievesExperiment);
     // Dispatch the deactivation event
-    dispatchDeactivate({experiment})
+    dispatchDeactivate({experiment});
     // Trigger the callbacks (if any were supplied)
     onDeactivate({experiment});
   }

@@ -6,7 +6,7 @@ import Variation from './variation';
  * Vanilla React Components
  */
 export default {
-  Experiment,
-  Variation,
   Debugger,
+  Experiment,
+  Variation
 };

@@ -26,4 +26,4 @@ export default function createCacheStore() {
     }
   };
   return noopStore;
-};
+}
