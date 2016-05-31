@@ -25,6 +25,7 @@ export type ExperimentType = {
 export const constants = {
   RESET: 'redux-ab-test/RESET',
   LOAD: 'redux-ab-test/LOAD',
+  REGISTER_ADHOC: 'redux-ab-test/REGISTER_ADHOC',
   ACTIVATE: 'redux-ab-test/ACTIVATE',
   DEACTIVATE: 'redux-ab-test/DEACTIVATE',
   PLAY: 'redux-ab-test/PLAY',
@@ -38,6 +39,9 @@ export const actions = {
     return Immutable.fromJS({experiments, active});
   }),
   activate: createAction(constants.ACTIVATE, ({experiment}) => {
+    return Immutable.fromJS({experiment});
+  }),
+  registerAdhoc: createAction(constants.REGISTER_ADHOC, ({experiment}) => {
     return Immutable.fromJS({experiment});
   }),
   deactivate: createAction(constants.DEACTIVATE, ({experiment}) => {
