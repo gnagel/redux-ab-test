@@ -1,6 +1,6 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Debugger from "../debugger";
+import Debugger from "./debugger";
 import { initialState } from '../../module';
 
 import { expect, renderContainer } from 'test_helper';
@@ -31,18 +31,6 @@ describe('(Container) src/container/debugger/debugger.js', () => {
 
   it('has the correct tagName', () => {
     expect(component).to.have.tagName('div');
-  });
-
-  it('has the correct text', () => {
-    expect(component).to.have.text('1 Active Experiment');
-  });
-
-  it('has the visible experiments', () => {
-    props = { visible: true };
-    component = renderContainer(Debugger, props, store);
-    expect(component.find('label')).to.have.length(2);
-    expect(component.find('label').first()).to.have.text('Original');
-    expect(component.find('label').last()).to.have.text('Variation B');
   });
 
 });

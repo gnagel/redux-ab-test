@@ -23,7 +23,7 @@ export const mapStateToProps = (state) => {
  */
 export const mapDispatchToProps = (dispatch) => {
   return {
-    dispatchRegisterAdhoc: bindActionCreators(registerAdhoc, dispatch),
+    dispatchRegisterAdhoc: bindActionCreators(actions.registerAdhoc, dispatch),
     dispatchActivate: bindActionCreators(actions.activate, dispatch),
     dispatchDeactivate: bindActionCreators(actions.deactivate, dispatch),
     dispatchPlay: bindActionCreators(actions.play, dispatch),

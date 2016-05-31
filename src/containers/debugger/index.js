@@ -1,2 +1,2 @@
-import { Debugger } from '../../components';
+import Debugger from './debugger';
 export default Debugger;
