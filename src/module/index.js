@@ -1,26 +1,14 @@
 /** @flow */
-import React                           from "react"; // eslint-disable-line no-unused-vars
-import Immutable                       from 'immutable';
-import { createAction, handleActions } from 'redux-actions';
-import findExperiment                  from './utils/find-experiment';
-import randomVariation                 from './utils/random-variation';
-import selectVariation                 from './utils/select-variation';
-import createCacheStore                from './utils/create-cache-store';
+import React                             from "react"; // eslint-disable-line no-unused-vars
+import Immutable                         from 'immutable';
+import { createAction, handleActions }   from 'redux-actions';
+import findExperiment                    from '../utils/find-experiment';
+import randomVariation                   from '../utils/random-variation';
+import selectVariation                   from '../utils/select-variation';
+import createCacheStore                  from '../utils/create-cache-store';
+import { VariationType, ExperimentType } from '../interfaces';
 
 export const cacheStore = createCacheStore();
-
-export type VariationType = {
-  id: ?string,
-  name: string,
-  weight: number,
-};
-
-export type ExperimentType = {
-  id: ?string,
-  name: string,
-  variations: Array<VariationType>,
-};
-
 
 export const constants = {
   RESET: 'redux-ab-test/RESET',
