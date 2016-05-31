@@ -6,27 +6,29 @@ import { VariationType, ExperimentType, WrapsExperimentType, WrapsExperimentVari
 describe("index.js", () => {
 
   it('VariationType exists', () => {
-    expect(VariationType).to.exist;
+    expect(VariationType).to.be.undefined;
   });
 
   it('ExperimentType exists', () => {
-    expect(ExperimentType).to.exist;
+    expect(ExperimentType).to.be.undefined;
   });
 
   it('WrapsExperimentType exists', () => {
-    expect(WrapsExperimentType).to.exist;
+    expect(WrapsExperimentType).to.be.undefined;
   });
 
   it('WrapsExperimentVariationType exists', () => {
-    expect(WrapsExperimentVariationType).to.exist;
+    expect(WrapsExperimentVariationType).to.be.undefined;
   });
 
   it('recievesExperiment exists', () => {
     expect(recievesExperiment).to.exist;
+    expect(recievesExperiment).to.be.a('function');
   });
 
   it('recievesExperimentVariation exists', () => {
     expect(recievesExperimentVariation).to.exist;
+    expect(recievesExperimentVariation).to.be.a('function');
   });
 
 });

@@ -3,7 +3,7 @@ import { expect } from 'test_helper';
 
 import Variation from "./index";
 
-describe("index.js", () => {
+describe('(Component) src/components/variation/index.js', () => {
   it('Variation exists', () => {
     expect(Variation).to.exist;
   });

@@ -17,18 +17,31 @@ const reduxAbTest = initialState.merge({
   'active': { 'Test-experimentName': 'Variation B' }
 });
 
-describe("Experiment", () => {
+describe('(Component) src/components/experiment/experiment.js', () => {
   let component;
   let props;
   let onActivate;
   let onDeactivate;
   let onPlay;
   let onWin;
+  // Action Creator callback: Function({experiment:ExperimentType})
+  let dispatchActivate;
+  // Action Creator callback: Function({experiment:ExperimentType})
+  let dispatchDeactivate;
+  // Action Creator callback: Function({experiment:ExperimentType, variation:VariationType})
+  let dispatchPlay;
+  // Action Creator callback: Function({experiment:ExperimentType, variation:VariationType})
+  let dispatchWin;
+
   beforeEach(() => {
     onActivate = spy();
     onDeactivate = spy();
     onPlay = spy();
     onWin = spy();
+    dispatchActivate = spy();
+    dispatchDeactivate = spy();
+    dispatchPlay = spy();
+    dispatchWin = spy();
 
     props = {
       reduxAbTest,
@@ -40,7 +53,11 @@ describe("Experiment", () => {
       onActivate,
       onDeactivate,
       onPlay,
-      onWin
+      onWin,
+      dispatchActivate,
+      dispatchDeactivate,
+      dispatchPlay,
+      dispatchWin,
     };
     component = renderComponent(Experiment, props);
   });
@@ -80,7 +97,7 @@ describe("Experiment", () => {
     expect(component.find('button')).to.have.length(1);
     expect(component.find('button')).to.have.text('Variation B');
     // TODO: simulate the onClick event
-    //   component.simulate('click');
+    // component.find('button').simulate('click');
     //   expect(onWin).to.have.been.called;
   });
 

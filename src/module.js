@@ -109,7 +109,7 @@ const reducers = {
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const active = state.get('active').set(experimentName, variationName);
-    cacheStore().removeItem(experimentName);
+    cacheStore.removeItem(experimentName);
     return state.set('active', active);
   },
 
