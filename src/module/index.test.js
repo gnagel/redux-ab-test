@@ -27,7 +27,7 @@ const experiment:ExperimentType = {
 };
 
 
-describe.skip('reduxAbTest', () => {
+describe('(Redux) src/module/index.js', () => {
   it('exists', () => {
     expect(reduxAbTest).to.exist;
   });
