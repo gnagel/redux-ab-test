@@ -2,7 +2,6 @@
 
 [![NPM Version](https://badge.fury.io/js/redux-ab-test.svg)](https://www.npmjs.com/package/redux-ab-test)
 [![Build Status](https://travis-ci.org/gnagel/redux-ab-test.svg?branch=fix%2Fshuffle-variations)](https://travis-ci.org/gnagel/redux-ab-test)
-[![Circle CI](https://circleci.com/gh/gnagel/redux-ab-test.svg?style=shield)](https://circleci.com/gh/gnagel/redux-ab-test)
 [![Coverage Status](https://coveralls.io/repos/gnagel/redux-ab-test/badge.svg?branch=master&service=github)](https://coveralls.io/github/gnagel/redux-ab-test?branch=master)
 [![Dependency Status](https://david-dm.org/gnagel/redux-ab-test.svg)](https://david-dm.org/gnagel/redux-ab-test)
 [![NPM Downloads](https://img.shields.io/npm/dm/redux-ab-test.svg?style=flat)](https://www.npmjs.com/package/redux-ab-test)
