@@ -22,5 +22,5 @@ export type WrapsExperimentVariationType = {
   variation: Immutable.Map
 };
 
-export function recievesExperiment(opts:WrapsExperimentType) { console.log(`recievesExperiment(${opts})`); }
-export function recievesExperimentVariation(opts:WrapsExperimentVariationType) { console.log(`recievesExperimentVariation(${opts})`); }
+export function recievesExperiment(opts:WrapsExperimentType) {}
+export function recievesExperimentVariation(opts:WrapsExperimentVariationType) {}

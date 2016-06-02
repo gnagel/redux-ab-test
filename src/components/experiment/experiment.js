@@ -86,6 +86,20 @@ export default class Experiment extends React.Component {
   props: Props;
   state: State;
 
+  static defaultProps = {
+    reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
+    name:                 'Default Experiment Name',
+    defaultVariationName: null,
+    onActivate:           recievesExperiment,
+    onDeactivate:         recievesExperiment,
+    onPlay:               recievesExperimentVariation,
+    onWin:                recievesExperimentVariation,
+    dispatchActivate:     recievesExperiment,
+    dispatchDeactivate:   recievesExperiment,
+    dispatchPlay:         recievesExperimentVariation,
+    dispatchWin:          recievesExperimentVariation,
+  };
+
   constructor(props, context) {
     super(props, context);
     this.state = {
@@ -100,9 +114,7 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
-    const onActivate = (this.props.onActivate || recievesExperiment);
-    const onPlay = (this.props.onPlay || recievesExperimentVariation);
+    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, onActivate, onPlay, children } = this.props;
     const experiment = findExperiment({reduxAbTest, experimentName: name});
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectVariation({
@@ -141,22 +153,21 @@ export default class Experiment extends React.Component {
    * Deactivate the variation from the state
    */
   componentWillUnmount() {
-    const { dispatchDeactivate } = this.props;
+    const { dispatchDeactivate, onDeactivate } = this.props;
     const { experiment } = this.state;
-    const onDeactivate = (this.props.onDeactivate || recievesExperiment);
     // Dispatch the deactivation event
     dispatchDeactivate({experiment});
     // Trigger the callbacks (if any were supplied)
     onDeactivate({experiment});
   }
 
+
   /**
    * Notify the client of the `WIN` event
    */
   handleWin() {
-    const { dispatchWin } = this.props;
+    const { dispatchWin, onWin } = this.props;
     const { experiment, variation } = this.state;
-    const onWin = (this.props.onWin || recievesExperimentVariation);
     dispatchWin({experiment, variation});
     onWin({experiment, variation});
   }

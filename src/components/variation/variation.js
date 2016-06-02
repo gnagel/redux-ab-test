@@ -9,6 +9,11 @@ type Props = {
 export default class Variation extends React.Component {
   props: Props;
 
+  static defaultProps = {
+    name: 'Default Variation Name',
+    handleWin: () => {}
+  };
+
   render() {
     const { children, handleWin } = this.props;
     if (!React.isValidElement(children)) {
