@@ -10,20 +10,24 @@ import reduxAbTest, { VariationType, ExperimentType, initialState } from './inde
 import {
   RESET,
   LOAD,
-  REGISTER_ADHOC,
   ACTIVATE,
   DEACTIVATE,
   PLAY,
   WIN,
+  REGISTER_ADHOC,
+  ENQUEUE_A_WIN,
+  RESPOND_TO_WIN,
 } from './index';
 import {
   reset,
   load,
   activate,
-  registerAdhoc,
   deactivate,
   play,
   win,
+  registerAdhoc,
+  enqueueAWin,
+  respondToWin,
 } from './index';
 
 const variation_original:VariationType = {
@@ -82,6 +86,18 @@ describe('(Redux) src/module/index.js', () => {
 
     it('WIN', () => {
       expect(WIN).to.be.equal('redux-ab-test/WIN');
+    });
+
+    it('REGISTER_ADHOC', () => {
+      expect(REGISTER_ADHOC).to.be.equal('redux-ab-test/REGISTER_ADHOC');
+    });
+
+    it('ENQUEUE_A_WIN', () => {
+      expect(ENQUEUE_A_WIN).to.be.equal('redux-ab-test/ENQUEUE_A_WIN');
+    });
+
+    it('RESPOND_TO_WIN', () => {
+      expect(RESPOND_TO_WIN).to.be.equal('redux-ab-test/RESPOND_TO_WIN');
     });
   });
 
@@ -169,6 +185,41 @@ describe('(Redux) src/module/index.js', () => {
         variation: variation_original
       })
     });
+
+    sharedActionExamples({
+      action: registerAdhoc,
+      type: REGISTER_ADHOC,
+      args: {
+        experiment
+      },
+      payload: Immutable.fromJS({
+        experiment
+      })
+    });
+
+    sharedActionExamples({
+      action: enqueueAWin,
+      type: ENQUEUE_A_WIN,
+      args: {
+        type: 'Test-Win-Action'
+      },
+      payload: Immutable.fromJS({
+        type: 'Test-Win-Action'
+      })
+    });
+
+    sharedActionExamples({
+      action: respondToWin,
+      type: RESPOND_TO_WIN,
+      args: {
+        type: 'Test-Win-Action',
+        experiment
+      },
+      payload: Immutable.fromJS({
+        type: 'Test-Win-Action',
+        experiment
+      })
+    });
   });
 
 
@@ -192,6 +243,8 @@ describe('(Redux) src/module/index.js', () => {
     sharedDescribe('running', 'object');
     sharedDescribe('active', 'object');
     sharedDescribe('winners', 'object');
+    sharedDescribe('winActionTypes', 'object');
+    sharedDescribe('winActionsQueue', 'array');
   });
 
 
@@ -279,6 +332,39 @@ describe('(Redux) src/module/index.js', () => {
         variation: variation_b
       }),
       newState: initialState.set('winners', Immutable.fromJS({ "Test-Name": "Variation #B" }))
+    });
+
+
+    sharedReducerExamples({
+      type: REGISTER_ADHOC,
+      state: undefined,
+      payload: Immutable.fromJS({
+        experiment,
+      }),
+      newState: initialState.set('experiments', Immutable.fromJS([experiment]))
+    });
+
+    sharedReducerExamples({
+      type: REGISTER_ADHOC,
+      state: undefined,
+      payload: Immutable.fromJS({
+        experiment: {...experiment, winActionTypes: []},
+      }),
+      newState: initialState.set('experiments', Immutable.fromJS([{...experiment, winActionTypes: []}]))
+    });
+
+    sharedReducerExamples({
+      type: REGISTER_ADHOC,
+      state: undefined,
+      payload: Immutable.fromJS({
+        experiment: {...experiment, winActionTypes: ['Test-action-type']},
+      }),
+      newState: initialState.merge({
+        experiments: [{...experiment, winActionTypes: ['Test-action-type']}],
+        winActionTypes: {
+          'Test-action-type': experiment.name
+        }
+      })
     });
 
   });
