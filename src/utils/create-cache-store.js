@@ -27,3 +27,5 @@ export default function createCacheStore() {
   };
   return noopStore;
 }
+
+export const cacheStore = createCacheStore();

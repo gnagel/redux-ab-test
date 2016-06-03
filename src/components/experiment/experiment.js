@@ -4,7 +4,7 @@ import Immutable from 'immutable';
 import { ExperimentType, VariationType, recievesExperiment, recievesExperimentVariation } from '../../interfaces';
 import findExperiment from '../../utils/find-experiment';
 import selectVariation from '../../utils/select-variation';
-
+import { cacheStore } from '../../utils/create-cache-store';
 
 type Props = {
   /**
@@ -120,7 +120,8 @@ export default class Experiment extends React.Component {
     const variation = selectVariation({
       reduxAbTest,
       experiment,
-      defaultVariationName
+      defaultVariationName,
+      cacheStore
     });
 
     // These will trigger `componentWillReceiveProps`
@@ -143,7 +144,8 @@ export default class Experiment extends React.Component {
     const variation = selectVariation({
       reduxAbTest,
       experiment,
-      defaultVariationName
+      defaultVariationName,
+      cacheStore
     });
     this.setState({ variationElements, experiment, variation });
   }

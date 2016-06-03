@@ -3,43 +3,31 @@ import React                             from "react"; // eslint-disable-line no
 import Immutable                         from 'immutable';
 import { createAction, handleActions }   from 'redux-actions';
 import findExperiment                    from '../utils/find-experiment';
-import selectVariation                   from '../utils/select-variation';
-import createCacheStore                  from '../utils/create-cache-store';
+import { cacheStore }                    from '../utils/create-cache-store';
+import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
 
-export const cacheStore = createCacheStore();
+//
+// Redux Action Types
+//
+export const RESET = 'redux-ab-test/RESET';
+export const LOAD = 'redux-ab-test/LOAD';
+export const REGISTER_ADHOC = 'redux-ab-test/REGISTER_ADHOC';
+export const ACTIVATE = 'redux-ab-test/ACTIVATE';
+export const DEACTIVATE = 'redux-ab-test/DEACTIVATE';
+export const PLAY = 'redux-ab-test/PLAY';
+export const WIN = 'redux-ab-test/WIN';
 
-export const constants = {
-  RESET: 'redux-ab-test/RESET',
-  LOAD: 'redux-ab-test/LOAD',
-  REGISTER_ADHOC: 'redux-ab-test/REGISTER_ADHOC',
-  ACTIVATE: 'redux-ab-test/ACTIVATE',
-  DEACTIVATE: 'redux-ab-test/DEACTIVATE',
-  PLAY: 'redux-ab-test/PLAY',
-  WIN: 'redux-ab-test/WIN'
-};
 
-
-export const actions = {
-  reset: createAction(constants.RESET, () => Immutable.fromJS({})),
-  load: createAction(constants.LOAD, ({experiments, active}) => {
-    return Immutable.fromJS({experiments, active});
-  }),
-  activate: createAction(constants.ACTIVATE, ({experiment}) => {
-    return Immutable.fromJS({experiment});
-  }),
-  registerAdhoc: createAction(constants.REGISTER_ADHOC, ({experiment}) => {
-    return Immutable.fromJS({experiment});
-  }),
-  deactivate: createAction(constants.DEACTIVATE, ({experiment}) => {
-    return Immutable.fromJS({experiment});
-  }),
-  play: createAction(constants.PLAY, ({experiment, variation}) => {
-    return Immutable.fromJS({experiment, variation});
-  }),
-  win: createAction(constants.WIN, ({experiment, variation}) => {
-    return Immutable.fromJS({experiment, variation});
-  })
-};
+//
+// Redux Action Creators:
+//
+export const reset = createAction(RESET,                   () => Immutable.fromJS({}));
+export const load = createAction(LOAD,                     ({experiments, active}) => Immutable.fromJS({experiments, active}) );
+export const activate = createAction(ACTIVATE,              immutableExperiment );
+export const registerAdhoc = createAction(REGISTER_ADHOC,   immutableExperiment );
+export const deactivate = createAction(DEACTIVATE,          immutableExperiment );
+export const play = createAction(PLAY,                     immutableExperimentVariation );
+export const win = createAction(WIN,                       immutableExperimentVariation );
 
 
 export const initialState = Immutable.fromJS({
@@ -54,7 +42,7 @@ const reducers = {
   /**
    * RESET the experiments state.
    */
-  [constants.RESET]: (state, { }) => {
+  [RESET]: (state, { }) => {
     cacheStore.clear();
     return initialState;
   },
@@ -62,14 +50,14 @@ const reducers = {
   /**
    * LOAD the available experiments. and reset the state of the server
    */
-  [constants.LOAD]: (state, { payload }) => {
+  [LOAD]: (state, { payload }) => {
     return initialState.set('experiments', payload.get('experiments')).set('active', payload.get('active'));
   },
 
   /**
    * ACTIVATE the available experiments. and reset the state of the server
    */
-  [constants.ACTIVATE]: (state, { payload }) => {
+  [ACTIVATE]: (state, { payload }) => {
     const experimentName = payload.get('experiment').get('name');
     const counter = (state.get('running').get(experimentName) || 0) + 1;
     const running = state.get('running').set(experimentName, counter);
@@ -79,7 +67,7 @@ const reducers = {
   /**
    * DEACTIVATE the available experiments. and reset the state of the server
    */
-  [constants.DEACTIVATE]: (state, { payload }) => {
+  [DEACTIVATE]: (state, { payload }) => {
     const experimentName = payload.get('experiment').get('name');
     const counter = (state.get('running').get(experimentName) || 0) - 1;
     let running;
@@ -95,7 +83,7 @@ const reducers = {
    * A user saw an experiment
    * @payload { experiment:ExperimentType, variation:VariationType }
    */
-  [constants.PLAY]: (state, { payload }) => {
+  [PLAY]: (state, { payload }) => {
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const active = state.get('active').set(experimentName, variationName);
@@ -107,7 +95,7 @@ const reducers = {
    * A user interacted with the variation
    * @payload { experiment:ExperimentType, variation:VariationType }
    */
-  [constants.WIN]: (state, { payload }) => {
+  [WIN]: (state, { payload }) => {
     const experimentName = payload.get('experiment').get('name');
     const variationName = payload.get('variation').get('name');
     const winners = state.get('winners').set(experimentName, variationName);
@@ -116,19 +104,3 @@ const reducers = {
 };
 
 export default handleActions(reducers, initialState);
-
-
-
-//
-// Selectors for querying the Redux/Compoenet state:
-//
-export const selectors = {
-  /**
-   * Find the experiment by name, raises an Error if not-found
-   */
-  findExperiment,
-  /**
-   * Select a variation from the given input variables
-   */
-  selectVariation: ({reduxAbTest, experiment, defaultVariationName}) => selectVariation({reduxAbTest, experiment, defaultVariationName, cacheStore})
-};
