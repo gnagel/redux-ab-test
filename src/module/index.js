@@ -48,16 +48,20 @@ export const middleware = store => next => action => {
   // Process the input action
   const output = next(action);
 
+  // Multi-plex the action output if we are listening for any wins
   const reduxAbTest = store.getState().reduxAbTest;
-  const actions = generateWinActions({
-    reduxAbTest,
-    next,
-    win,
-    actionType: action.type,
-    actionPayload: action.payload
-  });
-  actions.forEach( action => next(action) );
+  if (reduxAbTest) {
+    const actions = generateWinActions({
+      reduxAbTest,
+      next,
+      win,
+      actionType: action.type,
+      actionPayload: action.payload
+    });
+    actions.forEach( action => next(action) );
+  }
 
+  // Return the original action's output
   return output;
 };
 
