@@ -158,7 +158,9 @@ describe("__TEST__/reduxAbTest", () => {
       },
       payload: Immutable.fromJS({
         experiment: experiment,
-        variation: variation_original
+        variation: variation_original,
+        actionType: undefined,
+        actionPayload: undefined
       })
     });
   });

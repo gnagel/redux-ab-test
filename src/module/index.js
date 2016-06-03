@@ -18,8 +18,6 @@ export const DEACTIVATE = 'redux-ab-test/DEACTIVATE';
 export const PLAY = 'redux-ab-test/PLAY';
 export const WIN = 'redux-ab-test/WIN';
 export const REGISTER_ADHOC = 'redux-ab-test/REGISTER_ADHOC';
-export const ENQUEUE_A_WIN = 'redux-ab-test/ENQUEUE_A_WIN';
-export const RESPOND_TO_WIN = 'redux-ab-test/RESPOND_TO_WIN';
 
 
 //
@@ -30,11 +28,9 @@ export const load = createAction(LOAD,                     ({experiments, active
 export const activate = createAction(ACTIVATE,              immutableExperiment );
 export const deactivate = createAction(DEACTIVATE,          immutableExperiment );
 export const play = createAction(PLAY,                     immutableExperimentVariation );
-export const win = createAction(WIN,                       ({experiment, variation, actionType}) => Immutable.fromJS({experiment, variation, actionType}) );
+export const win = createAction(WIN,                       ({experiment, variation, actionType, actionPayload}) => Immutable.fromJS({experiment, variation, actionType, actionPayload}) );
 // Non-standard actions
 export const registerAdhoc = createAction(REGISTER_ADHOC,   immutableExperiment );
-export const enqueueAWin = createAction(ENQUEUE_A_WIN, ({type}) => Immutable.fromJS({type}) );
-export const respondToWin = createAction(RESPOND_TO_WIN, ({type, experiment}) => Immutable.fromJS({type, experiment}) );
 
 
 export const initialState = Immutable.fromJS({
@@ -48,14 +44,17 @@ export const initialState = Immutable.fromJS({
 });
 
 
-const middleware = store => next => action => {
+export const middleware = store => next => action => {
   // Process the input action
   const output = next(action);
 
+  const reduxAbTest = store.getState().reduxAbTest;
   const actions = generateWinActions({
-    reduxAbTest: (store.getState().reduxAbTest || initialState),
+    reduxAbTest,
     next,
-    actionType: action.type
+    win,
+    actionType: action.type,
+    actionPayload: action.payload
   });
   actions.forEach( action => next(action) );
 
@@ -154,51 +153,6 @@ const reducers = {
     const winners = state.get('winners').set(experimentName, variationName);
     return state.set('winners', winners);
   },
-
-
-  /**
-   * A redux state event occured for a `win` we are listening for.
-   */
-  [ENQUEUE_A_WIN]: (state, { payload }) => {
-    const type = payload.get('type');
-
-    // Get the experiment names that are listening for this action
-    const experimentNames = state.get('winActionTypes').get(type, Immutable.List([]));
-    if (!experimentNames || experimentNames.isEmpty()) {
-      return state;
-    }
-
-    //
-    // TODO: should we filter the experiment names here to only the ones that have been played?
-    //
-    const newActions = experimentNames.map( experimentName => Immutable.Map({ type, experimentName }) );
-    const winActionsQueue = state.get('winActionsQueue').concat( newActions );
-    return state.set('winActionsQueue', winActionsQueue);
-  },
-
-
-  /**
-   * A redux state event occured for a `win` was processed and dispatched.
-   */
-  [RESPOND_TO_WIN]: (state, { payload }) => {
-    const type = payload.get('type');
-    const experimentName = payload.get('experiment').get('name');
-
-    const winActionsQueue = state.get('winActionsQueue').filterNot( hash => (hash.get('type') === type && hash.get('experimentName') === experimentName) );
-    return state.set('winActionsQueue', winActionsQueue);
-  },
 };
 
-const reducerFn = handleActions(reducers, initialState);
-export default function rootReducer(state = initialState, action) {
-  // Execute the reducer functions
-  state = reducerFn(state, action);
-
-  // If the action type is one of the subscribed action types
-  // Generate a new action and pass it along to the reducer
-  if (state.get('winActionTypes').has(action.type)) {
-    state = reducerFn(state, { type: ENQUEUE_A_WIN, payload: action.type });
-  }
-
-  return state;
-}
+export default handleActions(reducers, initialState);

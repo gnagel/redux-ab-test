@@ -3,7 +3,7 @@ import Experiment from './containers/experiment';
 import Variation from './containers/variation';
 
 import { VariationType, ExperimentType } from './interfaces';
-import reduxAbTest, { initialState, reset, load, activate, deactivate, play, win } from './module';
+import reduxAbTest, { initialState, middleware, reset, load, WIN, PLAY } from './module';
 
 export default {
   /**
@@ -22,11 +22,15 @@ export default {
    */
   reduxAbTest,
   reduxAbTestInitialState: initialState,
+  reduxAbTestMiddleware: middleware,
   /**
    * Redux Action Creators
    */
-  reduxAbTestActions: {
-    reset,
-    load,
-  }
+  reset,
+  load,
+  /**
+   * Redux Action Types
+   */
+  WIN,
+  PLAY,
 };

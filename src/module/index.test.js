@@ -1,12 +1,12 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from 'test_helper';
+import { expect, spy } from 'test_helper';
 
 import { cacheStore } from '../utils/create-cache-store';
 import findExperiment from '../utils/find-experiment';
 import selectVariation from '../utils/select-variation';
 
-import reduxAbTest, { VariationType, ExperimentType, initialState } from './index';
+import reduxAbTest, { VariationType, ExperimentType, initialState, middleware } from './index';
 import {
   RESET,
   LOAD,
@@ -15,8 +15,6 @@ import {
   PLAY,
   WIN,
   REGISTER_ADHOC,
-  ENQUEUE_A_WIN,
-  RESPOND_TO_WIN,
 } from './index';
 import {
   reset,
@@ -92,13 +90,6 @@ describe('(Redux) src/module/index.js', () => {
       expect(REGISTER_ADHOC).to.be.equal('redux-ab-test/REGISTER_ADHOC');
     });
 
-    it('ENQUEUE_A_WIN', () => {
-      expect(ENQUEUE_A_WIN).to.be.equal('redux-ab-test/ENQUEUE_A_WIN');
-    });
-
-    it('RESPOND_TO_WIN', () => {
-      expect(RESPOND_TO_WIN).to.be.equal('redux-ab-test/RESPOND_TO_WIN');
-    });
   });
 
 
@@ -182,7 +173,26 @@ describe('(Redux) src/module/index.js', () => {
       },
       payload: Immutable.fromJS({
         experiment: experiment,
-        variation: variation_original
+        variation: variation_original,
+        actionType: undefined,
+        actionPayload: undefined
+      })
+    });
+
+    sharedActionExamples({
+      action: win,
+      type: WIN,
+      args: {
+        experiment: experiment,
+        variation: variation_original,
+        actionType: 'Test-action',
+        actionPayload: { example: 'payload' }
+      },
+      payload: Immutable.fromJS({
+        experiment: experiment,
+        variation: variation_original,
+        actionType: 'Test-action',
+        actionPayload: { example: 'payload' }
       })
     });
 
@@ -197,29 +207,6 @@ describe('(Redux) src/module/index.js', () => {
       })
     });
 
-    sharedActionExamples({
-      action: enqueueAWin,
-      type: ENQUEUE_A_WIN,
-      args: {
-        type: 'Test-Win-Action'
-      },
-      payload: Immutable.fromJS({
-        type: 'Test-Win-Action'
-      })
-    });
-
-    sharedActionExamples({
-      action: respondToWin,
-      type: RESPOND_TO_WIN,
-      args: {
-        type: 'Test-Win-Action',
-        experiment
-      },
-      payload: Immutable.fromJS({
-        type: 'Test-Win-Action',
-        experiment
-      })
-    });
   });
 
 
@@ -366,71 +353,6 @@ describe('(Redux) src/module/index.js', () => {
         }
       })
     });
-
-    // Ignores wins if there are no matching experiments
-    sharedReducerExamples({
-      type: ENQUEUE_A_WIN,
-      state: undefined,
-      payload: Immutable.fromJS({
-        type: 'Test-action-type',
-      }),
-      newState: initialState.merge({
-        winActionTypes: {}
-      })
-    });
-
-    // Enqueues 1x win per registered experiment
-    sharedReducerExamples({
-      type: ENQUEUE_A_WIN,
-      state: initialState.merge({
-        winActionTypes: {
-          'Test-action-type': [experiment.name, 'Test-experiment-2']
-        }
-      }),
-      payload: Immutable.fromJS({
-        type: 'Test-action-type',
-      }),
-      newState: initialState.merge({
-        winActionTypes: {
-          'Test-action-type': [experiment.name, 'Test-experiment-2'],
-        },
-        winActionsQueue: [
-          { type: 'Test-action-type', experimentName: experiment.name },
-          { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
-        ]
-      })
-    });
-
-    // Ignores wins if there is nothing matching in the queue
-    sharedReducerExamples({
-      type: RESPOND_TO_WIN,
-      state: undefined,
-      payload: Immutable.fromJS({
-        type: 'Test-action-type',
-        experiment
-      }),
-      newState: initialState
-    });
-
-    // Enqueues 1x win per registered experiment
-    sharedReducerExamples({
-      type: RESPOND_TO_WIN,
-      state: initialState.merge({
-        winActionsQueue: [
-          { type: 'Test-action-type', experimentName: experiment.name },
-          { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
-        ]
-      }),
-      payload: Immutable.fromJS({
-        type: 'Test-action-type',
-        experiment
-      }),
-      newState: initialState.merge({
-        winActionsQueue: [
-          { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
-        ]
-      })
-    });
   });
 
 
@@ -514,6 +436,126 @@ describe('(Redux) src/module/index.js', () => {
       });
     });
 
+  });
+
+
+  describe('middleware', () => {
+    let recordedActions = []
+    let next;
+    let reduxAbTest;
+    let store;
+    beforeEach(() => {
+      recordedActions = [];
+      next = (action) => { recordedActions.push(action) };
+      reduxAbTest = initialState;
+      store = {
+        getState: () => { return {reduxAbTest}; }
+      };
+    });
+
+    it('exists', () => {
+      expect(middleware).to.exist;
+      expect(middleware).to.be.a('function')
+    });
+
+    it('doesnt generate new actions', () => {
+      next = spy();
+      const action = {type: 'Test-action-type'};
+      const output = middleware(store)(next)(action);
+      expect(next).to.have.been.calledOnce;
+    });
+
+    it('ignores wins if there are no matching experiments', () => {
+      next = spy();
+      reduxAbTest = initialState.merge({
+        winActionTypes: {}
+      });
+      const action = {type: 'Test-action-type'};
+      const output = middleware(store)(next)(action);
+      expect(next).to.have.been.calledOnce;
+    });
+
+    it('only generates one action', () => {
+      reduxAbTest = initialState.merge({
+        winActionTypes: {}
+      });
+      const action = {type: 'Test-action-type'};
+      const output = middleware(store)(next)(action);
+      expect(recordedActions).to.deep.equal([
+        action
+      ]);
+    });
+
+    it('enqueues 1x win per registered experiment', () => {
+      reduxAbTest = initialState.merge({
+        experiments: [experiment],
+        winActionTypes: {
+          'Test-action-type': [experiment.name, 'Test-experiment-2']
+        },
+        active: {
+          'Test-Name': variation_a.name
+        }
+      });
+      const action = { type: 'Test-action-type', payload: { example: 'payload' } };
+      const output = middleware(store)(next)(action);
+      expect(recordedActions).to.deep.equal([
+        action,
+        {
+          type: WIN,
+          payload: Immutable.fromJS({
+            experiment,
+            variation: variation_a,
+            actionType: action.type,
+            actionPayload: action.payload
+          })
+        }
+      ]);
+    });
+
+    //   payload: Immutable.fromJS({
+    //     type: 'Test-action-type',
+    //   }),
+    //   newState: initialState.merge({
+    //     winActionTypes: {
+    //       'Test-action-type': [experiment.name, 'Test-experiment-2'],
+    //     },
+    //     winActionsQueue: [
+    //       { type: 'Test-action-type', experimentName: experiment.name },
+    //       { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
+    //     ]
+    //   })
+    // });
+    //
+    // // Ignores wins if there is nothing matching in the queue
+    // sharedReducerExamples({
+    //   type: RESPOND_TO_WIN,
+    //   state: undefined,
+    //   payload: Immutable.fromJS({
+    //     type: 'Test-action-type',
+    //     experiment
+    //   }),
+    //   newState: initialState
+    // });
+    //
+    // // Enqueues 1x win per registered experiment
+    // sharedReducerExamples({
+    //   type: RESPOND_TO_WIN,
+    //   state: initialState.merge({
+    //     winActionsQueue: [
+    //       { type: 'Test-action-type', experimentName: experiment.name },
+    //       { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
+    //     ]
+    //   }),
+    //   payload: Immutable.fromJS({
+    //     type: 'Test-action-type',
+    //     experiment
+    //   }),
+    //   newState: initialState.merge({
+    //     winActionsQueue: [
+    //       { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
+    //     ]
+    //   })
+    // });
   });
 
 });
