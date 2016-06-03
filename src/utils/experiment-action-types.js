@@ -15,7 +15,6 @@ export const toTypes = (experiment) => {
  * Generate a hash of "Action Type" => [ "Experiment Names" ...]
  */
 export default function toWinningActionTypes(experiments) {
-  console.log(`experiments: ${experiments}`);
   const output = experiments.map(toTypes).reduce( (output, hash) => {
     return output.mergeDeep(hash);
   }, Immutable.Map({}) );

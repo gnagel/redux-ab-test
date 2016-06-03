@@ -362,11 +362,75 @@ describe('(Redux) src/module/index.js', () => {
       newState: initialState.merge({
         experiments: [{...experiment, winActionTypes: ['Test-action-type']}],
         winActionTypes: {
-          'Test-action-type': experiment.name
+          'Test-action-type': [experiment.name]
         }
       })
     });
 
+    // Ignores wins if there are no matching experiments
+    sharedReducerExamples({
+      type: ENQUEUE_A_WIN,
+      state: undefined,
+      payload: Immutable.fromJS({
+        type: 'Test-action-type',
+      }),
+      newState: initialState.merge({
+        winActionTypes: {}
+      })
+    });
+
+    // Enqueues 1x win per registered experiment
+    sharedReducerExamples({
+      type: ENQUEUE_A_WIN,
+      state: initialState.merge({
+        winActionTypes: {
+          'Test-action-type': [experiment.name, 'Test-experiment-2']
+        }
+      }),
+      payload: Immutable.fromJS({
+        type: 'Test-action-type',
+      }),
+      newState: initialState.merge({
+        winActionTypes: {
+          'Test-action-type': [experiment.name, 'Test-experiment-2'],
+        },
+        winActionsQueue: [
+          { type: 'Test-action-type', experimentName: experiment.name },
+          { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
+        ]
+      })
+    });
+
+    // Ignores wins if there is nothing matching in the queue
+    sharedReducerExamples({
+      type: RESPOND_TO_WIN,
+      state: undefined,
+      payload: Immutable.fromJS({
+        type: 'Test-action-type',
+        experiment
+      }),
+      newState: initialState
+    });
+
+    // Enqueues 1x win per registered experiment
+    sharedReducerExamples({
+      type: RESPOND_TO_WIN,
+      state: initialState.merge({
+        winActionsQueue: [
+          { type: 'Test-action-type', experimentName: experiment.name },
+          { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
+        ]
+      }),
+      payload: Immutable.fromJS({
+        type: 'Test-action-type',
+        experiment
+      }),
+      newState: initialState.merge({
+        winActionsQueue: [
+          { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
+        ]
+      })
+    });
   });
 
 

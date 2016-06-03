@@ -5,6 +5,7 @@ import { createAction, handleActions }   from 'redux-actions';
 import findExperiment                    from '../utils/find-experiment';
 import { cacheStore }                    from '../utils/create-cache-store';
 import winningActionTypes                from '../utils/experiment-action-types';
+import generateWinActions                from '../utils/generate-win-actions';
 import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
 
 //
@@ -29,7 +30,7 @@ export const load = createAction(LOAD,                     ({experiments, active
 export const activate = createAction(ACTIVATE,              immutableExperiment );
 export const deactivate = createAction(DEACTIVATE,          immutableExperiment );
 export const play = createAction(PLAY,                     immutableExperimentVariation );
-export const win = createAction(WIN,                       immutableExperimentVariation );
+export const win = createAction(WIN,                       ({experiment, variation, actionType}) => Immutable.fromJS({experiment, variation, actionType}) );
 // Non-standard actions
 export const registerAdhoc = createAction(REGISTER_ADHOC,   immutableExperiment );
 export const enqueueAWin = createAction(ENQUEUE_A_WIN, ({type}) => Immutable.fromJS({type}) );
@@ -45,6 +46,21 @@ export const initialState = Immutable.fromJS({
   winActionTypes: { /** Array of Redux Action Types */ },
   winActionsQueue: [ /** Array of Redux Action Types */ ],
 });
+
+
+const middleware = store => next => action => {
+  // Process the input action
+  const output = next(action);
+
+  const actions = generateWinActions({
+    reduxAbTest: (store.getState().reduxAbTest || initialState),
+    next,
+    actionType: action.type
+  });
+  actions.forEach( action => next(action) );
+
+  return output;
+};
 
 
 const reducers = {
@@ -80,12 +96,7 @@ const reducers = {
       return state;
     }
     const experiments = state.get('experiments').push(experiment);
-    const winActionTypes = winningActionTypes(state.get('experiments'));
-    console.log('---')
-    console.log('---')
-    console.log(`winActionTypes=${winActionTypes}`)
-    console.log('---')
-    console.log('---')
+    const winActionTypes = winningActionTypes(experiments);
     return state.merge({
       experiments,
       winActionTypes
@@ -157,10 +168,14 @@ const reducers = {
       return state;
     }
 
-    const newActions = experimentNames.map( experimentName => Immuable.Map({ type, experimentName }) );
+    //
+    // TODO: should we filter the experiment names here to only the ones that have been played?
+    //
+    const newActions = experimentNames.map( experimentName => Immutable.Map({ type, experimentName }) );
     const winActionsQueue = state.get('winActionsQueue').concat( newActions );
-    return state.set('winActionsQueue', winners);
+    return state.set('winActionsQueue', winActionsQueue);
   },
+
 
   /**
    * A redux state event occured for a `win` was processed and dispatched.
@@ -170,7 +185,7 @@ const reducers = {
     const experimentName = payload.get('experiment').get('name');
 
     const winActionsQueue = state.get('winActionsQueue').filterNot( hash => (hash.get('type') === type && hash.get('experimentName') === experimentName) );
-    return state.set('winActionsQueue', winners);
+    return state.set('winActionsQueue', winActionsQueue);
   },
 };
 
