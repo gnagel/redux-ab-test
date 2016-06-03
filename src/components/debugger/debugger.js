@@ -22,19 +22,19 @@ type Props = {
    */
   reduxAbTest: Immutable.Map,
   /**
-   * Bound Action Creator: actions.activate(experimentName:string)
+   * Bound Action Creator: activate(experimentName:string)
    */
   dispatchActivate: Function,
   /**
-   * Bound Action Creator: actions.deactivate(experimentName:string)
+   * Bound Action Creator: deactivate(experimentName:string)
    */
   dispatchDeactivate: Function,
   /**
-  * Bound Action Creator: actions.play(experimentName:string, variationName:string)
+  * Bound Action Creator: play(experimentName:string, variationName:string)
    */
   dispatchPlay: Function,
   /**
-   * Bound Action Creator: actions.win(experimentName:string, variationName:string)
+   * Bound Action Creator: win(experimentName:string, variationName:string)
    */
   dispatchWin: Function,
 };
