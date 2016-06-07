@@ -231,7 +231,6 @@ describe('(Redux) src/module/index.js', () => {
     sharedDescribe('active', 'object');
     sharedDescribe('winners', 'object');
     sharedDescribe('winActionTypes', 'object');
-    sharedDescribe('winActionsQueue', 'array');
   });
 
 
@@ -512,50 +511,6 @@ describe('(Redux) src/module/index.js', () => {
       ]);
     });
 
-    //   payload: Immutable.fromJS({
-    //     type: 'Test-action-type',
-    //   }),
-    //   newState: initialState.merge({
-    //     winActionTypes: {
-    //       'Test-action-type': [experiment.name, 'Test-experiment-2'],
-    //     },
-    //     winActionsQueue: [
-    //       { type: 'Test-action-type', experimentName: experiment.name },
-    //       { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
-    //     ]
-    //   })
-    // });
-    //
-    // // Ignores wins if there is nothing matching in the queue
-    // sharedReducerExamples({
-    //   type: RESPOND_TO_WIN,
-    //   state: undefined,
-    //   payload: Immutable.fromJS({
-    //     type: 'Test-action-type',
-    //     experiment
-    //   }),
-    //   newState: initialState
-    // });
-    //
-    // // Enqueues 1x win per registered experiment
-    // sharedReducerExamples({
-    //   type: RESPOND_TO_WIN,
-    //   state: initialState.merge({
-    //     winActionsQueue: [
-    //       { type: 'Test-action-type', experimentName: experiment.name },
-    //       { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
-    //     ]
-    //   }),
-    //   payload: Immutable.fromJS({
-    //     type: 'Test-action-type',
-    //     experiment
-    //   }),
-    //   newState: initialState.merge({
-    //     winActionsQueue: [
-    //       { type: 'Test-action-type', experimentName: 'Test-experiment-2' },
-    //     ]
-    //   })
-    // });
   });
 
 });
