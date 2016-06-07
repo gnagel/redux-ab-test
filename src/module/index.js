@@ -38,9 +38,7 @@ export const initialState = Immutable.fromJS({
   running: { /** "experiment name" => number */ },
   active: { /** "experiment name" => "variation name" */ },
   winners: { /** "experiment name" => "variation name" */ },
-
   winActionTypes: { /** Array of Redux Action Types */ },
-  winActionsQueue: [ /** Array of Redux Action Types */ ],
 });
 
 
