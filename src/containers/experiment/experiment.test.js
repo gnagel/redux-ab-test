@@ -10,15 +10,15 @@ describe('(Container) src/container/experiment/experiment.js', () => {
   let component;
   let props;
   let store;
-  let onActivate;
-  let onDeactivate;
-  let onPlay;
-  let onWin;
+  let dispatchActivate;
+  let dispatchDeactivate;
+  let dispatchPlay;
+  let dispatchWin;
   beforeEach(() => {
-    onActivate = spy();
-    onDeactivate = spy();
-    onPlay = spy();
-    onWin = spy();
+    dispatchActivate = spy();
+    dispatchDeactivate = spy();
+    dispatchPlay = spy();
+    dispatchWin = spy();
 
     props = {
       name: 'Test-experimentName',
@@ -26,10 +26,10 @@ describe('(Container) src/container/experiment/experiment.js', () => {
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B">Test Variation B</Variation>
       ],
-      onActivate,
-      onDeactivate,
-      onPlay,
-      onWin
+      dispatchActivate,
+      dispatchDeactivate,
+      dispatchPlay,
+      dispatchWin
     };
     store = {
       reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
@@ -54,29 +54,29 @@ describe('(Container) src/container/experiment/experiment.js', () => {
     expect(component).to.have.text('Test Variation B');
   });
 
-  it('calls onActivate', () => {
-    expect(onActivate).to.have.been.called;
+  it('calls dispatchActivate', () => {
+    expect(dispatchActivate).to.have.been.called;
   });
 
-  it('calls onPlay', () => {
-    expect(onPlay).to.have.been.called;
+  it('calls dispatchPlay', () => {
+    expect(dispatchPlay).to.have.been.called;
   });
 
-  it('didnt call onWin', () => {
-    expect(onWin).to.not.have.been.called;
+  it('didnt call dispatchWin', () => {
+    expect(dispatchWin).to.not.have.been.called;
   });
 
-  it('did call onWin', () => {
+  it('did call dispatchWin', () => {
     props = {
       name: 'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B"><button onClick={ () => { this.props.handleWin(); } }>Variation B</button></Variation>
       ],
-      onActivate,
-      onDeactivate,
-      onPlay,
-      onWin
+      dispatchActivate,
+      dispatchDeactivate,
+      dispatchPlay,
+      dispatchWin
     };
     component = renderContainer(Experiment, props, store);
     expect(component.find('button')).to.have.length(1);

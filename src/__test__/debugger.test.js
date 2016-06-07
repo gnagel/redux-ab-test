@@ -1,7 +1,7 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Debugger from "../debugger";
-import { initialState } from '../module';
+import { Debugger } from "../index";
+import { reduxAbTestInitialState } from '../index';
 
 import { expect, renderContainer } from 'test_helper';
 
@@ -13,7 +13,7 @@ describe("__TEST__/Debugger", () => {
   beforeEach(() => {
     props = {};
     store = {
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
+      reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([{
         name: 'Test-experimentName',
         variations: [
           { name: 'Original', weight: 10000 },

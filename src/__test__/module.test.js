@@ -2,7 +2,20 @@ import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import { expect } from 'test_helper';
 
-import reduxAbTest, { VariationType, ExperimentType, constants, actions, selectors, initialState, cacheStore } from '../module';
+import { VariationType, ExperimentType, reduxAbTest, reduxAbTestInitialState } from '../index';
+import { reset, load, registerAdhoc, activate, play, win, deactivate } from '../module';
+import {
+  RESET,
+  LOAD,
+  REGISTER_ADHOC,
+  ACTIVATE,
+  DEACTIVATE,
+  PLAY,
+  WIN,
+} from '../module';
+import findExperiment from '../utils/find-experiment';
+import selectVariation from '../utils/select-variation';
+import { cacheStore } from '../utils/create-cache-store';
 
 
 const variation_original:VariationType = {
@@ -39,24 +52,29 @@ describe("__TEST__/reduxAbTest", () => {
   });
 
   describe('constants', () => {
-    it('exists', () => {
-      expect(constants).to.exist;
-      expect(constants).to.be.a('object');
-      expect(constants).to.not.be.blank;
+    it('RESET', () => {
+      expect(RESET).to.be.equal('redux-ab-test/RESET');
     });
 
-    const sharedConstant = (key) => {
-      it(key, () => {
-        expect(constants[key]).to.be.equal(`redux-ab-test/${key}`);
-      });
-    };
+    it('LOAD', () => {
+      expect(LOAD).to.be.equal('redux-ab-test/LOAD');
+    });
 
-    sharedConstant('RESET');
-    sharedConstant('LOAD');
-    sharedConstant('ACTIVATE');
-    sharedConstant('DEACTIVATE');
-    sharedConstant('PLAY');
-    sharedConstant('WIN');
+    it('ACTIVATE', () => {
+      expect(ACTIVATE).to.be.equal('redux-ab-test/ACTIVATE');
+    });
+
+    it('DEACTIVATE', () => {
+      expect(DEACTIVATE).to.be.equal('redux-ab-test/DEACTIVATE');
+    });
+
+    it('PLAY', () => {
+      expect(PLAY).to.be.equal('redux-ab-test/PLAY');
+    });
+
+    it('WIN', () => {
+      expect(WIN).to.be.equal('redux-ab-test/WIN');
+    });
   });
 
 
@@ -64,13 +82,6 @@ describe("__TEST__/reduxAbTest", () => {
   // Action Creators
   //
   describe('actions', () => {
-    it('exists', () => {
-      expect(actions).to.exist;
-      expect(actions).to.be.a('object');
-      expect(actions).to.not.be.blank;
-    });
-
-
     const sharedActionExamples = ({action, type, args, payload}) => {
       describe(type.split('/')[1], () => {
         it('exists', () => {
@@ -97,15 +108,15 @@ describe("__TEST__/reduxAbTest", () => {
     };
 
     sharedActionExamples({
-      action: actions.reset,
-      type: constants.RESET,
+      action: reset,
+      type: RESET,
       args: undefined,
       payload: Immutable.fromJS({})
     });
 
     sharedActionExamples({
-      action: actions.load,
-      type: constants.LOAD,
+      action: load,
+      type: LOAD,
       args: {
         experiments: [experiment],
         active: { "Test-Name": "Variation #A" }
@@ -117,8 +128,8 @@ describe("__TEST__/reduxAbTest", () => {
     });
 
     sharedActionExamples({
-      action: actions.activate,
-      type: constants.ACTIVATE,
+      action: activate,
+      type: ACTIVATE,
       args: {
         experiment: experiment
       },
@@ -128,8 +139,8 @@ describe("__TEST__/reduxAbTest", () => {
     });
 
     sharedActionExamples({
-      action: actions.deactivate,
-      type: constants.DEACTIVATE,
+      action: deactivate,
+      type: DEACTIVATE,
       args: {
         experiment: experiment
       },
@@ -139,15 +150,17 @@ describe("__TEST__/reduxAbTest", () => {
     });
 
     sharedActionExamples({
-      action: actions.win,
-      type: constants.WIN,
+      action: win,
+      type: WIN,
       args: {
         experiment: experiment,
         variation: variation_original
       },
       payload: Immutable.fromJS({
         experiment: experiment,
-        variation: variation_original
+        variation: variation_original,
+        actionType: undefined,
+        actionPayload: undefined
       })
     });
   });
@@ -156,17 +169,17 @@ describe("__TEST__/reduxAbTest", () => {
   //
   // Initial State
   //
-  describe('initialState', () => {
+  describe('reduxAbTestInitialState', () => {
     it('exists', () => {
-      expect(initialState).to.exist;
-      expect(initialState).to.be.an.instanceof(Immutable.Map);
+      expect(reduxAbTestInitialState).to.exist;
+      expect(reduxAbTestInitialState).to.be.an.instanceof(Immutable.Map);
     });
 
     const sharedDescribe = (field, type) => {
       it(field, () => {
-        expect(initialState.toJS()[field]).to.exist;
-        expect(initialState.toJS()[field]).to.be.a(type);
-        expect(initialState.toJS()[field]).to.be.blank;
+        expect(reduxAbTestInitialState.toJS()[field]).to.exist;
+        expect(reduxAbTestInitialState.toJS()[field]).to.be.a(type);
+        expect(reduxAbTestInitialState.toJS()[field]).to.be.blank;
       });
     };
     sharedDescribe('experiments', 'array');
@@ -187,9 +200,9 @@ describe("__TEST__/reduxAbTest", () => {
           expect(reduxAbTest).to.be.a('function');
         });
 
-        it('has the correct initialState', () => {
+        it('has the correct reduxAbTestInitialState', () => {
           const output = reduxAbTest(undefined, {});
-          expect(output).to.eql(initialState);
+          expect(output).to.eql(reduxAbTestInitialState);
         });
 
         it('has correct type', () => {
@@ -208,58 +221,58 @@ describe("__TEST__/reduxAbTest", () => {
     };
 
     sharedReducerExamples({
-      type: constants.RESET,
+      type: RESET,
       state: undefined,
       payload: undefined,
-      newState: initialState
+      newState: reduxAbTestInitialState
     });
 
     sharedReducerExamples({
-      type: constants.LOAD,
+      type: LOAD,
       state: undefined,
       payload: Immutable.fromJS({
         experiments: [ experiment ],
         active: { "Test-Name": "Variation #A" }
       }),
-      newState: initialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" })).set('experiments', Immutable.fromJS([experiment]))
+      newState: reduxAbTestInitialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" })).set('experiments', Immutable.fromJS([experiment]))
     });
 
     sharedReducerExamples({
-      type: constants.ACTIVATE,
-      state: initialState,
+      type: ACTIVATE,
+      state: reduxAbTestInitialState,
       payload: Immutable.fromJS({
         experiment
       }),
-      newState: initialState.set('running', Immutable.fromJS({ "Test-Name": 1 }))
+      newState: reduxAbTestInitialState.set('running', Immutable.fromJS({ "Test-Name": 1 }))
     });
 
     sharedReducerExamples({
-      type: constants.DEACTIVATE,
-      state: initialState.set('running', Immutable.fromJS({ "Test-Name": 1 })),
+      type: DEACTIVATE,
+      state: reduxAbTestInitialState.set('running', Immutable.fromJS({ "Test-Name": 1 })),
       payload: Immutable.fromJS({
         experiment
       }),
-      newState: initialState
+      newState: reduxAbTestInitialState
     });
 
     sharedReducerExamples({
-      type: constants.PLAY,
+      type: PLAY,
       state: undefined,
       payload: Immutable.fromJS({
         experiment: experiment,
         variation: variation_a
       }),
-      newState: initialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" }))
+      newState: reduxAbTestInitialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" }))
     });
 
     sharedReducerExamples({
-      type: constants.WIN,
+      type: WIN,
       state: undefined,
       payload: Immutable.fromJS({
         experiment: experiment,
         variation: variation_b
       }),
-      newState: initialState.set('winners', Immutable.fromJS({ "Test-Name": "Variation #B" }))
+      newState: reduxAbTestInitialState.set('winners', Immutable.fromJS({ "Test-Name": "Variation #B" }))
     });
 
   });
@@ -269,21 +282,15 @@ describe("__TEST__/reduxAbTest", () => {
   // State Selectors
   //
   describe('selectors', () => {
-    it('exists', () => {
-      expect(selectors).to.exist;
-      expect(selectors).to.be.a('object');
-      expect(selectors).to.not.be.blank;
-    });
-
     describe('findExperiment', () => {
       it('exists', () => {
-        expect(selectors.findExperiment).to.exist;
-        expect(selectors.findExperiment).to.be.a('function');
+        expect(findExperiment).to.exist;
+        expect(findExperiment).to.be.a('function');
       });
 
       it('has the correct experiment', () => {
-        const output = selectors.findExperiment({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
+        const output = findExperiment({
+          reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])),
           experimentName: experiment.name
         });
         expect(output).to.exist;
@@ -291,8 +298,8 @@ describe("__TEST__/reduxAbTest", () => {
       });
 
       it('throws an Error', () => {
-        const output = () => selectors.findExperiment({
-          reduxAbTest: initialState,
+        const output = () => findExperiment({
+          reduxAbTest: reduxAbTestInitialState,
           experimentName: experiment.name
         });
         expect(output).to.throw(Error);
@@ -301,25 +308,27 @@ describe("__TEST__/reduxAbTest", () => {
 
     describe('selectVariation', () => {
       it('exists', () => {
-        expect(selectors.selectVariation).to.exist;
-        expect(selectors.selectVariation).to.be.a('function');
+        expect(selectVariation).to.exist;
+        expect(selectVariation).to.be.a('function');
       });
 
       it('chooses the active variation from redux store', () => {
-        const output = selectors.selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+        const output = selectVariation({
+          reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
           experiment: Immutable.fromJS(experiment),
-          defaultVariationName: null
+          defaultVariationName: null,
+          cacheStore
         });
         expect(output).to.exist;
         expect(output.toJSON()).to.deep.equal(variation_b);
       });
 
       it('chooses the defaultVariationName variation', () => {
-        const output = selectors.selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
+        const output = selectVariation({
+          reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])),
           experiment: Immutable.fromJS(experiment),
-          defaultVariationName: "Variation #B"
+          defaultVariationName: "Variation #B",
+          cacheStore
         });
         expect(output).to.exist;
         expect(output.toJSON()).to.deep.equal(variation_b);
@@ -327,20 +336,22 @@ describe("__TEST__/reduxAbTest", () => {
 
       it('chooses the active variation from localcache', () => {
         cacheStore.setItem(experiment.name, variation_b.name);
-        const output = selectors.selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
+        const output = selectVariation({
+          reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])),
           experiment: Immutable.fromJS(experiment),
-          defaultVariationName: null
+          defaultVariationName: null,
+          cacheStore
         });
         expect(output).to.exist;
         expect(output.toJSON()).to.deep.equal(variation_b);
       });
 
       it('randomly assigns a variation, ignoring weight=0 records', () => {
-        const output = selectors.selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
+        const output = selectVariation({
+          reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])),
           experiment: Immutable.fromJS(experiment),
-          defaultVariationName: null
+          defaultVariationName: null,
+          cacheStore
         });
         expect(output).to.exist;
         expect(output.toJSON()).to.not.deep.equal(variation_b);

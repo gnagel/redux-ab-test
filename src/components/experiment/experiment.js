@@ -4,7 +4,7 @@ import Immutable from 'immutable';
 import { ExperimentType, VariationType, recievesExperiment, recievesExperimentVariation } from '../../interfaces';
 import findExperiment from '../../utils/find-experiment';
 import selectVariation from '../../utils/select-variation';
-
+import { cacheStore } from '../../utils/create-cache-store';
 
 type Props = {
   /**
@@ -31,22 +31,6 @@ type Props = {
    * >  This property may be useful for server side rendering but is otherwise not recommended.
    */
   defaultVariationName: ?string,
-  /**
-   * Optional Callback, occurs after the Bound Action Creator is called
-   */
-  onActivate: ?recievesExperiment,
-  /**
-   * Optional Callback, occurs after the Bound Action Creator is called
-   */
-  onDeactivate: ?recievesExperiment,
-  /**
-   * Optional Callback, occurs after the Bound Action Creator is called
-   */
-  onPlay: ?recievesExperimentVariation,
-  /**
-   * Optional Callback, occurs after the Bound Action Creator is called
-   */
-  onWin: ?recievesExperimentVariation,
   /**
    * Action Creator callback: Function({experiment:ExperimentType})
    */
@@ -90,10 +74,6 @@ export default class Experiment extends React.Component {
     reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
     name:                 'Default Experiment Name',
     defaultVariationName: null,
-    onActivate:           recievesExperiment,
-    onDeactivate:         recievesExperiment,
-    onPlay:               recievesExperimentVariation,
-    onWin:                recievesExperimentVariation,
     dispatchActivate:     recievesExperiment,
     dispatchDeactivate:   recievesExperiment,
     dispatchPlay:         recievesExperimentVariation,
@@ -114,21 +94,19 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, onActivate, onPlay, children } = this.props;
+    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
     const experiment = findExperiment({reduxAbTest, experimentName: name});
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectVariation({
       reduxAbTest,
       experiment,
-      defaultVariationName
+      defaultVariationName,
+      cacheStore
     });
 
     // These will trigger `componentWillReceiveProps`
     dispatchActivate({experiment});
     dispatchPlay({experiment, variation});
-    // Trigger the callbacks (if any were supplied)
-    onActivate({experiment});
-    onPlay({experiment, variation});
     this.setState({ variationElements, experiment, variation });
   }
 
@@ -143,7 +121,8 @@ export default class Experiment extends React.Component {
     const variation = selectVariation({
       reduxAbTest,
       experiment,
-      defaultVariationName
+      defaultVariationName,
+      cacheStore
     });
     this.setState({ variationElements, experiment, variation });
   }
@@ -153,12 +132,10 @@ export default class Experiment extends React.Component {
    * Deactivate the variation from the state
    */
   componentWillUnmount() {
-    const { dispatchDeactivate, onDeactivate } = this.props;
+    const { dispatchDeactivate } = this.props;
     const { experiment } = this.state;
     // Dispatch the deactivation event
     dispatchDeactivate({experiment});
-    // Trigger the callbacks (if any were supplied)
-    onDeactivate({experiment});
   }
 
 
@@ -166,10 +143,9 @@ export default class Experiment extends React.Component {
    * Notify the client of the `WIN` event
    */
   handleWin() {
-    const { dispatchWin, onWin } = this.props;
+    const { dispatchWin } = this.props;
     const { experiment, variation } = this.state;
     dispatchWin({experiment, variation});
-    onWin({experiment, variation});
   }
 
 

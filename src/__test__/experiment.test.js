@@ -1,8 +1,8 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Experiment from "../experiment";
-import Variation from "../variation";
-import { initialState } from '../module';
+import { Experiment } from "../index";
+import { Variation } from "../index";
+import { reduxAbTestInitialState } from '../index';
 import { expect, renderContainer, spy } from 'test_helper';
 
 
@@ -32,7 +32,7 @@ describe("__TEST__/Experiment", () => {
       onWin
     };
     store = {
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
+      reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([{
         name: 'Test-experimentName',
         variations: [
           { name: 'Original', weight: 10000 },

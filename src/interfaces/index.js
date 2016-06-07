@@ -11,6 +11,7 @@ export type ExperimentType = {
   id: ?string,
   name: string,
   variations: Array<VariationType>,
+  winActionTypes: ?Array<string>,
 };
 
 export type WrapsExperimentType = {

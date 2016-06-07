@@ -1,5 +1,5 @@
 import React from "react"; // eslint-disable-line no-unused-vars
-import Variation from "../variation";
+import { Variation } from "../index";
 
 import { expect, renderComponent } from 'test_helper';
 

@@ -1,8 +1,9 @@
-import Debugger from './debugger';
-import Experiment from './experiment';
-import Variation from './variation';
+import Debugger from './containers/debugger';
+import Experiment from './containers/experiment';
+import Variation from './containers/variation';
 
-import reduxAbTest, { VariationType, ExperimentType, constants, actions, initialState, reducers, selectors } from './module';
+import { VariationType, ExperimentType } from './interfaces';
+import reduxAbTest, { initialState, middleware, reset, load, WIN, PLAY } from './module';
 
 export default {
   /**
@@ -12,7 +13,7 @@ export default {
   Variation,
   Debugger,
   /**
-   * Flow type annotations:
+   * Flow type interfaces:
    */
   VariationType,
   ExperimentType,
@@ -20,9 +21,16 @@ export default {
    * Redux Reducer
    */
   reduxAbTest,
-  reduxAbTestConstants: constants,
-  reduxAbTestActions: actions,
   reduxAbTestInitialState: initialState,
-  reduxAbTestReducers: reducers,
-  reduxAbTestSelectors: selectors
+  reduxAbTestMiddleware: middleware,
+  /**
+   * Redux Action Creators
+   */
+  reset,
+  load,
+  /**
+   * Redux Action Types
+   */
+  WIN,
+  PLAY,
 };
