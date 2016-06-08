@@ -134,11 +134,27 @@ describe('(Redux) src/module/index.js', () => {
       type: LOAD,
       args: {
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" }
+        active: { "Test-Name": "Variation #A" },
       },
       payload: Immutable.fromJS({
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" }
+        active: { "Test-Name": "Variation #A" },
+        types_path: undefined
+      })
+    });
+
+    sharedActionExamples({
+      action: load,
+      type: LOAD,
+      args: {
+        experiments: [experiment],
+        active: { "Test-Name": "Variation #A" },
+        types_path: ['Test-win-path']
+      },
+      payload: Immutable.fromJS({
+        experiments: [experiment],
+        active: { "Test-Name": "Variation #A" },
+        types_path: ['Test-win-path']
       })
     });
 
@@ -230,7 +246,7 @@ describe('(Redux) src/module/index.js', () => {
     sharedDescribe('running', 'object');
     sharedDescribe('active', 'object');
     sharedDescribe('winners', 'object');
-    sharedDescribe('winActionTypes', 'object');
+    sharedDescribe('win_action_types', 'object');
   });
 
 
@@ -334,20 +350,20 @@ describe('(Redux) src/module/index.js', () => {
       type: REGISTER_ADHOC,
       state: undefined,
       payload: Immutable.fromJS({
-        experiment: {...experiment, winActionTypes: []},
+        experiment: {...experiment, win_action_types: []},
       }),
-      newState: initialState.set('experiments', Immutable.fromJS([{...experiment, winActionTypes: []}]))
+      newState: initialState.set('experiments', Immutable.fromJS([{...experiment, win_action_types: []}]))
     });
 
     sharedReducerExamples({
       type: REGISTER_ADHOC,
       state: undefined,
       payload: Immutable.fromJS({
-        experiment: {...experiment, winActionTypes: ['Test-action-type']},
+        experiment: {...experiment, win_action_types: ['Test-action-type']},
       }),
       newState: initialState.merge({
-        experiments: [{...experiment, winActionTypes: ['Test-action-type']}],
-        winActionTypes: {
+        experiments: [{...experiment, win_action_types: ['Test-action-type']}],
+        win_action_types: {
           'Test-action-type': [experiment.name]
         }
       })
@@ -467,7 +483,7 @@ describe('(Redux) src/module/index.js', () => {
     it('ignores wins if there are no matching experiments', () => {
       next = spy();
       reduxAbTest = initialState.merge({
-        winActionTypes: {}
+        win_action_types: {}
       });
       const action = {type: 'Test-action-type'};
       const output = middleware(store)(next)(action);
@@ -476,7 +492,7 @@ describe('(Redux) src/module/index.js', () => {
 
     it('only generates one action', () => {
       reduxAbTest = initialState.merge({
-        winActionTypes: {}
+        win_action_types: {}
       });
       const action = {type: 'Test-action-type'};
       const output = middleware(store)(next)(action);
@@ -488,7 +504,7 @@ describe('(Redux) src/module/index.js', () => {
     it('enqueues 1x win per registered experiment', () => {
       reduxAbTest = initialState.merge({
         experiments: [experiment],
-        winActionTypes: {
+        win_action_types: {
           'Test-action-type': [experiment.name, 'Test-experiment-2']
         },
         active: {

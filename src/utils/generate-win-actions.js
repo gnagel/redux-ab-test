@@ -5,12 +5,12 @@ import findExperiment from './find-experiment';
 
 // If the action is one of the ones we listen for, then generate `wins` if that experiment has been played
 export default function generateWinActions({reduxAbTest, win, actionType, actionPayload, next}) {
-  const winActionTypes = reduxAbTest.get('winActionTypes');
-  if (!winActionTypes.has(actionType)) {
+  const win_action_types = reduxAbTest.get('win_action_types');
+  if (!win_action_types.has(actionType)) {
     return Immutable.List([]);
   }
 
-  const experimentNames = winActionTypes.get(actionType);
+  const experimentNames = win_action_types.get(actionType);
   const reduceToActions = (list, experimentName) => {
     if (!reduxAbTest.get('active').has(experimentName)) {
       return list;
