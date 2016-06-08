@@ -119,11 +119,27 @@ describe("__TEST__/reduxAbTest", () => {
       type: LOAD,
       args: {
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" }
+        active: { "Test-Name": "Variation #A" },
       },
       payload: Immutable.fromJS({
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" }
+        active: { "Test-Name": "Variation #A" },
+        types_path: undefined
+      })
+    });
+
+    sharedActionExamples({
+      action: load,
+      type: LOAD,
+      args: {
+        experiments: [experiment],
+        active: { "Test-Name": "Variation #A" },
+        types_path: ['Test-win-path']
+      },
+      payload: Immutable.fromJS({
+        experiments: [experiment],
+        active: { "Test-Name": "Variation #A" },
+        types_path: ['Test-win-path']
       })
     });
 

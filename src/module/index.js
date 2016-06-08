@@ -4,7 +4,7 @@ import Immutable                         from 'immutable';
 import { createAction, handleActions }   from 'redux-actions';
 import findExperiment                    from '../utils/find-experiment';
 import { cacheStore }                    from '../utils/create-cache-store';
-import winningActionTypes                from '../utils/experiment-action-types';
+import toWinningActionTypes              from '../utils/experiment-action-types';
 import generateWinActions                from '../utils/generate-win-actions';
 import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
 
@@ -24,7 +24,7 @@ export const REGISTER_ADHOC = 'redux-ab-test/REGISTER_ADHOC';
 // Redux Action Creators:
 //
 export const reset = createAction(RESET,                   () => Immutable.fromJS({}));
-export const load = createAction(LOAD,                     ({experiments, active}) => Immutable.fromJS({experiments, active}) );
+export const load = createAction(LOAD,                     ({experiments, active, types_path}) => Immutable.fromJS({experiments, active, types_path}) );
 export const activate = createAction(ACTIVATE,              immutableExperiment );
 export const deactivate = createAction(DEACTIVATE,          immutableExperiment );
 export const play = createAction(PLAY,                     immutableExperimentVariation );
@@ -38,7 +38,8 @@ export const initialState = Immutable.fromJS({
   running: { /** "experiment name" => number */ },
   active: { /** "experiment name" => "variation name" */ },
   winners: { /** "experiment name" => "variation name" */ },
-  winActionTypes: { /** Array of Redux Action Types */ },
+  types_path: ['win_action_types'],
+  win_action_types: { /** Array of Redux Action Types */ },
 });
 
 
@@ -77,10 +78,17 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [LOAD]: (state, { payload }) => {
+    let types_path = payload.get('types_path');
+    if (payload.get('types_path') === undefined) {
+      types_path = state.get('types_path');
+    } else {
+      types_path = Immutable.fromJS([payload.get('types_path')]).flatten();
+    }
     return initialState.merge({
       experiments: payload.get('experiments'),
       active: payload.get('active'),
-      winActionTypes: winningActionTypes(payload.get('experiments'))
+      types_path,
+      win_action_types: toWinningActionTypes({experiments: payload.get('experiments'), path: types_path})
     });
   },
 
@@ -97,10 +105,10 @@ const reducers = {
       return state;
     }
     const experiments = state.get('experiments').push(experiment);
-    const winActionTypes = winningActionTypes(experiments);
+    const win_action_types = toWinningActionTypes({experiments, path: state.get('types_path')});
     return state.merge({
       experiments,
-      winActionTypes
+      win_action_types
     });
   },
 

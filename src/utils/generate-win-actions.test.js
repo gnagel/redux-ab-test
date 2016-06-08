@@ -10,7 +10,7 @@ describe('utils/generate-win-actions.js', () => {
     plays: {},
     active: {},
     winners: {},
-    winActionTypes: {}
+    win_action_types: {}
   });
 
   const experiment:ExperimentType = {
@@ -20,7 +20,7 @@ describe('utils/generate-win-actions.js', () => {
       { name: "Variation #A", weight: 5000 },
       { name: "Variation #B", weight: 0 }
     ],
-    winActionTypes: ['Test-action-1', 'Test-action-2'],
+    win_action_types: ['Test-action-1', 'Test-action-2'],
   };
 
   let next;
@@ -51,7 +51,7 @@ describe('utils/generate-win-actions.js', () => {
     const output = generateWinActions({
       reduxAbTest: initialState.merge({
         experiments: [experiment],
-        winActionTypes: {
+        win_action_types: {
           'Test-action-1': [experiment.name]
         },
         active: {
@@ -77,7 +77,7 @@ describe('utils/generate-win-actions.js', () => {
     const output = generateWinActions({
       reduxAbTest: initialState.merge({
         experiments: [experiment, {...experiment, name: 'Test-exeriment-2'}],
-        winActionTypes: {
+        win_action_types: {
           'Test-action-1': [experiment.name]
         },
         active: {
@@ -103,7 +103,7 @@ describe('utils/generate-win-actions.js', () => {
     const output = generateWinActions({
       reduxAbTest: initialState.merge({
         experiments: [experiment, {...experiment, name: 'Test-exeriment-2'}],
-        winActionTypes: {
+        win_action_types: {
           'Test-action-1': [experiment.name, 'Test-exeriment-2']
         },
         active: {
@@ -136,7 +136,7 @@ describe('utils/generate-win-actions.js', () => {
       generateWinActions({
         reduxAbTest: initialState.merge({
           experiments: [],
-          winActionTypes: {
+          win_action_types: {
             'Test-action-1': [experiment.name]
           },
           active: {
