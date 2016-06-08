@@ -2,11 +2,10 @@
 
 [![NPM Version](https://badge.fury.io/js/redux-ab-test.svg)](https://www.npmjs.com/package/redux-ab-test)
 [![Build Status](https://travis-ci.org/gnagel/redux-ab-test.svg?branch=fix%2Fshuffle-variations)](https://travis-ci.org/gnagel/redux-ab-test)
-[![Coverage Status](https://coveralls.io/repos/github/gnagel/redux-ab-test/badge.svg?branch=master)](https://coveralls.io/github/gnagel/redux-ab-test)
 [![Dependency Status](https://david-dm.org/gnagel/redux-ab-test.svg)](https://david-dm.org/gnagel/redux-ab-test)
 [![NPM Downloads](https://img.shields.io/npm/dm/redux-ab-test.svg?style=flat)](https://www.npmjs.com/package/redux-ab-test)
 
-Wrap components in [`<Variant />`](#variant-) and nest in [`<Experiment />`](#experiment-). A variant is chosen randomly and saved to local storage.
+Wrap components in [`<Variant />`](#variant-) and nest in [`<Experiment />`](#experiment-). A variant is chosen randomly and saved to redux storage.
 
 ```js
 <Experiment name="My Example">
@@ -19,12 +18,89 @@ Wrap components in [`<Variant />`](#variant-) and nest in [`<Experiment />`](#ex
 </Experiment>
 ```
 
-Report to your analytics provider using the [`emitter`](#emitter). Helpers are available for [Mixpanel](#mixpanelhelper) and [Segment.com](#segmenthelper).
+Report to your analytics provider using Redux [`actions`](#actions). Helpers are available for [Mixpanel](#mixpanelhelper) and [Segment.com](#segmenthelper).
 
 ```js
-emitter.addPlayListener(function(experimentName, variantName){
-  mixpanel.track("Start Experiment", {name: experimentName, variant: variantName});
-});
+//
+// Redux Reducer: create a reducer that listens for play & win events
+//
+import { createAction, handleActions }   from 'redux-actions';
+import { PLAY, WIN } = 'redux-ab-test';
+
+// Listen for plays & wins
+const analyticsReducer = handleActions({
+  [PLAY]: (state, { payload }) => {
+    const experiment = payload.get('experiment');
+    const variation = payload.get('variation');
+    // segment.trackEvent('PLAY', ...);
+    return state;
+  },
+  [WIN]: (state, { payload }) => {
+    const experiment = payload.get('experiment');
+    const variation = payload.get('variation');
+    // These are set if a Redux Action triggers the win
+    // See winActionTypes for details
+    const actionType = payload.get('actionType');
+    const actionPayload = payload.get('actionPayload');
+    // segment.trackEvent('WIN', ...);
+    return state;
+  }
+}, {});
+
+};
+```
+
+```js
+//
+// Redux Store: setup the store and attach the middleware
+//
+import { createStore, applyMiddleware, compose } from 'redux';
+import { reactAbTest, reactAbTestInitialState, reduxAbTestMiddleware } from 'redux-ab-test';
+
+const reducers = { reactAbTest, analyticsReducer /* ,... more reducers */ };
+
+const middlewares = [ reduxAbTestMiddleware, /*, thunk, promise, ...*/ ];
+const finalCreateStore = compose(applyMiddleware.apply(this, middleware))(createStore);
+
+const initialState = {
+  reactAbTest: reactAbTestInitialState.merge({
+    experiments: [
+      {
+        name: 'More Clicks',
+        winActionTypes: ['APP/CLICK_LINK'],
+        variations: [
+          { name: 'Control',      weight: 10000 },
+          { name: 'Good Version', weight:  1000 },
+          { name: 'Bad Version',  weight:   500 }
+        ]
+      }
+    ]
+  })
+  /* your app's initial state */
+};
+const store = finalCreateStore(reducers, initialState);
+```
+
+```js
+//
+// Create an experiment and run it!
+//
+class App extends React.Component {
+  render() {
+    // The redux store above registers the the experiment, variations, and weights.
+    // Once we render this you are bucketed into one of the variations!
+    // It's up to you (eg the amazing developer) to record the PLAY events
+    // and persist this to localstore/cookie/database/etc.
+    // -- Go for it!
+    return (
+      <Experiment name='More Clicks'>
+        <Version name='Control'>      <a>Boring CTA text here...      </a></Variant>
+        <Version name='Good Version'> <a>Amazing Deals Here!          </a></Variant>
+        <Version name='Bad Version'>  <a>Nothing interesting here...  </a></Variant>
+      </Experiment>
+    );
+  }
+}
 ```
 
 Please [★ on GitHub](https://github.com/gnagel/redux-ab-test)!
