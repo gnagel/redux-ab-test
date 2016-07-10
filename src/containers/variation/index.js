@@ -1,1 +1,1 @@
-export default from '../../components/variation';
+export default from './variation';

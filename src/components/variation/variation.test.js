@@ -1,18 +1,25 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import Variation from "./variation";
-
+import { initialState } from '../../module';
 import { expect, renderComponent } from 'test_helper';
 
-describe.only('(Component) src/components/variation/variation.js', () => {
+describe('(Component) src/components/variation/variation.js', () => {
   let component;
   let props;
   beforeEach(() => {
     props = {
-      id:         'test-id',
-      name:       'Test-name',
-      experiment: Immutable.Map({ id: 'test-experimentId', name: 'test-experimentName' }),
-      children:   'Test-children',
+      name:           'Variation B',
+      experimentName: 'Test-experimentName',
+      children:       'Test-children',
+      reduxAbTest:    initialState.set('experiments', Immutable.fromJS([{
+        id:         'test-experimentId',
+        name:       'Test-experimentName',
+        variations: [
+          { id: 'test-id-original', name: 'Original', weight: 10000 },
+          { id: 'test-id-variation-b', name: 'Variation B', weight: 0 }
+        ]
+      }]))
     };
     component = renderComponent(Variation, props);
   });
@@ -22,10 +29,9 @@ describe.only('(Component) src/components/variation/variation.js', () => {
   });
 
   it('has the correct props', () => {
-    expect(component).to.have.prop('id', 'test-id');
-    expect(component).to.have.prop('name', 'Test-name');
-    expect(component).to.have.prop('children', 'Test-children');
-    expect(component).to.have.prop('experiment');
+    expect(component).to.have.prop('name', 'Variation B');
+    expect(component).to.have.prop('experimentName', 'Test-experimentName');
+    expect(component).to.have.prop('reduxAbTest');
   });
 
   it('has the correct text', () => {
@@ -33,18 +39,18 @@ describe.only('(Component) src/components/variation/variation.js', () => {
   });
 
   it('has the data* attributes', () => {
-    expect(component).to.have.data('variation-id', 'test-id');
-    expect(component).to.have.data('variation-name', 'Test-name');
+    expect(component).to.have.data('variation-id', 'test-id-variation-b');
+    expect(component).to.have.data('variation-name', 'Variation B');
     expect(component).to.have.data('experiment-id', 'test-experimentId');
-    expect(component).to.have.data('experiment-name', 'test-experimentName');
+    expect(component).to.have.data('experiment-name', 'Test-experimentName');
   });
 
   it('has 1x span around the children', () => {
     expect(component).to.have.tagName('span');
-    expect(component).to.have.data('variation-id', 'test-id');
-    expect(component).to.have.data('variation-name', 'Test-name');
+    expect(component).to.have.data('variation-id', 'test-id-variation-b');
+    expect(component).to.have.data('variation-name', 'Variation B');
     expect(component).to.have.data('experiment-id', 'test-experimentId');
-    expect(component).to.have.data('experiment-name', 'test-experimentName');
+    expect(component).to.have.data('experiment-name', 'Test-experimentName');
     expect(component).to.have.text('Test-children');
   });
 
@@ -53,10 +59,10 @@ describe.only('(Component) src/components/variation/variation.js', () => {
     component = renderComponent(Variation, props);
     expect(component).to.have.tagName('div');
     expect(component).to.have.attr('id', 'test-id');
-    expect(component).to.have.data('variation-id', 'test-id');
-    expect(component).to.have.data('variation-name', 'Test-name');
+    expect(component).to.have.data('variation-id', 'test-id-variation-b');
+    expect(component).to.have.data('variation-name', 'Variation B');
     expect(component).to.have.data('experiment-id', 'test-experimentId');
-    expect(component).to.have.data('experiment-name', 'test-experimentName');
+    expect(component).to.have.data('experiment-name', 'Test-experimentName');
     expect(component).to.have.text('Test-children');
   });
 });

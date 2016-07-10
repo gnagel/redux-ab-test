@@ -1,8 +1,8 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Experiment from "./experiment";
-import Variation from "../variation";
+import Variation from "../../containers/variation";
 import { initialState } from '../../module';
-import { expect, renderComponent, spy } from 'test_helper';
+import { expect, renderContainer, spy } from 'test_helper';
 
 
 const reduxAbTest = initialState.merge({
@@ -58,7 +58,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
       dispatchPlay,
       dispatchWin
     };
-    component = renderComponent(Experiment, props);
+    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
   });
 
   it('exists', () => {
@@ -66,29 +66,31 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(component.html()).to.be.present;
   });
 
-  describe('rendered experiment', () => {
-    it('has 1x rendered variation', () => {
-      expect(component.find(Variation)).to.have.length(1);
-    });
+  it('has 1x rendered Experiment', () => {
+    expect(component).to.have.length(1);
+    expect(component).to.have.prop('name', 'Test-experimentName');
+    expect(component).to.have.tagName('span');
+    expect(component).to.have.text('Test Variation B');
+  });
 
-    it('variation has expected props', () => {
-      expect(component.find(Variation)).to.have.length(1);
-      expect(component).to.not.have.prop('name', 'Variation B');
-      expect(component).to.have.tagName('span');
-      expect(component).to.have.text('Test Variation B');
-    });
+  it('has 1x rendered variation', () => {
+    expect(component.find(Variation)).to.have.length(1);
+    expect(component.find(Variation)).to.have.tagName('span');
+    expect(component.find(Variation)).to.have.prop('name', 'Variation B');
+    expect(component.find(Variation)).to.have.prop('experimentName', 'Test-experimentName');
+    expect(component.find(Variation)).to.have.text('Test Variation B');
+  });
 
-    it('calls onActivate', () => {
-      expect(onActivate).to.have.been.called;
-    });
+  it('calls onActivate', () => {
+    expect(onActivate).to.have.been.called;
+  });
 
-    it('calls onPlay', () => {
-      expect(onPlay).to.have.been.called;
-    });
+  it('calls onPlay', () => {
+    expect(onPlay).to.have.been.called;
+  });
 
-    it('didnt call onWin', () => {
-      expect(onWin).to.not.have.been.called;
-    });
+  it('didnt call onWin', () => {
+    expect(onWin).to.not.have.been.called;
   });
 
   it('did call onWin', () => {
@@ -99,7 +101,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         <Variation name="Variation B"><button onClick={ () => { this.props.handleWin(); } }>Variation B</button></Variation>
       ]
     };
-    component = renderComponent(Experiment, props);
+    component = renderContainer(Experiment, props, { reduxAbTest });
     expect(component.find('button')).to.have.length(1);
     expect(component.find('button')).to.have.text('Variation B');
     // TODO: simulate the onClick event

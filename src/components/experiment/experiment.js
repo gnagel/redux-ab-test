@@ -148,6 +148,7 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
+    const { name } = this.props;
     const { variation, variationElements } = this.state;
     const variationName = variation.get('name');
     const variationChildElement = variationElements.toJS()[variationName];
@@ -156,7 +157,7 @@ export default class Experiment extends React.Component {
     }
 
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(variationChildElement, { handleWin: this._handleWin });
+    return React.cloneElement(variationChildElement, { experimentName: name });
   }
 }
 
