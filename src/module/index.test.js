@@ -29,19 +29,19 @@ import {
 } from './index';
 
 const variation_original:VariationType = {
-  name: "Original",
+  name:   "Original",
   weight: 5000
 };
 const variation_a:VariationType = {
-  name: "Variation #A",
+  name:   "Variation #A",
   weight: 5000
 };
 const variation_b:VariationType = {
-  name: "Variation #B",
+  name:   "Variation #B",
   weight: 0
 };
 const experiment:ExperimentType = {
-  name: "Test-Name",
+  name:       "Test-Name",
   variations: [
     variation_original,
     variation_a,
@@ -123,45 +123,45 @@ describe('(Redux) src/module/index.js', () => {
     };
 
     sharedActionExamples({
-      action: reset,
-      type: RESET,
-      args: undefined,
+      action:  reset,
+      type:    RESET,
+      args:    undefined,
       payload: Immutable.fromJS({})
     });
 
     sharedActionExamples({
       action: load,
-      type: LOAD,
-      args: {
+      type:   LOAD,
+      args:   {
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" }
+        active:      { "Test-Name": "Variation #A" }
       },
       payload: Immutable.fromJS({
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" },
-        types_path: undefined
+        active:      { "Test-Name": "Variation #A" },
+        types_path:  undefined
       })
     });
 
     sharedActionExamples({
       action: load,
-      type: LOAD,
-      args: {
+      type:   LOAD,
+      args:   {
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" },
-        types_path: ['Test-win-path']
+        active:      { "Test-Name": "Variation #A" },
+        types_path:  ['Test-win-path']
       },
       payload: Immutable.fromJS({
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" },
-        types_path: ['Test-win-path']
+        active:      { "Test-Name": "Variation #A" },
+        types_path:  ['Test-win-path']
       })
     });
 
     sharedActionExamples({
       action: activate,
-      type: ACTIVATE,
-      args: {
+      type:   ACTIVATE,
+      args:   {
         experiment: experiment
       },
       payload: Immutable.fromJS({
@@ -171,8 +171,8 @@ describe('(Redux) src/module/index.js', () => {
 
     sharedActionExamples({
       action: deactivate,
-      type: DEACTIVATE,
-      args: {
+      type:   DEACTIVATE,
+      args:   {
         experiment: experiment
       },
       payload: Immutable.fromJS({
@@ -182,40 +182,40 @@ describe('(Redux) src/module/index.js', () => {
 
     sharedActionExamples({
       action: win,
-      type: WIN,
-      args: {
+      type:   WIN,
+      args:   {
         experiment: experiment,
-        variation: variation_original
+        variation:  variation_original
       },
       payload: Immutable.fromJS({
-        experiment: experiment,
-        variation: variation_original,
-        actionType: undefined,
+        experiment:    experiment,
+        variation:     variation_original,
+        actionType:    undefined,
         actionPayload: undefined
       })
     });
 
     sharedActionExamples({
       action: win,
-      type: WIN,
-      args: {
-        experiment: experiment,
-        variation: variation_original,
-        actionType: 'Test-action',
+      type:   WIN,
+      args:   {
+        experiment:    experiment,
+        variation:     variation_original,
+        actionType:    'Test-action',
         actionPayload: { example: 'payload' }
       },
       payload: Immutable.fromJS({
-        experiment: experiment,
-        variation: variation_original,
-        actionType: 'Test-action',
+        experiment:    experiment,
+        variation:     variation_original,
+        actionType:    'Test-action',
         actionPayload: { example: 'payload' }
       })
     });
 
     sharedActionExamples({
       action: registerAdhoc,
-      type: REGISTER_ADHOC,
-      args: {
+      type:   REGISTER_ADHOC,
+      args:   {
         experiment
       },
       payload: Immutable.fromJS({
@@ -282,25 +282,25 @@ describe('(Redux) src/module/index.js', () => {
     };
 
     sharedReducerExamples({
-      type: RESET,
-      state: undefined,
-      payload: undefined,
+      type:     RESET,
+      state:    undefined,
+      payload:  undefined,
       newState: initialState
     });
 
     sharedReducerExamples({
-      type: LOAD,
-      state: undefined,
+      type:    LOAD,
+      state:   undefined,
       payload: Immutable.fromJS({
         experiments: [ experiment ],
-        active: { "Test-Name": "Variation #A" }
+        active:      { "Test-Name": "Variation #A" }
       }),
       newState: initialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" })).set('experiments', Immutable.fromJS([experiment]))
     });
 
     sharedReducerExamples({
-      type: ACTIVATE,
-      state: initialState,
+      type:    ACTIVATE,
+      state:   initialState,
       payload: Immutable.fromJS({
         experiment
       }),
@@ -308,8 +308,8 @@ describe('(Redux) src/module/index.js', () => {
     });
 
     sharedReducerExamples({
-      type: DEACTIVATE,
-      state: initialState.set('running', Immutable.fromJS({ "Test-Name": 1 })),
+      type:    DEACTIVATE,
+      state:   initialState.set('running', Immutable.fromJS({ "Test-Name": 1 })),
       payload: Immutable.fromJS({
         experiment
       }),
@@ -317,29 +317,29 @@ describe('(Redux) src/module/index.js', () => {
     });
 
     sharedReducerExamples({
-      type: PLAY,
-      state: undefined,
+      type:    PLAY,
+      state:   undefined,
       payload: Immutable.fromJS({
         experiment: experiment,
-        variation: variation_a
+        variation:  variation_a
       }),
       newState: initialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" }))
     });
 
     sharedReducerExamples({
-      type: WIN,
-      state: undefined,
+      type:    WIN,
+      state:   undefined,
       payload: Immutable.fromJS({
         experiment: experiment,
-        variation: variation_b
+        variation:  variation_b
       }),
       newState: initialState.set('winners', Immutable.fromJS({ "Test-Name": "Variation #B" }))
     });
 
 
     sharedReducerExamples({
-      type: REGISTER_ADHOC,
-      state: undefined,
+      type:    REGISTER_ADHOC,
+      state:   undefined,
       payload: Immutable.fromJS({
         experiment
       }),
@@ -347,8 +347,8 @@ describe('(Redux) src/module/index.js', () => {
     });
 
     sharedReducerExamples({
-      type: REGISTER_ADHOC,
-      state: undefined,
+      type:    REGISTER_ADHOC,
+      state:   undefined,
       payload: Immutable.fromJS({
         experiment: {...experiment, win_action_types: []}
       }),
@@ -356,13 +356,13 @@ describe('(Redux) src/module/index.js', () => {
     });
 
     sharedReducerExamples({
-      type: REGISTER_ADHOC,
-      state: undefined,
+      type:    REGISTER_ADHOC,
+      state:   undefined,
       payload: Immutable.fromJS({
         experiment: {...experiment, win_action_types: ['Test-action-type']}
       }),
       newState: initialState.merge({
-        experiments: [{...experiment, win_action_types: ['Test-action-type']}],
+        experiments:      [{...experiment, win_action_types: ['Test-action-type']}],
         win_action_types: {
           'Test-action-type': [experiment.name]
         }
@@ -383,7 +383,7 @@ describe('(Redux) src/module/index.js', () => {
 
       it('has the correct experiment', () => {
         const output = findExperiment({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
+          reduxAbTest:    initialState.set('experiments', Immutable.fromJS([experiment])),
           experimentName: experiment.name
         });
         expect(output).to.exist;
@@ -392,7 +392,7 @@ describe('(Redux) src/module/index.js', () => {
 
       it('throws an Error', () => {
         const output = () => findExperiment({
-          reduxAbTest: initialState,
+          reduxAbTest:    initialState,
           experimentName: experiment.name
         });
         expect(output).to.throw(Error);
@@ -407,8 +407,8 @@ describe('(Redux) src/module/index.js', () => {
 
       it('chooses the active variation from redux store', () => {
         const output = selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
-          experiment: Immutable.fromJS(experiment),
+          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+          experiment:           Immutable.fromJS(experiment),
           defaultVariationName: null,
           cacheStore
         });
@@ -418,8 +418,8 @@ describe('(Redux) src/module/index.js', () => {
 
       it('chooses the defaultVariationName variation', () => {
         const output = selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
-          experiment: Immutable.fromJS(experiment),
+          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+          experiment:           Immutable.fromJS(experiment),
           defaultVariationName: "Variation #B",
           cacheStore
         });
@@ -430,8 +430,8 @@ describe('(Redux) src/module/index.js', () => {
       it('chooses the active variation from localcache', () => {
         cacheStore.setItem(experiment.name, variation_b.name);
         const output = selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
-          experiment: Immutable.fromJS(experiment),
+          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+          experiment:           Immutable.fromJS(experiment),
           defaultVariationName: null,
           cacheStore
         });
@@ -441,8 +441,8 @@ describe('(Redux) src/module/index.js', () => {
 
       it('randomly assigns a variation, ignoring weight=0 records', () => {
         const output = selectVariation({
-          reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
-          experiment: Immutable.fromJS(experiment),
+          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+          experiment:           Immutable.fromJS(experiment),
           defaultVariationName: null,
           cacheStore
         });
@@ -455,13 +455,13 @@ describe('(Redux) src/module/index.js', () => {
 
 
   describe('middleware', () => {
-    let recordedActions = []
+    let recordedActions = [];
     let next;
     let reduxAbTest;
     let store;
     beforeEach(() => {
       recordedActions = [];
-      next = (action) => { recordedActions.push(action) };
+      next = (action) => { recordedActions.push(action); };
       reduxAbTest = initialState;
       store = {
         getState: () => { return {reduxAbTest}; }
@@ -470,7 +470,7 @@ describe('(Redux) src/module/index.js', () => {
 
     it('exists', () => {
       expect(middleware).to.exist;
-      expect(middleware).to.be.a('function')
+      expect(middleware).to.be.a('function');
     });
 
     it('doesnt generate new actions', () => {
@@ -503,7 +503,7 @@ describe('(Redux) src/module/index.js', () => {
 
     it('enqueues 1x win per registered experiment', () => {
       reduxAbTest = initialState.merge({
-        experiments: [experiment],
+        experiments:      [experiment],
         win_action_types: {
           'Test-action-type': [experiment.name, 'Test-experiment-2']
         },
@@ -516,11 +516,11 @@ describe('(Redux) src/module/index.js', () => {
       expect(recordedActions).to.deep.equal([
         action,
         {
-          type: WIN,
+          type:    WIN,
           payload: Immutable.fromJS({
             experiment,
-            variation: variation_a,
-            actionType: action.type,
+            variation:     variation_a,
+            actionType:    action.type,
             actionPayload: action.payload
           })
         }

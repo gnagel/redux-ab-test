@@ -22,7 +22,7 @@ export default {
    */
   reduxAbTest,
   reduxAbTestInitialState: initialState,
-  reduxAbTestMiddleware: middleware,
+  reduxAbTestMiddleware:   middleware,
   /**
    * Redux Action Creators
    */

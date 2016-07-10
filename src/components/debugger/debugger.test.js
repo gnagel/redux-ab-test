@@ -13,7 +13,7 @@ describe('(Component) src/components/debugger/debugger.js', () => {
       reduxAbTest: initialState.merge(
         {
           experiments: [{
-            name: 'Test-experimentName',
+            name:       'Test-experimentName',
             variations: [
               { name: 'Original', weight: 10000 },
               { name: 'Variation B', weight: 0 }

@@ -9,25 +9,25 @@ import selectVariation from './select-variation';
 describe('utils/select-variation.js', () => {
   const initialState = Immutable.fromJS({
     experiments: [],
-    plays: {},
-    active: {},
-    winners: {}
+    plays:       {},
+    active:      {},
+    winners:     {}
   });
 
   const variation_original:VariationType = {
-    name: "Original",
+    name:   "Original",
     weight: 5000
   };
   const variation_a:VariationType = {
-    name: "Variation #A",
+    name:   "Variation #A",
     weight: 5000
   };
   const variation_b:VariationType = {
-    name: "Variation #B",
+    name:   "Variation #B",
     weight: 0
   };
   const experiment:ExperimentType = {
-    name: "Test-Name",
+    name:       "Test-Name",
     variations: [
       variation_original,
       variation_a,
@@ -42,8 +42,8 @@ describe('utils/select-variation.js', () => {
 
   it('chooses the active variation from redux store w/o cacheStore', () => {
     const output = selectVariation({
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
-      experiment: Immutable.fromJS(experiment),
+      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+      experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null
     });
     expect(output).to.exist;
@@ -53,10 +53,10 @@ describe('utils/select-variation.js', () => {
   it('chooses the active variation from redux store w/cacheStore', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
-      experiment: Immutable.fromJS(experiment),
+      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+      experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
-      cacheStore: cacheStore
+      cacheStore:           cacheStore
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -67,10 +67,10 @@ describe('utils/select-variation.js', () => {
   it('chooses the defaultVariationName variation', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
-      experiment: Immutable.fromJS(experiment),
+      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+      experiment:           Immutable.fromJS(experiment),
       defaultVariationName: "Variation #B",
-      cacheStore: cacheStore
+      cacheStore:           cacheStore
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -83,10 +83,10 @@ describe('utils/select-variation.js', () => {
     const cacheStore = createCacheStore();
     cacheStore.setItem(experiment.name, variation_b.name);
     const output = selectVariation({
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
-      experiment: Immutable.fromJS(experiment),
+      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+      experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
-      cacheStore: cacheStore
+      cacheStore:           cacheStore
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -98,8 +98,8 @@ describe('utils/select-variation.js', () => {
   it('randomly assigns a variation, ignoring weight=0 records', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      reduxAbTest: initialState.set('experiments', Immutable.fromJS([experiment])),
-      experiment: Immutable.fromJS(experiment),
+      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+      experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
       cacheStore
     });

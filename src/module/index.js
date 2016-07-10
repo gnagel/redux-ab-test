@@ -34,11 +34,11 @@ export const registerAdhoc = createAction(REGISTER_ADHOC,   immutableExperiment 
 
 
 export const initialState = Immutable.fromJS({
-  experiments: [ /** Array of ExperimentType objects */ ],
-  running: { /** "experiment name" => number */ },
-  active: { /** "experiment name" => "variation name" */ },
-  winners: { /** "experiment name" => "variation name" */ },
-  types_path: ['win_action_types'],
+  experiments:      [ /** Array of ExperimentType objects */ ],
+  running:          { /** "experiment name" => number */ },
+  active:           { /** "experiment name" => "variation name" */ },
+  winners:          { /** "experiment name" => "variation name" */ },
+  types_path:       ['win_action_types'],
   win_action_types: { /** Array of Redux Action Types */ },
 });
 
@@ -53,7 +53,7 @@ export const middleware = store => next => action => {
     const actions = generateWinActions({
       reduxAbTest,
       win,
-      actionType: action.type,
+      actionType:    action.type,
       actionPayload: action.payload
     });
     actions.forEach( action => next(action) );
@@ -84,8 +84,8 @@ const reducers = {
       types_path = Immutable.fromJS([payload.get('types_path')]).flatten();
     }
     return initialState.merge({
-      experiments: payload.get('experiments'),
-      active: payload.get('active'),
+      experiments:      payload.get('experiments'),
+      active:           payload.get('active'),
       types_path,
       win_action_types: toWinningActionTypes({experiments: payload.get('experiments'), path: types_path})
     });

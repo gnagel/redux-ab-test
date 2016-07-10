@@ -22,10 +22,10 @@ export const mapStateToProps = (state) => {
 export const mapDispatchToProps = (dispatch) => {
   return {
     dispatchRegisterAdhoc: bindActionCreators(registerAdhoc, dispatch),
-    dispatchActivate: bindActionCreators(activate, dispatch),
-    dispatchDeactivate: bindActionCreators(deactivate, dispatch),
-    dispatchPlay: bindActionCreators(play, dispatch),
-    dispatchWin: bindActionCreators(win, dispatch)
+    dispatchActivate:      bindActionCreators(activate, dispatch),
+    dispatchDeactivate:    bindActionCreators(deactivate, dispatch),
+    dispatchPlay:          bindActionCreators(play, dispatch),
+    dispatchWin:           bindActionCreators(win, dispatch)
   };
 };
 

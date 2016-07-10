@@ -7,7 +7,7 @@
 export default function createCacheStore() {
   let cache = {};
   const noopStore = {
-    cache: () => cache,
+    cache:   () => cache,
     getItem: (key) => {
       return cache[key];
     },

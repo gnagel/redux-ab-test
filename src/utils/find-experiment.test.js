@@ -7,13 +7,13 @@ import findExperiment from './find-experiment';
 describe('utils/find-experiment.js', () => {
   const initialState = Immutable.fromJS({
     experiments: [],
-    plays: {},
-    active: {},
-    winners: {}
+    plays:       {},
+    active:      {},
+    winners:     {}
   });
 
   const experiment:ExperimentType = {
-    name: "Test-Name",
+    name:       "Test-Name",
     variations: [
       { name: "Original", weight: 5000 },
       { name: "Variation #A", weight: 5000 },
@@ -29,7 +29,7 @@ describe('utils/find-experiment.js', () => {
 
   it('has the correct experiment', () => {
     const output = findExperiment({
-      reduxAbTest: initialState.merge({experiments: [experiment]}),
+      reduxAbTest:    initialState.merge({experiments: [experiment]}),
       experimentName: experiment.name
     });
     expect(output).to.exist;
@@ -38,7 +38,7 @@ describe('utils/find-experiment.js', () => {
 
   it('throws an Error', () => {
     const output = () => findExperiment({
-      reduxAbTest: initialState,
+      reduxAbTest:    initialState,
       experimentName: experiment.name
     });
     expect(output).to.throw(Error);

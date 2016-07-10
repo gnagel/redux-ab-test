@@ -14,7 +14,7 @@ describe("__TEST__/Debugger", () => {
     props = {};
     store = {
       reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([{
-        name: 'Test-experimentName',
+        name:       'Test-experimentName',
         variations: [
           { name: 'Original', weight: 10000 },
           { name: 'Variation B', weight: 0 }

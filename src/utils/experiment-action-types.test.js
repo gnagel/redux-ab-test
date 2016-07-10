@@ -6,7 +6,7 @@ import toWinningActionTypes, { toTypes } from './experiment-action-types';
 
 describe('utils/winning-action-types.js', () => {
   const experiment:ExperimentType = {
-    name: "Test-Name",
+    name:       "Test-Name",
     variations: [
       { name: "Original", weight: 5000 },
       { name: "Variation #A", weight: 5000 },
@@ -59,7 +59,7 @@ describe('utils/winning-action-types.js', () => {
         win_action_types: ['Test/TYPE', 'Another-Type']
       }), ['win_action_types']);
       expect(output.toJS()).to.deep.equal({
-        'Test/TYPE': [experiment.name],
+        'Test/TYPE':    [experiment.name],
         'Another-Type': [experiment.name]
       });
     });
@@ -112,7 +112,7 @@ describe('utils/winning-action-types.js', () => {
       ]);
       const output = toWinningActionTypes({experiments, path: ['win_action_types']});
       expect(output.toJS()).to.deep.equal({
-        'Test/TYPE': [experiment.name],
+        'Test/TYPE':    [experiment.name],
         'Another-Type': [experiment.name]
       });
     });
@@ -124,8 +124,8 @@ describe('utils/winning-action-types.js', () => {
       ]);
       const output = toWinningActionTypes({experiments, path: ['win_action_types']});
       expect(output.toJS()).to.deep.equal({
-        'Test/TYPE': [experiment.name, 'Test-name2'],
-        'New-Type': ['Test-name2'],
+        'Test/TYPE':    [experiment.name, 'Test-name2'],
+        'New-Type':     ['Test-name2'],
         'Another-Type': [experiment.name]
       });
     });

@@ -10,7 +10,7 @@ export default class Variation extends React.Component {
   props: Props;
 
   static defaultProps = {
-    name: 'Default Variation Name',
+    name:      'Default Variation Name',
     handleWin: () => {}
   };
 

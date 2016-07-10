@@ -7,7 +7,7 @@ import { expect, renderComponent, spy } from 'test_helper';
 
 const reduxAbTest = initialState.merge({
   'experiments': [{
-    name: 'Test-experimentName',
+    name:       'Test-experimentName',
     variations: [
       { name: 'Original', weight: 10000 },
       { name: 'Variation B', weight: 0 }
@@ -44,7 +44,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
 
     props = {
       reduxAbTest,
-      name: 'Test-experimentName',
+      name:     'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B">Test Variation B</Variation>

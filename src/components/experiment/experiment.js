@@ -84,8 +84,8 @@ export default class Experiment extends React.Component {
     super(props, context);
     this.state = {
       variationElements: {},
-      variation: null,
-      experiment: null
+      variation:         null,
+      experiment:        null
     };
   }
 

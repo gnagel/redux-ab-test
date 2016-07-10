@@ -57,7 +57,7 @@
     "no-multi-spaces": [0],
     "key-spacing": ["error", { "align": "value" }],
     "no-extra-semi": [1],
-    "comma-dangle":[1],
+    "comma-dangle":["error", "only-multiline"],
     "comma-spacing":[1],
     "react/jsx-no-undef": 1,
     "react/no-did-mount-set-state": 1,

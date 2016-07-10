@@ -19,7 +19,7 @@ describe("__TEST__/Experiment", () => {
     onWin = spy();
 
     props = {
-      name: 'Test-experimentName',
+      name:     'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B">Test `Variation` B</Variation>
@@ -31,7 +31,7 @@ describe("__TEST__/Experiment", () => {
     };
     store = {
       reduxAbTest: reduxAbTestInitialState.set('experiments', Immutable.fromJS([{
-        name: 'Test-experimentName',
+        name:       'Test-experimentName',
         variations: [
           { name: 'Original', weight: 10000 },
           { name: 'Variation B', weight: 0 }
@@ -66,7 +66,7 @@ describe("__TEST__/Experiment", () => {
 
   it('did call onWin', () => {
     props = {
-      name: 'Test-experimentName',
+      name:     'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B"><button onClick={ () => { this.props.handleWin(); } }>Variation B</button></Variation>
