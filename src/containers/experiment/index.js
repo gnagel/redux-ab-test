@@ -1,2 +1,1 @@
-import Experiment from './experiment';
-export default Experiment;
+export default from './experiment';

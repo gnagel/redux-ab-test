@@ -66,22 +66,29 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(component.html()).to.be.present;
   });
 
-  it('is the Variation\'s contents', () => {
-    expect(component).to.not.have.prop('name', 'Variation B');
-    expect(component).to.have.tagName('span');
-    expect(component).to.have.text('Test Variation B');
-  });
+  describe('rendered experiment', () => {
+    it('has 1x rendered variation', () => {
+      expect(component.find(Variation)).to.have.length(1);
+    });
 
-  it('calls onActivate', () => {
-    expect(onActivate).to.have.been.called;
-  });
+    it('variation has expected props', () => {
+      expect(component.find(Variation)).to.have.length(1);
+      expect(component).to.not.have.prop('name', 'Variation B');
+      expect(component).to.have.tagName('span');
+      expect(component).to.have.text('Test Variation B');
+    });
 
-  it('calls onPlay', () => {
-    expect(onPlay).to.have.been.called;
-  });
+    it('calls onActivate', () => {
+      expect(onActivate).to.have.been.called;
+    });
 
-  it('didnt call onWin', () => {
-    expect(onWin).to.not.have.been.called;
+    it('calls onPlay', () => {
+      expect(onPlay).to.have.been.called;
+    });
+
+    it('didnt call onWin', () => {
+      expect(onWin).to.not.have.been.called;
+    });
   });
 
   it('did call onWin', () => {

@@ -1,2 +1,1 @@
-import Variation from './variation';
-export default Variation;
+export default from './variation';

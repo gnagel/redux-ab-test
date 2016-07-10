@@ -1,2 +1,1 @@
-import { Variation } from '../../components';
-export default Variation;
+export default from '../../components/variation';

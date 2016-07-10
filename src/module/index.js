@@ -2,7 +2,6 @@
 import React                             from "react"; // eslint-disable-line no-unused-vars
 import Immutable                         from 'immutable';
 import { createAction, handleActions }   from 'redux-actions';
-import findExperiment                    from '../utils/find-experiment';
 import { cacheStore }                    from '../utils/create-cache-store';
 import toWinningActionTypes              from '../utils/experiment-action-types';
 import generateWinActions                from '../utils/generate-win-actions';

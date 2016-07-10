@@ -69,7 +69,6 @@ type State = {
 export default class Experiment extends React.Component {
   props: Props;
   state: State;
-
   static defaultProps = {
     reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
     name:                 'Default Experiment Name',
@@ -79,15 +78,11 @@ export default class Experiment extends React.Component {
     dispatchPlay:         recievesExperimentVariation,
     dispatchWin:          recievesExperimentVariation,
   };
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      variationElements: {},
-      variation:         null,
-      experiment:        null
-    };
-  }
+  state = {
+    variationElements: {},
+    variation:         null,
+    experiment:        null
+  };
 
 
   /**
@@ -142,7 +137,7 @@ export default class Experiment extends React.Component {
   /**
    * Notify the client of the `WIN` event
    */
-  handleWin() {
+  _handleWin = () => {
     const { dispatchWin } = this.props;
     const { experiment, variation } = this.state;
     dispatchWin({experiment, variation});
@@ -161,7 +156,7 @@ export default class Experiment extends React.Component {
     }
 
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(variationChildElement, { handleWin: this.handleWin.bind(this) });
+    return React.cloneElement(variationChildElement, { handleWin: this._handleWin });
   }
 }
 

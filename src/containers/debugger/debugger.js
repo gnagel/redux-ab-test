@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
-import { Debugger } from '../../components';
+import Debugger from '../../components/debugger';
 import { registerAdhoc, activate, deactivate, play, win } from '../../module';
 
 

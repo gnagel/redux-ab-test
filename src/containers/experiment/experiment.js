@@ -3,7 +3,7 @@ import React from "react"; // eslint-disable-line no-unused-vars
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { Experiment } from '../../components';
+import Experiment from '../../components/experiment';
 import { registerAdhoc, activate, deactivate, play, win } from '../../module';
 
 
@@ -19,15 +19,16 @@ export const mapStateToProps = (state) => {
 /**
  * Map the action creators to the the Experiment's props.
  */
-export const mapDispatchToProps = (dispatch) => {
-  return {
-    dispatchRegisterAdhoc: bindActionCreators(registerAdhoc, dispatch),
-    dispatchActivate:      bindActionCreators(activate, dispatch),
-    dispatchDeactivate:    bindActionCreators(deactivate, dispatch),
-    dispatchPlay:          bindActionCreators(play, dispatch),
-    dispatchWin:           bindActionCreators(win, dispatch)
-  };
-};
+export const mapDispatchToProps = (dispatch) => bindActionCreators(
+  {
+    dispatchRegisterAdhoc: registerAdhoc,
+    dispatchActivate:      activate,
+    dispatchDeactivate:    deactivate,
+    dispatchPlay:          play,
+    dispatchWin:           win,
+  },
+  dispatch
+);
 
 
 /**
