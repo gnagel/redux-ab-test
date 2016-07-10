@@ -14,18 +14,18 @@ import {
   DEACTIVATE,
   PLAY,
   WIN,
-  REGISTER_ADHOC,
+  REGISTER_ADHOC
 } from './index';
 import {
   reset,
   load,
   activate,
   deactivate,
-  play,
+  // TODO: play,
   win,
   registerAdhoc,
-  enqueueAWin,
-  respondToWin,
+  // TODO: enqueueAWin,
+  // TODO: respondToWin
 } from './index';
 
 const variation_original:VariationType = {
@@ -134,7 +134,7 @@ describe('(Redux) src/module/index.js', () => {
       type: LOAD,
       args: {
         experiments: [experiment],
-        active: { "Test-Name": "Variation #A" },
+        active: { "Test-Name": "Variation #A" }
       },
       payload: Immutable.fromJS({
         experiments: [experiment],
@@ -341,7 +341,7 @@ describe('(Redux) src/module/index.js', () => {
       type: REGISTER_ADHOC,
       state: undefined,
       payload: Immutable.fromJS({
-        experiment,
+        experiment
       }),
       newState: initialState.set('experiments', Immutable.fromJS([experiment]))
     });
@@ -350,7 +350,7 @@ describe('(Redux) src/module/index.js', () => {
       type: REGISTER_ADHOC,
       state: undefined,
       payload: Immutable.fromJS({
-        experiment: {...experiment, win_action_types: []},
+        experiment: {...experiment, win_action_types: []}
       }),
       newState: initialState.set('experiments', Immutable.fromJS([{...experiment, win_action_types: []}]))
     });
@@ -359,7 +359,7 @@ describe('(Redux) src/module/index.js', () => {
       type: REGISTER_ADHOC,
       state: undefined,
       payload: Immutable.fromJS({
-        experiment: {...experiment, win_action_types: ['Test-action-type']},
+        experiment: {...experiment, win_action_types: ['Test-action-type']}
       }),
       newState: initialState.merge({
         experiments: [{...experiment, win_action_types: ['Test-action-type']}],

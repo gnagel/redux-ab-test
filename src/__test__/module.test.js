@@ -11,7 +11,7 @@ import {
   ACTIVATE,
   DEACTIVATE,
   PLAY,
-  WIN,
+  WIN
 } from '../module';
 import findExperiment from '../utils/find-experiment';
 import selectVariation from '../utils/select-variation';

@@ -20,7 +20,7 @@ describe('utils/generate-win-actions.js', () => {
       { name: "Variation #A", weight: 5000 },
       { name: "Variation #B", weight: 0 }
     ],
-    win_action_types: ['Test-action-1', 'Test-action-2'],
+    win_action_types: ['Test-action-1', 'Test-action-2']
   };
 
   let next;
@@ -108,7 +108,7 @@ describe('utils/generate-win-actions.js', () => {
         },
         active: {
           'Test-Name': 'Original',
-          'Test-exeriment-2': 'Variation #A',
+          'Test-exeriment-2': 'Variation #A'
         }
       }),
       win,

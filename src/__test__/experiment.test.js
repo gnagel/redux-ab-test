@@ -1,8 +1,6 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { Experiment } from "../index";
-import { Variation } from "../index";
-import { reduxAbTestInitialState } from '../index';
+import { Experiment, Variation, reduxAbTestInitialState } from '../index';
 import { expect, renderContainer, spy } from 'test_helper';
 
 
@@ -24,7 +22,7 @@ describe("__TEST__/Experiment", () => {
       name: 'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
-        <Variation name="Variation B">Test Variation B</Variation>
+        <Variation name="Variation B">Test `Variation` B</Variation>
       ],
       onActivate,
       onDeactivate,

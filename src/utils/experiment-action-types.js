@@ -13,7 +13,7 @@ export const toTypes = (experiment, path) => {
  * Generate a hash of "Action Type" => [ "Experiment Names" ...]
  */
 export default function toWinningActionTypes({experiments, path}) {
-  path = Immutable.fromJS(path).toJS()
+  path = Immutable.fromJS(path).toJS();
   if (path.length == 0) {
     throw new Error(`Empty path=${path}`);
   }

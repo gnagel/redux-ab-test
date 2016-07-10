@@ -30,10 +30,10 @@ describe('utils/winning-action-types.js', () => {
 
     it('has the default output', () => {
       let output = toTypes(Immutable.fromJS(experiment), ['win_action_types']);
-      expect(output.toJS()).to.deep.equal({})
+      expect(output.toJS()).to.deep.equal({});
 
       output = toTypes(Immutable.fromJS(experiment).merge({win_action_types: []}), ['win_action_types']);
-      expect(output.toJS()).to.deep.equal({})
+      expect(output.toJS()).to.deep.equal({});
     });
 
     it('converts the string to an array', () => {
@@ -87,13 +87,13 @@ describe('utils/winning-action-types.js', () => {
 
     it('has the default output', () => {
       let output = toWinningActionTypes({ experiments: Immutable.fromJS([]), path: ['win_action_types'] });
-      expect(output.toJS()).to.deep.equal({})
+      expect(output.toJS()).to.deep.equal({});
 
       output = toWinningActionTypes({ experiments: Immutable.fromJS([experiment]), path: ['win_action_types'] });
-      expect(output.toJS()).to.deep.equal({})
+      expect(output.toJS()).to.deep.equal({});
 
       output = toWinningActionTypes({ experiments: Immutable.fromJS([ {...experiment, win_action_types: []} ]), path: ['win_action_types'] });
-      expect(output.toJS()).to.deep.equal({})
+      expect(output.toJS()).to.deep.equal({});
     });
 
     it('has the expected type', () => {

@@ -52,7 +52,6 @@ export const middleware = store => next => action => {
   if (reduxAbTest) {
     const actions = generateWinActions({
       reduxAbTest,
-      next,
       win,
       actionType: action.type,
       actionPayload: action.payload
