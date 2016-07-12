@@ -10,6 +10,6 @@ export default createReduxAbTestStore;
 
 export const decorateStore = (_state = {}) => {
   return (story) => {
-    return (<Provider store={createStore(_state)}>{story()}</Provider>);
+    return (<Provider store={createReduxAbTestStore(_state)}>{story()}</Provider>);
   };
 };
