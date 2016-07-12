@@ -9,7 +9,6 @@ import createCacheStore from './create-cache-store';
 export default function selectVariation({reduxAbTest, experiment, defaultVariationName, cacheStore}) {
   const experimentName = experiment.get('name');
   cacheStore = cacheStore === undefined || cacheStore === null ? createCacheStore() : cacheStore;
-
   // Hash of variation.name => VariationType
   const variationsMap = {};
   experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
@@ -39,6 +38,7 @@ export default function selectVariation({reduxAbTest, experiment, defaultVariati
 
   // Record the choice in the tmp cache
   cacheStore.setItem(experimentName, variation.get('name'));
+  debugger;
 
   // Return the chosen variation
   return variation;

@@ -121,11 +121,11 @@ export default class Debugger extends React.Component {
   }
 
   renderVariation(experiment, variation) {
-    const { reduxAbTest, dispatchActivate } = this.props;
+    const { reduxAbTest, dispatchPlay } = this.props;
     const experimentName = experiment.get('name');
     const variationName = variation.get('name');
     const active = reduxAbTest.get('active').get(experiment.get('name'), null) === variation.get('name');
-    const setActivevariation = () => dispatchActivate({experiment, variation});
+    const setActivevariation = () => dispatchPlay({experiment, variation});
     return (
       <li key={variationName}>
         <label onClick={setActivevariation} className={`${active ? 'active' : 'label'}`}>

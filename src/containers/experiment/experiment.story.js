@@ -3,6 +3,7 @@ import { storiesOf } from '@kadira/storybook';
 import { decorateStore } from '../../../.storybook/store';
 import Experiment from './experiment'; //eslint-disable-line
 import Variation from '../variation'; //eslint-disable-line
+import Debugger from '../debugger'; //eslint-disable-line
 
 const __state__ = {
   experiments: [
@@ -22,12 +23,15 @@ storiesOf('Experiment', module)
   .addDecorator(decorateStore(__state__))
 
   .add('Original variation in an experiment', () => (
-    <Experiment
-      name='Test-experimentName'
-      experimentName='Test-experimentName'
-      >
-      <Variation name='Original'>Original content</Variation>
-      <Variation name='Variation B'>Variation B's content</Variation>
-    </Experiment>
+    <div>
+      <Experiment
+        name='Test-experimentName'
+        experimentName='Test-experimentName'
+        >
+        <Variation name='Original'>Original content</Variation>
+        <Variation name='Variation B'>Variation B's content</Variation>
+      </Experiment>
+      <Debugger />
+    </div>
   ))
   ;
