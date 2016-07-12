@@ -16,7 +16,7 @@ export default function generateWinActions({reduxAbTest, win, actionType, action
       return list;
     }
 
-    const experiment = findExperiment({reduxAbTest, experimentName});
+    const experiment = findExperiment(reduxAbTest, experimentName);
     const variationName = reduxAbTest.get('active').get(experimentName);
     const variation = experiment.get('variations').find( variation => (variation.get('name') === variationName) );
     if (!variation) {

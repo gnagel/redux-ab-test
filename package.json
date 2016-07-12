@@ -65,7 +65,7 @@
     "eslint-plugin-react": "^5.2.2",
     "express": "^4.14.0",
     "flow": "^0.2.3",
-    "flow-bin": "^0.27.0",
+    "flow-bin": "^0.28.0",
     "flow-interfaces": "^0.6.1",
     "history": "^3.0.0",
     "iflow-axios": "^1.0.17",

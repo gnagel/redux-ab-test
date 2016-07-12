@@ -305,19 +305,19 @@ describe("__TEST__/reduxAbTest", () => {
       });
 
       it('has the correct experiment', () => {
-        const output = findExperiment({
-          reduxAbTest:    reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])),
-          experimentName: experiment.name
-        });
+        const output = findExperiment(
+          reduxAbTestInitialState.set('experiments', Immutable.fromJS([experiment])),
+          experiment.name
+        );
         expect(output).to.exist;
         expect(output.toJSON()).to.deep.equal(experiment);
       });
 
       it('throws an Error', () => {
-        const output = () => findExperiment({
-          reduxAbTest:    reduxAbTestInitialState,
-          experimentName: experiment.name
-        });
+        const output = () => findExperiment(
+          reduxAbTestInitialState,
+          experiment.name
+        );
         expect(output).to.throw(Error);
       });
     });

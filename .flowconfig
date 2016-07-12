@@ -1,15 +1,17 @@
 [libs]
 ./node_modules/flow-interfaces/interfaces/
-./src/interfaces/
+./interfaces/
 
 [include]
+./src/*.js
 ./src/**/*.js
 
 [ignore]
-.*/*test*/*
-.*/*/*.test.js
+.src/*/*.test.js
+.src/**/*.test.js
 
 [options]
+module.name_mapper='^redux-ab-test/i/\(.*\)' -> '<PROJECT_ROOT>/i/\1'
 module.system=haste
 module.system.node.resolve_dirname=node_modules
 module.system.node.resolve_dirname=src
@@ -25,14 +27,5 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(1[0-6]\\|[0
 suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(1[0-6]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*www[a-z,_]*\\)?)\\)? #[0-9]+
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 
-module.name_mapper='.*\.\(scss\|css\)$' -> 'CSSModule'
-module.name_mapper='.*\.\(jpg\|jpeg\|gif\|svg\|png\)$' -> 'Image'
-module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
-module.name_mapper='^views\/\(.*\)$' -> '<PROJECT_ROOT>/app/views/\1'
-module.name_mapper='^redux\/\(.*\)$' -> '<PROJECT_ROOT>/app/redux/\1'
-module.name_mapper='^lib\/\(.*\)$' -> '<PROJECT_ROOT>/app/lib/\1'
-module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/app/utils/\1'
-module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/app/components/\1'
-
 [version]
-0.27.0
+0.28.0

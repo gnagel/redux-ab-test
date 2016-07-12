@@ -86,7 +86,7 @@ const reducers = {
       experiments:      payload.get('experiments'),
       active:           payload.get('active'),
       types_path,
-      win_action_types: toWinningActionTypes({experiments: payload.get('experiments'), path: types_path})
+      win_action_types: toWinningActionTypes(payload.get('experiments'), types_path)
     });
   },
 
@@ -103,7 +103,7 @@ const reducers = {
       return state;
     }
     const experiments = state.get('experiments').push(experiment);
-    const win_action_types = toWinningActionTypes({experiments, path: state.get('types_path')});
+    const win_action_types = toWinningActionTypes(experiments, state.get('types_path'));
     return state.merge({
       experiments,
       win_action_types

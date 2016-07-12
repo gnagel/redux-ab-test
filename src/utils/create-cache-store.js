@@ -8,16 +8,16 @@ export default function createCacheStore() {
   let cache = {};
   const noopStore = {
     cache:   () => cache,
-    getItem: (key) => {
+    getItem: (key:string):any => {
       return cache[key];
     },
-    setItem: (key, value) => {
+    setItem: (key:string, value:any):void => {
       cache[key] = value;
     },
-    removeItem: (key) => {
+    removeItem: (key:string):void => {
       delete cache[key];
     },
-    clear: () => {
+    clear: ():void => {
       cache = {};
     }
   };

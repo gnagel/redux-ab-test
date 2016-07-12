@@ -1,7 +1,6 @@
 /** @flow */
 import React from "react";
 import Immutable from 'immutable';
-import { ExperimentType, VariationType, recievesExperiment, recievesExperimentVariation } from '../../interfaces';
 import findExperiment from '../../utils/find-experiment';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
@@ -73,10 +72,10 @@ export default class Experiment extends React.Component {
     reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
     name:                 'Default Experiment Name',
     defaultVariationName: null,
-    dispatchActivate:     recievesExperiment,
-    dispatchDeactivate:   recievesExperiment,
-    dispatchPlay:         recievesExperimentVariation,
-    dispatchWin:          recievesExperimentVariation,
+    dispatchActivate:     () => {},
+    dispatchDeactivate:   () => {},
+    dispatchPlay:         () => {},
+    dispatchWin:          () => {},
   };
   state = {
     variationElements: {},
@@ -90,7 +89,7 @@ export default class Experiment extends React.Component {
    */
   componentWillMount() {
     const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
-    const experiment = findExperiment({reduxAbTest, experimentName: name});
+    const experiment = findExperiment(reduxAbTest, name);
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectVariation({
       reduxAbTest,
@@ -111,7 +110,7 @@ export default class Experiment extends React.Component {
    */
   componentWillReceiveProps(nextProps) {
     const { name, defaultVariationName, reduxAbTest, children } = nextProps;
-    const experiment = findExperiment({reduxAbTest, experimentName: name});
+    const experiment = findExperiment(reduxAbTest, name);
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectVariation({
       reduxAbTest,

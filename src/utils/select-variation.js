@@ -38,7 +38,6 @@ export default function selectVariation({reduxAbTest, experiment, defaultVariati
 
   // Record the choice in the tmp cache
   cacheStore.setItem(experimentName, variation.get('name'));
-  debugger;
 
   // Return the chosen variation
   return variation;
