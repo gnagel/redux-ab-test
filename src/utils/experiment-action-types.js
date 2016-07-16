@@ -1,7 +1,7 @@
 /** @flow */
 import Immutable from 'immutable';
 
-export const toTypes = (experiment:Immuable.Map, path:string):Immuable.Map => {
+export const toTypes = (experiment:Immuable.Map, path:Array<string>):Immuable.Map => {
   const experimentName = experiment.get('name');
   const win_action_types = Immutable.List([experiment.getIn(path)]).flatten().filter( value => value );
   const output = win_action_types.reduce( (hash, type) => hash.set(type, Immutable.Set([experimentName])), Immutable.Map({}) );

@@ -96,21 +96,21 @@ describe('utils/winning-action-types.js', () => {
       expect(output.toJS()).to.deep.equal({});
     });
 
-    it('has the expected type', () => {
+    it('output has the expected type', () => {
       const experiments = Immutable.fromJS([
         {...experiment, win_action_types: ['Test/TYPE']}
       ]);
-      const output = toWinningActionTypes({experiments, path: ['win_action_types']});
+      const output = toWinningActionTypes(experiments, ['win_action_types']);
       expect(output.toJS()).to.deep.equal({
         'Test/TYPE': [ experiment.name ]
       });
     });
 
-    it('has the expected types', () => {
+    it('output has the expected types', () => {
       const experiments = Immutable.fromJS([
         {...experiment, win_action_types: ['Test/TYPE', 'Another-Type']}
       ]);
-      const output = toWinningActionTypes({experiments, path: ['win_action_types']});
+      const output = toWinningActionTypes(experiments, ['win_action_types']);
       expect(output.toJS()).to.deep.equal({
         'Test/TYPE':    [experiment.name],
         'Another-Type': [experiment.name]
@@ -122,7 +122,7 @@ describe('utils/winning-action-types.js', () => {
         {...experiment, win_action_types: ['Test/TYPE', 'Another-Type']},
         {...experiment, name: 'Test-name2', win_action_types: ['Test/TYPE', 'New-Type']}
       ]);
-      const output = toWinningActionTypes({experiments, path: ['win_action_types']});
+      const output = toWinningActionTypes(experiments, ['win_action_types']);
       expect(output.toJS()).to.deep.equal({
         'Test/TYPE':    [experiment.name, 'Test-name2'],
         'New-Type':     ['Test-name2'],

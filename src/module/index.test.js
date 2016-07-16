@@ -7,15 +7,7 @@ import findExperiment from '../utils/find-experiment';
 import selectVariation from '../utils/select-variation';
 
 import reduxAbTest, { VariationType, ExperimentType, initialState, middleware } from './index';
-import {
-  RESET,
-  LOAD,
-  ACTIVATE,
-  DEACTIVATE,
-  PLAY,
-  WIN,
-  REGISTER_ADHOC
-} from './index';
+import { RESET, LOAD, ACTIVATE, DEACTIVATE, PLAY, WIN, REGISTER_ADHOC } from './index';
 import {
   reset,
   load,
@@ -486,7 +478,7 @@ describe('(Redux) src/module/index.js', () => {
         win_action_types: {}
       });
       const action = {type: 'Test-action-type'};
-      const output = middleware(store)(next)(action);
+      middleware(store)(next)(action);
       expect(next).to.have.been.calledOnce;
     });
 
@@ -495,7 +487,8 @@ describe('(Redux) src/module/index.js', () => {
         win_action_types: {}
       });
       const action = {type: 'Test-action-type'};
-      const output = middleware(store)(next)(action);
+      middleware(store)(next)(action);
+      expect(recordedActions).to.not.be.empty;
       expect(recordedActions).to.deep.equal([
         action
       ]);
