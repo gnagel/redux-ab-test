@@ -468,7 +468,7 @@ describe('(Redux) src/module/index.js', () => {
     it('doesnt generate new actions', () => {
       next = spy();
       const action = {type: 'Test-action-type'};
-      const output = middleware(store)(next)(action);
+      middleware(store)(next)(action);
       expect(next).to.have.been.calledOnce;
     });
 
@@ -505,7 +505,7 @@ describe('(Redux) src/module/index.js', () => {
         }
       });
       const action = { type: 'Test-action-type', payload: { example: 'payload' } };
-      const output = middleware(store)(next)(action);
+      middleware(store)(next)(action);
       expect(recordedActions).to.deep.equal([
         action,
         {
