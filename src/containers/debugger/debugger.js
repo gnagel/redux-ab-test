@@ -22,13 +22,12 @@ export const mapStateToProps = (state:Object) => {
  * Map the action creators to the the Experiment's props.
  */
 export const mapDispatchToProps = (dispatch:Function) => bindActionCreators({
-    dispatchRegisterAdhoc: registerAdhoc,
-    dispatchActivate:      activate,
-    dispatchDeactivate:    deactivate,
-    dispatchPlay:          play,
-    dispatchWin:           win,
-  }, dispatch
-);
+  dispatchRegisterAdhoc: registerAdhoc,
+  dispatchActivate:      activate,
+  dispatchDeactivate:    deactivate,
+  dispatchPlay:          play,
+  dispatchWin:           win,
+}, dispatch);
 
 
 /**
