@@ -1,1 +1,2 @@
-export default from'./debugger';
+import Debugger from './debugger';
+export default Debugger;
