@@ -17,7 +17,7 @@ type Props = {
 export default function selectVariation(props:Props) {
   const { reduxAbTest, experiment, defaultVariationName, cacheStore } = props;
   const experimentName = experiment.get('name');
-  const cache = cacheStore === undefined || cacheStore === null ? createCacheStore() : cache;
+  const cache = cacheStore === undefined || cacheStore === null ? createCacheStore() : cacheStore;
   // Hash of variation.name => VariationType
   const variationsMap = {};
   experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
