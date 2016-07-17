@@ -2,9 +2,16 @@
 import Immutable from 'immutable';
 import findExperiment from './find-experiment';
 
+type Props = {
+  reduxAbTest:   Immutable.Map,
+  win:           Function,
+  actionType:    string,
+  actionPayload: any,
+};
 
 // If the action is one of the ones we listen for, then generate `wins` if that experiment has been played
-export default function generateWinActions({reduxAbTest, win, actionType, actionPayload}) {
+export default function generateWinActions(props:Props) {
+  const { reduxAbTest, win, actionType, actionPayload } = props;
   const win_action_types = reduxAbTest.get('win_action_types');
   if (!win_action_types.has(actionType)) {
     return Immutable.List([]);

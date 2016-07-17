@@ -7,7 +7,7 @@ import Variation from '../../components/variation';
 /**
  * Map the Redux Store to the Experiment's props
  */
-export const mapStateToProps = (state) => {
+export const mapStateToProps = (state:Object) => {
   const { reduxAbTest } = state;
   return { reduxAbTest };
 };

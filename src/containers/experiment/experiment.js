@@ -10,7 +10,7 @@ import { registerAdhoc, activate, deactivate, play, win } from '../../module';
 /**
  * Map the Redux Store to the Experiment's props
  */
-export const mapStateToProps = (state) => {
+export const mapStateToProps = (state:Object) => {
   const { reduxAbTest } = state;
   return { reduxAbTest };
 };
@@ -19,7 +19,7 @@ export const mapStateToProps = (state) => {
 /**
  * Map the action creators to the the Experiment's props.
  */
-export const mapDispatchToProps = (dispatch) => bindActionCreators(
+export const mapDispatchToProps = (dispatch:Function) => bindActionCreators(
   {
     dispatchRegisterAdhoc: registerAdhoc,
     dispatchActivate:      activate,

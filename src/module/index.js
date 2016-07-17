@@ -42,7 +42,7 @@ export const initialState = Immutable.fromJS({
 });
 
 
-export const middleware = store => next => action => {
+export const middleware = (store:Object) => (next:Function) => (action:Object) => {
   // Process the input action
   const output = next(action);
 

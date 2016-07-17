@@ -46,6 +46,10 @@ type Props = {
    * Action Creator callback: Function({experiment:ExperimentType, variation:VariationType})
    */
   dispatchWin: Function,
+  /**
+   * Variation Children to render
+   */
+  children: any,
 };
 
 
@@ -108,7 +112,7 @@ export default class Experiment extends React.Component {
   /**
    * Update the component's state with the new properties
    */
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps:Props) {
     const { name, defaultVariationName, reduxAbTest, children } = nextProps;
     const experiment = findExperiment(reduxAbTest, name);
     const variationElements = mapChildrenToVariationElements(children);
@@ -149,6 +153,10 @@ export default class Experiment extends React.Component {
   render() {
     const { name } = this.props;
     const { variation, variationElements } = this.state;
+    if (!variation) {
+      return null;
+    }
+
     const variationName = variation.get('name');
     const variationChildElement = variationElements.toJS()[variationName];
     if (!variationChildElement) {

@@ -9,6 +9,8 @@
 .src/*/*.test.js
 .src/**/*.test.js
 ./node_modules/**/*.js
+./node_modules/**/*.json
+node_modules/cjson/test/fixtures/templates/conf11tmpl.json
 
 [options]
 module.name_mapper='^redux-ab-test/i/\(.*\)' -> '<PROJECT_ROOT>/i/\1'
