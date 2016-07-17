@@ -1,5 +1,4 @@
 [libs]
-./node_modules/flow-interfaces/interfaces/
 ./interfaces/
 
 [include]
@@ -9,6 +8,7 @@
 [ignore]
 .src/*/*.test.js
 .src/**/*.test.js
+./node_modules/**/*.js
 
 [options]
 module.name_mapper='^redux-ab-test/i/\(.*\)' -> '<PROJECT_ROOT>/i/\1'
@@ -28,4 +28,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(1[0-6]\\|[0-9]\\).[0-9
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 
 [version]
-0.28.0
+0.29.0
