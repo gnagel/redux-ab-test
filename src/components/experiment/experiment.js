@@ -1,7 +1,6 @@
 /** @flow */
 import React from "react";
 import Immutable from 'immutable';
-import { ExperimentType, VariationType, recievesExperiment, recievesExperimentVariation } from '../../interfaces';
 import findExperiment from '../../utils/find-experiment';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
@@ -47,6 +46,10 @@ type Props = {
    * Action Creator callback: Function({experiment:ExperimentType, variation:VariationType})
    */
   dispatchWin: Function,
+  /**
+   * Variation Children to render
+   */
+  children: any,
 };
 
 
@@ -69,25 +72,20 @@ type State = {
 export default class Experiment extends React.Component {
   props: Props;
   state: State;
-
   static defaultProps = {
     reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
     name:                 'Default Experiment Name',
     defaultVariationName: null,
-    dispatchActivate:     recievesExperiment,
-    dispatchDeactivate:   recievesExperiment,
-    dispatchPlay:         recievesExperimentVariation,
-    dispatchWin:          recievesExperimentVariation,
+    dispatchActivate:     () => {},
+    dispatchDeactivate:   () => {},
+    dispatchPlay:         () => {},
+    dispatchWin:          () => {},
   };
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = {
-      variationElements: {},
-      variation: null,
-      experiment: null
-    };
-  }
+  state = {
+    variationElements: {},
+    variation:         null,
+    experiment:        null
+  };
 
 
   /**
@@ -95,7 +93,7 @@ export default class Experiment extends React.Component {
    */
   componentWillMount() {
     const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay, children } = this.props;
-    const experiment = findExperiment({reduxAbTest, experimentName: name});
+    const experiment = findExperiment(reduxAbTest, name);
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectVariation({
       reduxAbTest,
@@ -114,9 +112,9 @@ export default class Experiment extends React.Component {
   /**
    * Update the component's state with the new properties
    */
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps:Props) {
     const { name, defaultVariationName, reduxAbTest, children } = nextProps;
-    const experiment = findExperiment({reduxAbTest, experimentName: name});
+    const experiment = findExperiment(reduxAbTest, name);
     const variationElements = mapChildrenToVariationElements(children);
     const variation = selectVariation({
       reduxAbTest,
@@ -142,7 +140,7 @@ export default class Experiment extends React.Component {
   /**
    * Notify the client of the `WIN` event
    */
-  handleWin() {
+  _handleWin = () => {
     const { dispatchWin } = this.props;
     const { experiment, variation } = this.state;
     dispatchWin({experiment, variation});
@@ -153,7 +151,12 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
+    const { name } = this.props;
     const { variation, variationElements } = this.state;
+    if (!variation) {
+      return null;
+    }
+
     const variationName = variation.get('name');
     const variationChildElement = variationElements.toJS()[variationName];
     if (!variationChildElement) {
@@ -161,7 +164,7 @@ export default class Experiment extends React.Component {
     }
 
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(variationChildElement, { handleWin: this.handleWin.bind(this) });
+    return React.cloneElement(variationChildElement, { experimentName: name });
   }
 }
 

@@ -1,12 +1,11 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Experiment, { mapStateToProps, mapDispatchToProps } from "./experiment";
-import Variation from '../variation';
+import Variation, { mapStateToProps } from "./variation";
 import { initialState } from '../../module';
-import { expect, renderContainer, spy } from 'test_helper';
+import { expect, renderContainer } from 'test_helper';
 
 
-describe('(Container) Experiment', () => {
+describe('(Container) Variation', () => {
   describe('mapStateToProps', () => {
     it('exists', () => {
       expect(mapStateToProps).to.exist;
@@ -19,25 +18,13 @@ describe('(Container) Experiment', () => {
     });
   });
 
-  describe('mapDispatchToProps', () => {
-    it('exists', () => {
-      expect(mapDispatchToProps).to.exist;
-    });
-    it('has correct keys', () => {
-      const dispatch = spy();
-      expect(mapDispatchToProps(dispatch)).to.have.keys(['dispatchActivate', 'dispatchDeactivate', 'dispatchPlay', 'dispatchWin', 'dispatchRegisterAdhoc']);
-    });
-  });
-
   describe('component', () => {
     let component;
     beforeEach(() => {
       const props = {
-        name:     'Test-experimentName',
-        children: [
-          <Variation name="Original">Test Original</Variation>,
-          <Variation name="Variation B">Test Variation B</Variation>
-        ],
+        name:           'Test-variationName',
+        experimentName: 'Test-experimentName',
+        children:       'Test Variation B',
       };
       const store = {
         reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
@@ -48,7 +35,7 @@ describe('(Container) Experiment', () => {
           ]
         }]))
       };
-      component = renderContainer(Experiment, props, store);
+      component = renderContainer(Variation, props, store).find(Variation);
     });
 
     it('exists', () => {
@@ -57,7 +44,14 @@ describe('(Container) Experiment', () => {
     });
 
     it('has 1x Variation', () => {
-      expect(component.find(Variation)).to.have.length(1);
+      expect(component).to.have.length(1);
+    });
+
+    it('variation has expected props', () => {
+      expect(component).to.have.length(1);
+      expect(component).to.not.have.prop('name', 'Variation B');
+      expect(component).to.have.tagName('span');
+      expect(component).to.have.text('Test Variation B');
     });
   });
 });

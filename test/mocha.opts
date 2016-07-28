@@ -1,6 +1,4 @@
 --require babel-core/register
 --require babel-polyfill
 --require test/test_setup.js
---reporter=progress
---bail
 src/**/*.test.js

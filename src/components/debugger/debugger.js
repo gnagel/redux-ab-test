@@ -46,11 +46,7 @@ type State = {
 export default class Debugger extends React.Component {
   props: Props;
   state: State;
-
-  constructor(props, context) {
-    super(props, context);
-    this.state = { isOpen: false };
-  }
+  state = { isOpen: false };
 
   toggleVisibility() {
     const { isOpen } = this.state;
@@ -102,7 +98,7 @@ export default class Debugger extends React.Component {
     return null;
   }
 
-  renderExperiment(experiment) {
+  renderExperiment(experiment:Immutable.Map) {
     const experimentName = experiment.get('name');
     const variations = experiment.get('variations');
     const variationNames = variations.map( variation => variation.get('name') ).toJS();
@@ -120,12 +116,12 @@ export default class Debugger extends React.Component {
     );
   }
 
-  renderVariation(experiment, variation) {
-    const { reduxAbTest, dispatchActivate } = this.props;
+  renderVariation(experiment:Immutable.Map, variation:Immutable.Map) {
+    const { reduxAbTest, dispatchPlay } = this.props;
     const experimentName = experiment.get('name');
     const variationName = variation.get('name');
     const active = reduxAbTest.get('active').get(experiment.get('name'), null) === variation.get('name');
-    const setActivevariation = () => dispatchActivate({experiment, variation});
+    const setActivevariation = () => dispatchPlay({experiment, variation});
     return (
       <li key={variationName}>
         <label onClick={setActivevariation} className={`${active ? 'active' : 'label'}`}>

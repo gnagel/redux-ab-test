@@ -1,15 +1,23 @@
 /** @flow */
 import React           from "react"; // eslint-disable-line no-unused-vars
+import Immutable from 'immutable';
 import randomVariation from './random-variation';
 import createCacheStore from './create-cache-store';
+
+type Props = {
+  reduxAbTest:          Immutable.Map,
+  experiment:           Immutable.Map,
+  defaultVariationName: ?string,
+  cacheStore:           ?Object,
+};
 
 /**
  * Select a variation for the experiment
  */
-export default function selectVariation({reduxAbTest, experiment, defaultVariationName, cacheStore}) {
+export default function selectVariation(props:Props) {
+  const { reduxAbTest, experiment, defaultVariationName, cacheStore } = props;
   const experimentName = experiment.get('name');
-  cacheStore = cacheStore === undefined || cacheStore === null ? createCacheStore() : cacheStore;
-
+  const cache = cacheStore === undefined || cacheStore === null ? createCacheStore() : cacheStore;
   // Hash of variation.name => VariationType
   const variationsMap = {};
   experiment.get('variations').forEach( variation => variationsMap[variation.get('name')] = variation );
@@ -23,14 +31,14 @@ export default function selectVariation({reduxAbTest, experiment, defaultVariati
   // Match against the instance state.
   // This is used as a in-memory cache to prevent multiple instances of the same experiment from getting differient variations.
   // It is wiped out with each pass of the RESET/LOAD/PLAY cycle
-  const storeVariationName = cacheStore.getItem(experimentName);
+  const storeVariationName = cache.getItem(experimentName);
   if (storeVariationName && variationsMap[storeVariationName]) {
     return variationsMap[storeVariationName];
   }
 
   // Match against the defaultVariationName
   if (defaultVariationName && variationsMap[defaultVariationName]) {
-    cacheStore.setItem(experimentName, variationsMap[defaultVariationName].get('name'));
+    cache.setItem(experimentName, variationsMap[defaultVariationName].get('name'));
     return variationsMap[defaultVariationName];
   }
 
@@ -38,7 +46,7 @@ export default function selectVariation({reduxAbTest, experiment, defaultVariati
   const variation = randomVariation(experiment);
 
   // Record the choice in the tmp cache
-  cacheStore.setItem(experimentName, variation.get('name'));
+  cache.setItem(experimentName, variation.get('name'));
 
   // Return the chosen variation
   return variation;

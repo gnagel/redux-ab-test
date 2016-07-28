@@ -1,44 +1,41 @@
 {
-    "presets": [
-        "react",
-        "es2015",
-        "stage-0"
-    ],
-    "plugins": [
-        "transform-runtime",
-        "add-module-exports",
-        "transform-react-display-name"
-    ],
-    "env": {
-        "test": {
-            "plugins": [
-                [
-                    "react-transform",
-                    {
-                      "transforms": [
-                        {
-                          "transform": "react-transform-catch-errors",
-                          "imports": ["react", "redbox-react"]
-                        }
-                      ]
-                    }
-                ]
+  "presets": [ "airbnb", "react", "es2015", "es2016", "stage-0" ],
+  "plugins": [
+    "transform-class-properties",
+    "transform-runtime",
+    "transform-react-display-name",
+    "add-module-exports",
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        [
+          "react-transform",
+          {
+            "transforms": [
+              {
+                "transform": "react-transform-catch-errors",
+                "imports": ["react", "redbox-react"]
+              }
             ]
-        },
-        "development": {
-            "plugins": [
-                [
-                    "react-transform",
-                    {
-                      "transforms": [
-                        {
-                          "transform": "react-transform-catch-errors",
-                          "imports": ["react", "redbox-react"]
-                        }
-                      ]
-                    }
-                ]
+          }
+        ]
+      ]
+    },
+    "development": {
+      "plugins": [
+        [
+          "react-transform",
+          {
+            "transforms": [
+              {
+                "transform": "react-transform-catch-errors",
+                "imports": ["react", "redbox-react"]
+              }
             ]
-        }
+          }
+        ]
+      ]
     }
+  }
 }
