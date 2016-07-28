@@ -22,7 +22,7 @@ describe('(Container) Variation', () => {
     let component;
     beforeEach(() => {
       const props = {
-        name:           'Test-variationName',
+        name:           'Variation B',
         experimentName: 'Test-experimentName',
         children:       'Test Variation B',
       };
@@ -49,7 +49,7 @@ describe('(Container) Variation', () => {
 
     it('variation has expected props', () => {
       expect(component).to.have.length(1);
-      expect(component).to.not.have.prop('name', 'Variation B');
+      expect(component).to.have.prop('name', 'Variation B');
       expect(component).to.have.tagName('span');
       expect(component).to.have.text('Test Variation B');
     });

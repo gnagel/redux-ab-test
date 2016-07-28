@@ -93,20 +93,22 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(onWin).to.not.have.been.called;
   });
 
-  it('did call onWin', () => {
-    props = {
-      ...props,
-      children: [
-        <Variation name="Original">Test Original</Variation>,
-        <Variation name="Variation B"><button onClick={ () => { this.props.handleWin(); } }>Variation B</button></Variation>
-      ]
-    };
-    component = renderContainer(Experiment, props, { reduxAbTest });
-    expect(component.find('button')).to.have.length(1);
-    expect(component.find('button')).to.have.text('Variation B');
-    // TODO: simulate the onClick event
-    // component.find('button').simulate('click');
-    //   expect(onWin).to.have.been.called;
+  it('wraps the text children in a Variation', () => {
+    props['children'] = 'Testing a single child';
+    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
+    expect(component).to.exist;
+    expect(component.find(Variation)).to.have.length(1);
+    expect(component.find(Variation)).to.have.tagName('span');
+    expect(component.find(Variation)).to.have.prop('experimentName', 'Test-experimentName');
+  });
+
+  it('wraps the component children in a Variation', () => {
+    props['children'] = <div>Testing a single child</div>;
+    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
+    expect(component).to.exist;
+    expect(component.find(Variation)).to.have.length(1);
+    expect(component.find(Variation)).to.have.tagName('div');
+    expect(component.find(Variation)).to.have.prop('experimentName', 'Test-experimentName');
   });
 
   it('creates Ad-hoc experiments');
