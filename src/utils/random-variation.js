@@ -19,7 +19,7 @@ export const toRange = (list:Immuable.List, counter:number) => {
 export const toRanges = (variations:Immuable.List) => variations.map(toWeight).reduce(toRange, Immutable.List([]));
 
 export default function randomVariation(experiment:Immuable.Map, random:Function = Math.random) {
-  const variations = experiment.get('variations').sortBy(toWeight).reverse();
+  const variations = experiment.get('variations').toList().sortBy(toWeight).reverse();
   const weightTotal = toTotal(variations);
   const weightRanges = toRanges(variations);
   const weightRandom = Math.round(weightTotal * random());

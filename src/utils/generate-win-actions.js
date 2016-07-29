@@ -1,7 +1,5 @@
 /** @flow */
 import Immutable from 'immutable';
-import findExperiment from './find-experiment';
-import findVariation from './find-variation';
 
 type Props = {
   reduxAbTest:   Immutable.Map,
@@ -13,26 +11,26 @@ type Props = {
 // If the action is one of the ones we listen for, then generate `wins` if that experiment has been played
 export default function generateWinActions(props:Props) {
   const { reduxAbTest, win, actionType, actionPayload } = props;
-  const win_action_types = reduxAbTest.get('win_action_types');
-  if (!win_action_types.has(actionType)) {
+
+  // Experiment IDs that match the current action
+  const experimentKeys = reduxAbTest.getIn(['win_action_types', actionType], null);
+  if (!experimentKeys) {
     return Immutable.List([]);
   }
 
-  const experimentNames = win_action_types.get(actionType);
-  const reduceToActions = (list, experimentName) => {
-    if (!reduxAbTest.get('active').has(experimentName)) {
-      return list;
+  const actions = experimentKeys.map(experimentKey => {
+    const experiment = reduxAbTest.getIn(['allExperiments', experimentKey], null);
+    if (!experiment) {
+      return null;
     }
 
-    const experiment = findExperiment(reduxAbTest, experimentName);
-    const variationName = reduxAbTest.get('active').get(experimentName);
-    const variation = findVariation(experiment, variationName);
+    const variationKey = reduxAbTest.getIn(['active', experimentKey]);
+    const variation    = experiment.getIn(['variations', variationKey], null);
     if (!variation) {
-      return list;
+      return null;
     }
 
-    return list.push(win({experiment, variation, actionType, actionPayload}));
-  };
-  const actionsQueue = experimentNames.reduce(reduceToActions, Immutable.List([]));
-  return actionsQueue;
+    return win({experiment, variation, actionType, actionPayload});
+  });
+  return actions.filter( value => value );
 }

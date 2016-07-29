@@ -25,7 +25,7 @@ describe('(Container) Experiment', () => {
     });
     it('has correct keys', () => {
       const dispatch = spy();
-      expect(mapDispatchToProps(dispatch)).to.have.keys(['dispatchActivate', 'dispatchDeactivate', 'dispatchPlay', 'dispatchWin', 'dispatchRegisterAdhoc']);
+      expect(mapDispatchToProps(dispatch)).to.have.keys(['dispatchActivate', 'dispatchDeactivate', 'dispatchPlay', 'dispatchWin']);
     });
   });
 

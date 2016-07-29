@@ -3,21 +3,19 @@ import Immutable from 'immutable';
 import { expect, spy } from 'test_helper';
 
 import { cacheStore } from '../utils/create-cache-store';
-import findExperiment from '../utils/find-experiment';
 import selectVariation from '../utils/select-variation';
 
-import reduxAbTest, { VariationType, ExperimentType, initialState, middleware } from './index';
-import { RESET, LOAD, ACTIVATE, DEACTIVATE, PLAY, WIN, REGISTER_ADHOC } from './index';
+import reduxAbTest, { VariationType, ExperimentType, initialState, middleware, flattenCompact } from './index';
+import { RESET, LOAD, SET_ACTIVE, SET_AUDIENCE, ACTIVATE, DEACTIVATE, PLAY, WIN } from './index';
 import {
   reset,
   load,
+  setActive,
+  setAudience,
   activate,
   deactivate,
   // TODO: play,
   win,
-  registerAdhoc,
-  // TODO: enqueueAWin,
-  // TODO: respondToWin
 } from './index';
 
 const variation_original:VariationType = {
@@ -40,6 +38,14 @@ const experiment:ExperimentType = {
     variation_b
   ]
 };
+const experimentInStore = Immutable.fromJS({
+  name:       "Test-Name",
+  variations: {
+    "Original" : variation_original,
+    "Variation #A" : variation_a,
+    "Variation #B" : variation_b,
+  }
+});
 
 
 describe('(Redux) src/module/index.js', () => {
@@ -53,6 +59,20 @@ describe('(Redux) src/module/index.js', () => {
     cacheStore.clear();
   });
 
+  describe('flattenCompact', () => {
+    it('exists', () => { expect(flattenCompact).to.exist; });
+    it('has the correct type', () => { expect(flattenCompact).to.be.a('function'); });
+    it('has the correct output', () => { expect(flattenCompact().toJS()).to.deep.equal([]); });
+    it('has the correct output', () => { expect(flattenCompact(null).toJS()).to.deep.equal([]); });
+    it('has the correct output', () => { expect(flattenCompact(undefined).toJS()).to.deep.equal([]); });
+    it('has the correct output', () => { expect(flattenCompact([null]).toJS()).to.deep.equal([]); });
+    it('has the correct output', () => { expect(flattenCompact([undefined]).toJS()).to.deep.equal([]); });
+    it('has the correct output', () => { expect(flattenCompact([]).toJS()).to.deep.equal([]); });
+    it('has the correct output', () => { expect(flattenCompact('a').toJS()).to.deep.equal(['a']); });
+    it('has the correct output', () => { expect(flattenCompact(['a', 'b']).toJS()).to.deep.equal(['a', 'b']); });
+    it('has the correct output', () => { expect(flattenCompact(['a', null, false, 0, '', undefined, 'b']).toJS()).to.deep.equal(['a', 'b']); });
+  });
+
   describe('constants', () => {
     it('RESET', () => {
       expect(RESET).to.be.equal('redux-ab-test/RESET');
@@ -60,6 +80,14 @@ describe('(Redux) src/module/index.js', () => {
 
     it('LOAD', () => {
       expect(LOAD).to.be.equal('redux-ab-test/LOAD');
+    });
+
+    it('SET_ACTIVE', () => {
+      expect(SET_ACTIVE).to.be.equal('redux-ab-test/SET_ACTIVE');
+    });
+
+    it('SET_AUDIENCE', () => {
+      expect(SET_AUDIENCE).to.be.equal('redux-ab-test/SET_AUDIENCE');
     });
 
     it('ACTIVATE', () => {
@@ -77,11 +105,6 @@ describe('(Redux) src/module/index.js', () => {
     it('WIN', () => {
       expect(WIN).to.be.equal('redux-ab-test/WIN');
     });
-
-    it('REGISTER_ADHOC', () => {
-      expect(REGISTER_ADHOC).to.be.equal('redux-ab-test/REGISTER_ADHOC');
-    });
-
   });
 
 
@@ -131,7 +154,6 @@ describe('(Redux) src/module/index.js', () => {
       payload: Immutable.fromJS({
         experiments: [experiment],
         active:      { "Test-Name": "Variation #A" },
-        types_path:  undefined
       })
     });
 
@@ -147,6 +169,24 @@ describe('(Redux) src/module/index.js', () => {
         experiments: [experiment],
         active:      { "Test-Name": "Variation #A" },
         types_path:  ['Test-win-path']
+      })
+    });
+
+    sharedActionExamples({
+      action: setAudience,
+      type:   SET_AUDIENCE,
+      args:   { "type": "New User" },
+      payload: Immutable.fromJS({
+        audience: { "type": "New User" },
+      })
+    });
+
+    sharedActionExamples({
+      action: setActive,
+      type:   SET_ACTIVE,
+      args:   { "Test-Name": "Variation #A" },
+      payload: Immutable.fromJS({
+        active:      { "Test-Name": "Variation #A" },
       })
     });
 
@@ -203,18 +243,6 @@ describe('(Redux) src/module/index.js', () => {
         actionPayload: { example: 'payload' }
       })
     });
-
-    sharedActionExamples({
-      action: registerAdhoc,
-      type:   REGISTER_ADHOC,
-      args:   {
-        experiment
-      },
-      payload: Immutable.fromJS({
-        experiment
-      })
-    });
-
   });
 
 
@@ -234,7 +262,11 @@ describe('(Redux) src/module/index.js', () => {
         expect(initialState.toJS()[field]).to.be.blank;
       });
     };
-    sharedDescribe('experiments', 'array');
+    sharedDescribe('allExperiments', 'object');
+    sharedDescribe('availableExperiments', 'object');
+    sharedDescribe('types_path', 'array');
+    sharedDescribe('props_path', 'array');
+    sharedDescribe('audience_path', 'array');
     sharedDescribe('running', 'object');
     sharedDescribe('active', 'object');
     sharedDescribe('winners', 'object');
@@ -287,7 +319,35 @@ describe('(Redux) src/module/index.js', () => {
         experiments: [ experiment ],
         active:      { "Test-Name": "Variation #A" }
       }),
-      newState: initialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" })).set('experiments', Immutable.fromJS([experiment]))
+      newState: initialState.merge({
+        active:               { "Test-Name": "Variation #A" },
+        allExperiments:       { "Test-Name": experimentInStore },
+        availableExperiments: { "Test-Name": experimentInStore },
+      }),
+    });
+
+    sharedReducerExamples({
+      type:    SET_ACTIVE,
+      state:   initialState,
+      payload: Immutable.fromJS({
+        active: { "Test-Name": "Variation #A" }
+      }),
+      newState: initialState.merge({
+        active: { "Test-Name": "Variation #A" },
+      }),
+    });
+
+    // TODO: test changing the audience changes the availableExperiments
+    sharedReducerExamples({
+      type:    SET_AUDIENCE,
+      state:   initialState,
+      payload: Immutable.fromJS({
+        audience:      { "type": "New User" },
+      }),
+      newState: initialState.merge({
+        audience: { "type": "New User" },
+        // TODO .set('availableExperiments', Immutable.fromJS([experiment]))
+      })
     });
 
     sharedReducerExamples({
@@ -327,39 +387,6 @@ describe('(Redux) src/module/index.js', () => {
       }),
       newState: initialState.set('winners', Immutable.fromJS({ "Test-Name": "Variation #B" }))
     });
-
-
-    sharedReducerExamples({
-      type:    REGISTER_ADHOC,
-      state:   undefined,
-      payload: Immutable.fromJS({
-        experiment
-      }),
-      newState: initialState.set('experiments', Immutable.fromJS([experiment]))
-    });
-
-    sharedReducerExamples({
-      type:    REGISTER_ADHOC,
-      state:   undefined,
-      payload: Immutable.fromJS({
-        experiment: {...experiment, win_action_types: []}
-      }),
-      newState: initialState.set('experiments', Immutable.fromJS([{...experiment, win_action_types: []}]))
-    });
-
-    sharedReducerExamples({
-      type:    REGISTER_ADHOC,
-      state:   undefined,
-      payload: Immutable.fromJS({
-        experiment: {...experiment, win_action_types: ['Test-action-type']}
-      }),
-      newState: initialState.merge({
-        experiments:      [{...experiment, win_action_types: ['Test-action-type']}],
-        win_action_types: {
-          'Test-action-type': [experiment.name]
-        }
-      })
-    });
   });
 
 
@@ -367,29 +394,6 @@ describe('(Redux) src/module/index.js', () => {
   // State Selectors
   //
   describe('selectors', () => {
-    describe('findExperiment', () => {
-      it('exists', () => {
-        expect(findExperiment).to.exist;
-        expect(findExperiment).to.be.a('function');
-      });
-
-      it('has the correct experiment', () => {
-        const output = findExperiment(
-          initialState.set('experiments', Immutable.fromJS([experiment])),
-          experiment.name
-        );
-        expect(output).to.exist;
-        expect(output.toJSON()).to.deep.equal(experiment);
-      });
-
-      it('throws an Error', () => {
-        const output = () => findExperiment(
-          initialState,
-          experiment.name
-        );
-        expect(output).to.throw(Error);
-      });
-    });
 
     describe('selectVariation', () => {
       it('exists', () => {
@@ -496,7 +500,7 @@ describe('(Redux) src/module/index.js', () => {
 
     it('enqueues 1x win per registered experiment', () => {
       reduxAbTest = initialState.merge({
-        experiments:      [experiment],
+        allExperiments: { "Test-Name": experimentInStore },
         win_action_types: {
           'Test-action-type': [experiment.name, 'Test-experiment-2']
         },
@@ -511,7 +515,7 @@ describe('(Redux) src/module/index.js', () => {
         {
           type:    WIN,
           payload: Immutable.fromJS({
-            experiment,
+            experiment:    experimentInStore,
             variation:     variation_a,
             actionType:    action.type,
             actionPayload: action.payload

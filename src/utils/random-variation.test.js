@@ -167,7 +167,7 @@ describe('utils/random-variation.js', () => {
     });
 
     it('sorts the variations by weight descending', () => {
-      const output = experiment.get('variations').sortBy(toWeight).reverse();
+      const output = experiment.get('variations').toList().sortBy(toWeight).reverse();
       expect(output).to.exist;
       expect(output).to.be.an.instanceof(Immutable.List);
       expect(output.get(0).get('name')).to.equal('Original');
