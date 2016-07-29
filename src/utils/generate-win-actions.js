@@ -1,6 +1,7 @@
 /** @flow */
 import Immutable from 'immutable';
 import findExperiment from './find-experiment';
+import findVariation from './find-variation';
 
 type Props = {
   reduxAbTest:   Immutable.Map,
@@ -25,7 +26,7 @@ export default function generateWinActions(props:Props) {
 
     const experiment = findExperiment(reduxAbTest, experimentName);
     const variationName = reduxAbTest.get('active').get(experimentName);
-    const variation = experiment.get('variations').find( variation => (variation.get('name') === variationName) );
+    const variation = findVariation(experiment, variationName);
     if (!variation) {
       return list;
     }
