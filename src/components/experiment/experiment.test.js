@@ -6,13 +6,15 @@ import { expect, renderContainer, spy } from 'test_helper';
 
 
 const reduxAbTest = initialState.merge({
-  'experiments': [{
-    name:       'Test-experimentName',
-    variations: [
-      { name: 'Original', weight: 10000 },
-      { name: 'Variation B', weight: 0 }
-    ]
-  }],
+  'availableExperiments': {
+    'Test-experimentName': {
+      name:       'Test-experimentName',
+      variations: [
+        { name: 'Original', weight: 10000 },
+        { name: 'Variation B', weight: 0 }
+      ]
+    },
+  },
   'active': { 'Test-experimentName': 'Variation B' }
 });
 
@@ -67,8 +69,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
   });
 
   it('has 1x rendered Experiment', () => {
-    expect(component).to.have.length(1);
-    expect(component).to.have.prop('name', 'Test-experimentName');
+    expect(component.find(Experiment)).to.have.length(1);
     expect(component).to.have.tagName('span');
     expect(component).to.have.text('Test Variation B');
   });

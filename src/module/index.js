@@ -38,16 +38,16 @@ export const win           = createAction(WIN,              ({experiment, variat
 
 
 export const initialState = Immutable.fromJS({
-  allExperiments:         { /** "experiment id" => "experiment objects" */              },
-  availableExperiments:   { /** Hash of experiments that match the current audience */  },
-  running:                { /** "experiment id" => counter  */                          },
-  active:                 { /** "experiment id" => "variation id" */                    },
-  winners:                { /** "experiment id" => "variation id" */                    },
-  audience:               { /** Any props you want to use for user/session targeting */ },
-  types_path:             ['win_action_types'],
-  props_path:             ['componentProps'],
-  audience_path:          ['audienceProps'],
-  win_action_types:       { /** Array of Redux Action Types */ },
+  allExperiments:       { /** "experiment id" => "experiment objects" */              },
+  availableExperiments: { /** Hash of experiments that match the current audience */  },
+  running:              { /** "experiment id" => counter  */                          },
+  active:               { /** "experiment id" => "variation id" */                    },
+  winners:              { /** "experiment id" => "variation id" */                    },
+  audience:             { /** Any props you want to use for user/session targeting */ },
+  types_path:           ['win_action_types'],
+  props_path:           ['componentProps'],
+  audience_path:        ['audienceProps'],
+  win_action_types:     { /** Array of Redux Action Types */ },
 });
 
 
