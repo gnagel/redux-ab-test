@@ -1,39 +1,33 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import { expect } from 'test_helper';
-
 import createCacheStore from './create-cache-store';
 import selectVariation from './select-variation';
+import { initialState } from '../module';
+
+const variation_original:VariationType = {
+  name:   "Original",
+  weight: 5000
+};
+const variation_a:VariationType = {
+  name:   "Variation #A",
+  weight: 5000
+};
+const variation_b:VariationType = {
+  name:   "Variation #B",
+  weight: 0
+};
+const experiment:ExperimentType = {
+  name:       "Test-Name",
+  variations: [
+    variation_original,
+    variation_a,
+    variation_b
+  ]
+};
 
 
-describe('utils/select-variation.js', () => {
-  const initialState = Immutable.fromJS({
-    experiments: [],
-    plays:       {},
-    active:      {},
-    winners:     {}
-  });
-
-  const variation_original:VariationType = {
-    name:   "Original",
-    weight: 5000
-  };
-  const variation_a:VariationType = {
-    name:   "Variation #A",
-    weight: 5000
-  };
-  const variation_b:VariationType = {
-    name:   "Variation #B",
-    weight: 0
-  };
-  const experiment:ExperimentType = {
-    name:       "Test-Name",
-    variations: [
-      variation_original,
-      variation_a,
-      variation_b
-    ]
-  };
+describe.only('utils/select-variation.js', () => {
 
   it('exists', () => {
     expect(selectVariation).to.exist;
@@ -42,7 +36,7 @@ describe('utils/select-variation.js', () => {
 
   it('chooses the active variation from redux store w/o cacheStore', () => {
     const output = selectVariation({
-      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+      active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null
     });
@@ -53,7 +47,7 @@ describe('utils/select-variation.js', () => {
   it('chooses the active variation from redux store w/cacheStore', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+      active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
       cacheStore:           cacheStore
@@ -67,7 +61,7 @@ describe('utils/select-variation.js', () => {
   it('chooses the defaultVariationName variation', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+      active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: "Variation #B",
       cacheStore:           cacheStore
@@ -83,7 +77,7 @@ describe('utils/select-variation.js', () => {
     const cacheStore = createCacheStore();
     cacheStore.setItem(experiment.name, variation_b.name);
     const output = selectVariation({
-      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+      active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
       cacheStore:           cacheStore
@@ -98,7 +92,7 @@ describe('utils/select-variation.js', () => {
   it('randomly assigns a variation, ignoring weight=0 records', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+      active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
       cacheStore

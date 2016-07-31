@@ -4,6 +4,20 @@ import Variation from "./variation";
 import { initialState } from '../../module';
 import { expect, renderComponent } from 'test_helper';
 
+
+const reduxAbTest = initialState.merge({
+  'availableExperiments': {
+    'Test-experimentName': {
+      name:       'Test-experimentName',
+      variations: [
+        { name: 'Original', weight: 10000 },
+        { name: 'Variation B', weight: 0 }
+      ]
+    },
+  },
+  'active': { 'Test-experimentName': 'Variation B' }
+});
+
 describe('(Component) src/components/variation/variation.js', () => {
   let component;
   let props;
