@@ -1,28 +1,20 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import { expect, spy } from 'test_helper';
-
+import { initialState } from '../module';
 import generateWinActions from './generate-win-actions';
 
-describe('utils/generate-win-actions.js', () => {
-  const initialState = Immutable.fromJS({
-    experiments:      [],
-    plays:            {},
-    active:           {},
-    winners:          {},
-    win_action_types: {}
-  });
+const experiment = Immutable.fromJS({
+  name:       "Test-Name",
+  variations: [
+    { name: "Original", weight: 5000 },
+    { name: "Variation #A", weight: 5000 },
+    { name: "Variation #B", weight: 0 }
+  ],
+  win_action_types: ['Test-action-1', 'Test-action-2']
+});
 
-  const experiment:ExperimentType = {
-    name:       "Test-Name",
-    variations: [
-      { name: "Original", weight: 5000 },
-      { name: "Variation #A", weight: 5000 },
-      { name: "Variation #B", weight: 0 }
-    ],
-    win_action_types: ['Test-action-1', 'Test-action-2']
-  };
-
+describe.only('utils/generate-win-actions.js', () => {
   let next;
   let win;
   beforeEach(() => {
@@ -43,8 +35,8 @@ describe('utils/generate-win-actions.js', () => {
       next
     });
     expect(output).to.exist;
-    expect(output).to.be.an.instanceof(Immutable.List);
-    expect(output.toJS()).to.deep.equal([]);
+    expect(output).to.be.a('array');
+    expect(output).to.deep.equal([]);
   });
 
   it('has one action', () => {
@@ -63,8 +55,8 @@ describe('utils/generate-win-actions.js', () => {
       next
     });
     expect(output).to.exist;
-    expect(output).to.be.an.instanceof(Immutable.List);
-    expect(output.toJS()).to.deep.equal([
+    expect(output).to.be.a('array');
+    expect(output).to.deep.equal([
       {
         experiment,
         variation:  { name: "Original", weight: 5000 },
@@ -131,23 +123,4 @@ describe('utils/generate-win-actions.js', () => {
     ]);
   });
 
-  it('throws an Error', () => {
-    const output = () => {
-      generateWinActions({
-        reduxAbTest: initialState.merge({
-          experiments:      [],
-          win_action_types: {
-            'Test-action-1': [experiment.name]
-          },
-          active: {
-            'Test-Name': 'Original'
-          }
-        }),
-        win,
-        actionType: 'Test-action-1',
-        next
-      });
-    };
-    expect(output).to.throw(Error);
-  });
 });

@@ -1,6 +1,6 @@
 /** @flow */
 import Immutable from 'immutable';
-import findExperiment from './find-experiment';
+import getKey from './get-key';
 
 type Props = {
   reduxAbTest:   Immutable.Map,
@@ -12,26 +12,25 @@ type Props = {
 // If the action is one of the ones we listen for, then generate `wins` if that experiment has been played
 export default function generateWinActions(props:Props) {
   const { reduxAbTest, win, actionType, actionPayload } = props;
-  const win_action_types = reduxAbTest.get('win_action_types');
-  if (!win_action_types.has(actionType)) {
-    return Immutable.List([]);
-  }
 
-  const experimentNames = win_action_types.get(actionType);
-  const reduceToActions = (list, experimentName) => {
-    if (!reduxAbTest.get('active').has(experimentName)) {
-      return list;
+  // Get only the experients that match this actionType and are currently active
+  const experimentKeys = reduxAbTest.getIn( ['win_action_types', actionType], Immutable.List([]) ).filter( experimentKey => reduxAbTest.hasIn(['active', experimentKey]) );
+
+  // Map the experiments to variations and to redux `win` actions
+  const output = [];
+  experimentKeys.forEach(experimentKey => {
+    const variationKey = reduxAbTest.getIn(['active', experimentKey]);
+    const experiment   = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === experimentKey), null);
+    if (!experiment) {
+      return;
     }
-
-    const experiment = findExperiment(reduxAbTest, experimentName);
-    const variationName = reduxAbTest.get('active').get(experimentName);
-    const variation = experiment.get('variations').find( variation => (variation.get('name') === variationName) );
+    const variation = experiment.get('variations').find(variation => (getKey(variation) === variationKey), null);
     if (!variation) {
-      return list;
+      return;
     }
+    output.push( win({experiment, variation, actionType, actionPayload}) );
+  });
 
-    return list.push(win({experiment, variation, actionType, actionPayload}));
-  };
-  const actionsQueue = experimentNames.reduce(reduceToActions, Immutable.List([]));
-  return actionsQueue;
+  // Return the collection of `win` actions that match the experiments
+  return output;
 }

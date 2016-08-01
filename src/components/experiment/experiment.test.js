@@ -6,13 +6,15 @@ import { expect, renderContainer, spy } from 'test_helper';
 
 
 const reduxAbTest = initialState.merge({
-  'experiments': [{
-    name:       'Test-experimentName',
-    variations: [
-      { name: 'Original', weight: 10000 },
-      { name: 'Variation B', weight: 0 }
-    ]
-  }],
+  'availableExperiments': {
+    'Test-experimentName': {
+      name:       'Test-experimentName',
+      variations: [
+        { name: 'Original', weight: 10000 },
+        { name: 'Variation B', weight: 0 }
+      ],
+    },
+  },
   'active': { 'Test-experimentName': 'Variation B' }
 });
 
@@ -67,8 +69,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
   });
 
   it('has 1x rendered Experiment', () => {
-    expect(component).to.have.length(1);
-    expect(component).to.have.prop('name', 'Test-experimentName');
+    expect(component.find(Experiment)).to.have.length(1);
     expect(component).to.have.tagName('span');
     expect(component).to.have.text('Test Variation B');
   });
@@ -77,7 +78,8 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(component.find(Variation)).to.have.length(1);
     expect(component.find(Variation)).to.have.tagName('span');
     expect(component.find(Variation)).to.have.prop('name', 'Variation B');
-    expect(component.find(Variation)).to.have.prop('experimentName', 'Test-experimentName');
+    expect(component.find(Variation)).to.have.prop('experiment');
+    expect(component.find(Variation)).to.have.prop('variation');
     expect(component.find(Variation)).to.have.text('Test Variation B');
   });
 
@@ -99,7 +101,8 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(component).to.exist;
     expect(component.find(Variation)).to.have.length(1);
     expect(component.find(Variation)).to.have.tagName('span');
-    expect(component.find(Variation)).to.have.prop('experimentName', 'Test-experimentName');
+    expect(component.find(Variation)).to.have.prop('experiment');
+    expect(component.find(Variation)).to.have.prop('variation');
   });
 
   it('wraps the component children in a Variation', () => {
@@ -108,7 +111,8 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(component).to.exist;
     expect(component.find(Variation)).to.have.length(1);
     expect(component.find(Variation)).to.have.tagName('div');
-    expect(component.find(Variation)).to.have.prop('experimentName', 'Test-experimentName');
+    expect(component.find(Variation)).to.have.prop('experiment');
+    expect(component.find(Variation)).to.have.prop('variation');
   });
 
   it('creates Ad-hoc experiments');

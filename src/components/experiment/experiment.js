@@ -3,7 +3,6 @@ import React from "react";
 import Immutable from 'immutable';
 import VariationComponent from '../../components/variation';
 import VariationContainer from '../../containers/variation';
-import findExperiment from '../../utils/find-experiment';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
 
@@ -22,6 +21,10 @@ type Props = {
    * ```
    */
   reduxAbTest: Immutable.Map,
+  /**
+   * ID of the experiment
+   */
+  id: ?string,
   /**
    * Name of the experiment
    */
@@ -71,7 +74,8 @@ export default class Experiment extends React.Component {
   props: Props;
   state: State;
   static defaultProps = {
-    reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
+    reduxAbTest:          Immutable.Map({}),
+    id:                   null,
     name:                 'Default Experiment Name',
     defaultVariationName: null,
     dispatchActivate:     () => {},
@@ -89,10 +93,10 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
-    const experiment = findExperiment(reduxAbTest, name);
+    const { id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
+    const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
     const variation = selectVariation({
-      reduxAbTest,
+      active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
       cacheStore
@@ -109,15 +113,18 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { name, defaultVariationName, reduxAbTest } = nextProps;
-    const experiment = findExperiment(reduxAbTest, name);
+    const { id, name, defaultVariationName, reduxAbTest } = nextProps;
+    const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
     const variation = selectVariation({
-      reduxAbTest,
+      active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
       cacheStore
     });
-    this.setState({ experiment, variation });
+
+    if (!experiment.equals(this.state.experiment) || !variation.equals(this.state.variation)) {
+      this.setState({ experiment, variation });
+    }
   }
 
 
@@ -171,7 +178,13 @@ export default class Experiment extends React.Component {
     //
     if (React.Children.count(children) === 1 && (!React.isValidElement(children) || React.Children.only(children).type !== VariationComponent || React.Children.only(children).type !== VariationContainer)) {
       return (
-        <VariationContainer name={variation.get('name')} experimentName={experiment.get('name')}>{children}</VariationContainer>
+        <VariationContainer
+          id={variation.get('id')}
+          name={variation.get('name')}
+          experiment={experiment}
+          variation={variation}>
+          {children}
+        </VariationContainer>
       );
     }
 
@@ -184,7 +197,12 @@ export default class Experiment extends React.Component {
     }
 
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(variationChildElement, { experimentName: name });
+    return React.cloneElement(variationChildElement, {
+      experiment,
+      variation,
+      id: variation.get('id'),
+      name: variation.get('name'),
+    });
   }
 }
 

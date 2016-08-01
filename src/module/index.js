@@ -1,44 +1,52 @@
 /** @flow */
 import React                             from "react"; // eslint-disable-line no-unused-vars
 import Immutable                         from 'immutable';
+import _flattenDeep                      from 'lodash/flattenDeep';
+import _compact                          from 'lodash/compact';
 import { createAction, handleActions }   from 'redux-actions';
 import { cacheStore }                    from '../utils/create-cache-store';
-import toWinningActionTypes              from '../utils/experiment-action-types';
+import availableExperiments              from '../utils/available-experiments';
+import getKey                            from '../utils/get-key';
 import generateWinActions                from '../utils/generate-win-actions';
 import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
 
 //
 // Redux Action Types
 //
-export const RESET = 'redux-ab-test/RESET';
-export const LOAD = 'redux-ab-test/LOAD';
-export const ACTIVATE = 'redux-ab-test/ACTIVATE';
-export const DEACTIVATE = 'redux-ab-test/DEACTIVATE';
-export const PLAY = 'redux-ab-test/PLAY';
-export const WIN = 'redux-ab-test/WIN';
-export const REGISTER_ADHOC = 'redux-ab-test/REGISTER_ADHOC';
+export const RESET          = 'redux-ab-test/RESET';
+export const LOAD           = 'redux-ab-test/LOAD';
+export const SET_AUDIENCE   = 'redux-ab-test/SET_AUDIENCE';
+export const SET_ACTIVE     = 'redux-ab-test/SET_ACTIVE';
+export const ACTIVATE       = 'redux-ab-test/ACTIVATE';
+export const DEACTIVATE     = 'redux-ab-test/DEACTIVATE';
+export const PLAY           = 'redux-ab-test/PLAY';
+export const WIN            = 'redux-ab-test/WIN';
 
 
 //
 // Redux Action Creators:
 //
-export const reset = createAction(RESET,                   () => Immutable.fromJS({}));
-export const load = createAction(LOAD,                     ({experiments, active, types_path}) => Immutable.fromJS({experiments, active, types_path}) );
-export const activate = createAction(ACTIVATE,              immutableExperiment );
-export const deactivate = createAction(DEACTIVATE,          immutableExperiment );
-export const play = createAction(PLAY,                     immutableExperimentVariation );
-export const win = createAction(WIN,                       ({experiment, variation, actionType, actionPayload}) => Immutable.fromJS({experiment, variation, actionType, actionPayload}) );
-// Non-standard actions
-export const registerAdhoc = createAction(REGISTER_ADHOC,   immutableExperiment );
+export const reset         = createAction(RESET,            ()              => Immutable.fromJS({}));
+export const load          = createAction(LOAD,             (opts = {})     => Immutable.fromJS(opts) );
+export const setAudience   = createAction(SET_AUDIENCE,     (audience = {}) => Immutable.fromJS({audience}));
+export const setActive     = createAction(SET_ACTIVE,       (active = {})   => Immutable.fromJS({active}));
+export const activate      = createAction(ACTIVATE,         immutableExperiment );
+export const deactivate    = createAction(DEACTIVATE,       immutableExperiment );
+export const play          = createAction(PLAY,             immutableExperimentVariation );
+export const win           = createAction(WIN,              ({experiment, variation, actionType, actionPayload}) => Immutable.fromJS({experiment, variation, actionType, actionPayload}) );
 
 
 export const initialState = Immutable.fromJS({
-  experiments:      [ /** Array of ExperimentType objects */ ],
-  running:          { /** "experiment name" => number */ },
-  active:           { /** "experiment name" => "variation name" */ },
-  winners:          { /** "experiment name" => "variation name" */ },
-  types_path:       ['win_action_types'],
-  win_action_types: { /** Array of Redux Action Types */ },
+  experiments:          [ /** Array of "experiment objects" */                        ],
+  availableExperiments: [ /** Array of "experiment objects" */                        ],
+  running:              { /** "experiment id" => counter  */                          },
+  active:               { /** "experiment id" => "variation id" */                    },
+  winners:              { /** "experiment id" => "variation id" */                    },
+  audience:             { /** Any props you want to use for user/session targeting */ },
+  types_path:           ['win_action_types'],
+  props_path:           ['componentProps'],
+  audience_path:        ['audienceProps'],
+  win_action_types:     { /** Array of Redux Action Types */ },
 });
 
 
@@ -63,6 +71,9 @@ export const middleware = (store:Object) => (next:Function) => (action:Object) =
 };
 
 
+export const flattenCompact = (list) => Immutable.List( _compact(_flattenDeep(Immutable.fromJS([list]).toJS())) );
+
+
 const reducers = {
   /**
    * RESET the experiments state.
@@ -76,64 +87,80 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [LOAD]: (state, { payload }) => {
-    let types_path = payload.get('types_path');
-    if (payload.get('types_path') === undefined) {
-      types_path = state.get('types_path');
-    } else {
-      types_path = Immutable.fromJS([payload.get('types_path')]).flatten();
-    }
+    const types_path    = flattenCompact(payload.get('types_path',    initialState.get('types_path')));
+    const props_path    = flattenCompact(payload.get('props_path',    initialState.get('props_path')));
+    const audience_path = flattenCompact(payload.get('audience_path', initialState.get('audience_path')));
+    const experiments   = payload.get('experiments');
+    const active        = payload.has('active')   ? payload.get('active')   : state.get('active');
+    const audience      = payload.has('audience') ? payload.get('audience') : state.get('audience');
+
+    const win_action_types = experiments.reduce(
+      (map, experiment) => {
+        const key = getKey(experiment);
+        const types = flattenCompact(experiment.getIn(types_path));
+        types.forEach(type => {
+          const list = map[type] || [];
+          list.push(key);
+          map[type] = list;
+        });
+        return map;
+      },
+      {}
+    );
+
     return initialState.merge({
-      experiments:      payload.get('experiments'),
-      active:           payload.get('active'),
-      types_path,
-      win_action_types: toWinningActionTypes(payload.get('experiments'), types_path)
-    });
-  },
-
-
-  /**
-   * An Ad-Hoc Experiment was seen.  This dynamically creates a new experiment, ignoring duplicates when necessary.
-   */
-  [REGISTER_ADHOC]: (state, { payload }) => {
-    const experiment = payload.get('experiment');
-    const experimentNames = state.get('experiments').map( i => i.get('name') );
-    if (experimentNames.includes(experiment.get('name'))) {
-      // Ignore duplicate register events
-      // ex: seeing an adhoc experiment multiple times by switching between pages
-      return state;
-    }
-    const experiments = state.get('experiments').push(experiment);
-    const win_action_types = toWinningActionTypes(experiments, state.get('types_path'));
-    return state.merge({
+      availableExperiments: availableExperiments({experiments, audience_path, audience}),
       experiments,
+      audience,
+      active,
+      types_path,
+      props_path,
+      audience_path,
       win_action_types
     });
   },
 
 
   /**
-   * ACTIVATE the available experiments. and reset the state of the server
+   * Set the Audience for the experiments
+   */
+  [SET_AUDIENCE]: (state, { payload }) => {
+    const audience       = payload.get('audience');
+    const experiments    = state.get('experiments');
+    const audience_path  = state.get('audience_path');
+    return state.merge({
+      availableExperiments: availableExperiments({experiments, audience_path, audience}),
+      audience,
+    });
+  },
+
+
+  /**
+   * Set the Active variations
+   */
+  [SET_ACTIVE]: (state, { payload }) => {
+    return state.set('active', payload.get('active'));
+  },
+
+
+  /**
+   * ACTIVATE the experiment
    */
   [ACTIVATE]: (state, { payload }) => {
-    const experimentName = payload.get('experiment').get('name');
-    const counter = (state.get('running').get(experimentName) || 0) + 1;
-    const running = state.get('running').set(experimentName, counter);
+    const experimentKey = getKey(payload.get('experiment'));
+    const counter = (state.get('running').get(experimentKey) || 0) + 1;
+    const running = state.get('running').set(experimentKey, counter);
     return state.set('running', running);
   },
 
 
   /**
-   * DEACTIVATE the available experiments. and reset the state of the server
+   * DEACTIVATE the experiment
    */
   [DEACTIVATE]: (state, { payload }) => {
-    const experimentName = payload.get('experiment').get('name');
-    const counter = (state.get('running').get(experimentName) || 0) - 1;
-    let running;
-    if (counter <= 0) {
-      running = state.get('running').delete(experimentName);
-    } else {
-      running = state.get('running').set(experimentName, counter);
-    }
+    const experimentKey = getKey(payload.get('experiment'));
+    const counter = (state.get('running').get(experimentKey) || 0) - 1;
+    const running = (counter <= 0) ? state.get('running').delete(experimentKey) : state.get('running').set(experimentKey, counter);
     return state.set('running', running);
   },
 
@@ -143,10 +170,10 @@ const reducers = {
    * @payload { experiment:ExperimentType, variation:VariationType }
    */
   [PLAY]: (state, { payload }) => {
-    const experimentName = payload.get('experiment').get('name');
-    const variationName = payload.get('variation').get('name');
-    const active = state.get('active').set(experimentName, variationName);
-    cacheStore.removeItem(experimentName);
+    const experimentKey = getKey(payload.get('experiment'));
+    const variationKey  = getKey(payload.get('variation'));
+    const active        = state.get('active').set(experimentKey, variationKey);
+    cacheStore.removeItem(experimentKey);
     return state.set('active', active);
   },
 
@@ -156,9 +183,9 @@ const reducers = {
    * @payload { experiment:ExperimentType, variation:VariationType }
    */
   [WIN]: (state, { payload }) => {
-    const experimentName = payload.get('experiment').get('name');
-    const variationName = payload.get('variation').get('name');
-    const winners = state.get('winners').set(experimentName, variationName);
+    const experimentKey = getKey(payload.get('experiment'));
+    const variationKey  = getKey(payload.get('variation'));
+    const winners       = state.get('winners').set(experimentKey, variationKey);
     return state.set('winners', winners);
   },
 };
