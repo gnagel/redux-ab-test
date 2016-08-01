@@ -139,16 +139,16 @@ describe('utils/available-experiments.js', () => {
         audience_path: ['audienceProps'],
         experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
       });
-      expect(output.toJS()).to.be.have.length(2);
-      expect(output.map( e => e.get('name') ).toJS()).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
+      expect(output).to.be.an.instanceOf(Immutable.Map);
+      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
 
       output = availableExperiments({
         audience:      Immutable.Map({ type: 'new user' }),
         audience_path: ['audienceProps'],
         experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
       });
-      expect(output.toJS()).to.be.have.length(2);
-      expect(output.map( e => e.get('name') ).toJS()).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
+      expect(output).to.be.an.instanceOf(Immutable.Map);
+      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
     });
 
     it('matches vip', () => {
@@ -157,8 +157,8 @@ describe('utils/available-experiments.js', () => {
         audience_path: ['audienceProps'],
         experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
       });
-      expect(output.toJS()).to.be.have.length(3);
-      expect(output.map( e => e.get('name') ).toJS()).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type' ]);
+      expect(output).to.be.an.instanceOf(Immutable.Map);
+      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type' ]);
     });
 
     it('matches vip and orders', () => {
@@ -167,8 +167,8 @@ describe('utils/available-experiments.js', () => {
         audience_path: ['audienceProps'],
         experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
       });
-      expect(output.toJS()).to.be.have.length(4);
-      expect(output.map( e => e.get('name') ).toJS()).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type', 'Complex Audience Type' ]);
+      expect(output).to.be.an.instanceOf(Immutable.Map);
+      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type', 'Complex Audience Type' ]);
     });
 
   });

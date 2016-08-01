@@ -1,4 +1,5 @@
 import Immutable from 'immutable';
+import getKey from './get-key';
 
 /**
  * Returns true if the
@@ -31,6 +32,11 @@ export const matchesAudience = (audience, audienceProps) => {
 
 
 const availableExperiments = ({experiments, audience_path, audience}) => {
-  return experiments.filter((experiment) => matchesAudience(audience, experiment.getIn(audience_path, null)) );
+  return experiments.filter(
+    (experiment) => matchesAudience(audience, experiment.getIn(audience_path, null))
+  ).reduce(
+    (hash, experiment) => hash.set(getKey(experiment), experiment),
+    Immutable.Map({}),
+  );
 };
 export default availableExperiments;

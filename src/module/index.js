@@ -38,7 +38,7 @@ export const win           = createAction(WIN,              ({experiment, variat
 
 export const initialState = Immutable.fromJS({
   experiments:          [ /** Array of "experiment objects" */                        ],
-  availableExperiments: [ /** Array of "experiment objects" */                        ],
+  availableExperiments: { /** Hash of  "experiment key" => "experiment objects" */    },
   running:              { /** "experiment id" => counter  */                          },
   active:               { /** "experiment id" => "variation id" */                    },
   winners:              { /** "experiment id" => "variation id" */                    },

@@ -255,7 +255,7 @@ describe('(Redux) src/module/index.js', () => {
       });
     };
     sharedDescribe('experiments', 'array');
-    sharedDescribe('availableExperiments', 'array');
+    sharedDescribe('availableExperiments', 'object');
     sharedDescribe('types_path', 'array');
     sharedDescribe('props_path', 'array');
     sharedDescribe('audience_path', 'array');
@@ -314,7 +314,7 @@ describe('(Redux) src/module/index.js', () => {
       newState: initialState.merge({
         active:               { "Test-Name": "Variation #A" },
         experiments:          [ experiment ],
-        availableExperiments: [ experiment ],
+        availableExperiments: { "Test-Name": experiment },
       }),
     });
 
