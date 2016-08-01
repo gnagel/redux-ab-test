@@ -105,12 +105,7 @@ export default class Experiment extends React.Component {
    */
   componentWillMount() {
     const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
-    const key_path = reduxAbTest.get('key_path');
-
-    const experiment = selector && reduxAbTest.get('availableExperiments').find(
-      experiment => (experiment.getIn(key_path) === selector),
-      null
-    ) || reduxAbTest.getIn(['availableExperiments', id || name], null);
+    const experiment = this.getExperiment(reduxAbTest, selector, id, name);
 
     // If the experiment is un-available, then record it wasn't played and move on
     if (!experiment) {
@@ -131,19 +126,18 @@ export default class Experiment extends React.Component {
     this.setState({ experiment, variation, played: true });
   }
 
-  isNotVariationChildren() {
-    const { children } = this.props;
-    return (React.Children.count(children) === 1 && (!React.isValidElement(children) || React.Children.only(children).type !== VariationComponent || React.Children.only(children).type !== VariationContainer))
-  }
-
 
   /**
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { id, name, defaultVariationName, reduxAbTest } = nextProps;
-    const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
+    const { selector, id, name, defaultVariationName, reduxAbTest } = nextProps;
+    const experiment = this.getExperiment(reduxAbTest, selector, id, name);
     if (!experiment) {
+      // If we no-longer have an experiment anymore, then update the internal state
+      if (this.state.experiment) {
+        this.setState({ experiment: null, variation: null, played: false });
+      }
       return;
     }
 
@@ -165,6 +159,21 @@ export default class Experiment extends React.Component {
   }
 
 
+  getExperiment(reduxAbTest, selector, id, name) {
+    const key_path = reduxAbTest.get('key_path');
+    const experiment = selector && reduxAbTest.get('availableExperiments').find(
+      experiment => (experiment.getIn(key_path) === selector),
+      null
+    ) || reduxAbTest.getIn(['availableExperiments', id || name], null);
+    return experiment;
+  }
+
+  isNotVariationChildren() {
+    const { children } = this.props;
+    return (React.Children.count(children) === 1 && (!React.isValidElement(children) || React.Children.only(children).type !== VariationComponent || React.Children.only(children).type !== VariationContainer));
+  }
+
+
   /**
    * Deactivate the variation from the state
    */
@@ -182,7 +191,7 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
-    const { name, children } = this.props;
+    const { children } = this.props;
     const { experiment, variation } = this.state;
 
     const notVariationChildren = this.isNotVariationChildren();
@@ -241,7 +250,7 @@ export default class Experiment extends React.Component {
     return React.cloneElement(variationChildElement, {
       experiment,
       variation,
-      id: variation.get('id'),
+      id:   variation.get('id'),
       name: variation.get('name'),
     });
   }
