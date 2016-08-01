@@ -43,6 +43,7 @@ export const initialState = Immutable.fromJS({
   active:               { /** "experiment id" => "variation id" */                    },
   winners:              { /** "experiment id" => "variation id" */                    },
   audience:             { /** Any props you want to use for user/session targeting */ },
+  selector_path:        ['key'],
   types_path:           ['win_action_types'],
   props_path:           ['componentProps'],
   audience_path:        ['audienceProps'],

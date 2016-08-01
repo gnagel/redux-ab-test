@@ -30,6 +30,11 @@ type Props = {
    */
   name: string,
   /**
+   * Selector key for choosing an experiment from the redux store
+   * Eg:
+   */
+  selector: ?string,
+  /**
    * Name of the default variation.
    * >  When defined, this value is used to choose a variation if a stored value is not present.
    * >  This property may be useful for server side rendering but is otherwise not recommended.
@@ -80,7 +85,8 @@ export default class Experiment extends React.Component {
   static defaultProps = {
     reduxAbTest:          Immutable.Map({}),
     id:                   null,
-    name:                 'Default Experiment Name',
+    name:                 null,
+    selector:             null,
     defaultVariationName: null,
     dispatchActivate:     () => {},
     dispatchDeactivate:   () => {},
@@ -98,8 +104,13 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
-    const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
+    const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
+    const selector_path = reduxAbTest.get('selector_path');
+
+    const experiment = selector && reduxAbTest.get('availableExperiments').find(
+      experiment => (experiment.getIn(selector_path) === selector),
+      null
+    ) || reduxAbTest.getIn(['availableExperiments', id || name], null);
 
     // If the experiment is un-available, then record it wasn't played and move on
     if (!experiment) {
