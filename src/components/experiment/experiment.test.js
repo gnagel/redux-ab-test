@@ -150,7 +150,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         },
       },
       active: { 'Test-id': 'Variation B' },
-      selector_path: ['component', 'key'],
+      key_path: ['component', 'key'],
     });
 
     beforeEach(() => {

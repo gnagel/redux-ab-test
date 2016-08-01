@@ -43,7 +43,7 @@ export const initialState = Immutable.fromJS({
   active:               { /** "experiment id" => "variation id" */                    },
   winners:              { /** "experiment id" => "variation id" */                    },
   audience:             { /** Any props you want to use for user/session targeting */ },
-  selector_path:        ['key'],
+  key_path:             ['key'],
   types_path:           ['win_action_types'],
   props_path:           ['componentProps'],
   audience_path:        ['audienceProps'],
@@ -88,9 +88,10 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [LOAD]: (state, { payload }) => {
-    const types_path    = flattenCompact(payload.get('types_path',    initialState.get('types_path')));
-    const props_path    = flattenCompact(payload.get('props_path',    initialState.get('props_path')));
-    const audience_path = flattenCompact(payload.get('audience_path', initialState.get('audience_path')));
+    const key_path      = flattenCompact(payload.get('key_path',      state.get('key_path')));
+    const types_path    = flattenCompact(payload.get('types_path',    state.get('types_path')));
+    const props_path    = flattenCompact(payload.get('props_path',    state.get('props_path')));
+    const audience_path = flattenCompact(payload.get('audience_path', state.get('audience_path')));
     const experiments   = payload.get('experiments');
     const active        = payload.has('active')   ? payload.get('active')   : state.get('active');
     const audience      = payload.has('audience') ? payload.get('audience') : state.get('audience');
@@ -114,6 +115,7 @@ const reducers = {
       experiments,
       audience,
       active,
+      key_path,
       types_path,
       props_path,
       audience_path,

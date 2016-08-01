@@ -105,10 +105,10 @@ export default class Experiment extends React.Component {
    */
   componentWillMount() {
     const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
-    const selector_path = reduxAbTest.get('selector_path');
+    const key_path = reduxAbTest.get('key_path');
 
     const experiment = selector && reduxAbTest.get('availableExperiments').find(
-      experiment => (experiment.getIn(selector_path) === selector),
+      experiment => (experiment.getIn(key_path) === selector),
       null
     ) || reduxAbTest.getIn(['availableExperiments', id || name], null);
 
