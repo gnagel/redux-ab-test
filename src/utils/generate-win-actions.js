@@ -17,7 +17,8 @@ export default function generateWinActions(props:Props) {
   const experimentKeys = reduxAbTest.getIn( ['win_action_types', actionType], Immutable.List([]) ).filter( experimentKey => reduxAbTest.hasIn(['active', experimentKey]) );
 
   // Map the experiments to variations and to redux `win` actions
-  const output = experimentKeys.map(experimentKey => {
+  const output = [];
+  experimentKeys.forEach(experimentKey => {
     const variationKey = reduxAbTest.getIn(['active', experimentKey]);
     const experiment   = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === experimentKey), null);
     if (!experiment) {
@@ -27,7 +28,7 @@ export default function generateWinActions(props:Props) {
     if (!variation) {
       return;
     }
-    return win({experiment, variation, actionType, actionPayload});
+    output.push( win({experiment, variation, actionType, actionPayload}) );
   });
 
   // Return the collection of `win` actions that match the experiments

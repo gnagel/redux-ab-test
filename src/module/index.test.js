@@ -38,14 +38,6 @@ const experiment:ExperimentType = {
     variation_b
   ]
 };
-const experimentInStore = Immutable.fromJS({
-  name:       "Test-Name",
-  variations: {
-    "Original" : variation_original,
-    "Variation #A" : variation_a,
-    "Variation #B" : variation_b,
-  }
-});
 
 
 describe('(Redux) src/module/index.js', () => {
@@ -262,8 +254,8 @@ describe('(Redux) src/module/index.js', () => {
         expect(initialState.toJS()[field]).to.be.blank;
       });
     };
-    sharedDescribe('allExperiments', 'object');
-    sharedDescribe('availableExperiments', 'object');
+    sharedDescribe('experiments', 'array');
+    sharedDescribe('availableExperiments', 'array');
     sharedDescribe('types_path', 'array');
     sharedDescribe('props_path', 'array');
     sharedDescribe('audience_path', 'array');
@@ -321,8 +313,8 @@ describe('(Redux) src/module/index.js', () => {
       }),
       newState: initialState.merge({
         active:               { "Test-Name": "Variation #A" },
-        allExperiments:       { "Test-Name": experimentInStore },
-        availableExperiments: { "Test-Name": experimentInStore },
+        experiments:          [ experiment ],
+        availableExperiments: [ experiment ],
       }),
     });
 
@@ -500,7 +492,7 @@ describe('(Redux) src/module/index.js', () => {
 
     it('enqueues 1x win per registered experiment', () => {
       reduxAbTest = initialState.merge({
-        allExperiments: { "Test-Name": experimentInStore },
+        experiments: [experiment],
         win_action_types: {
           'Test-action-type': [experiment.name, 'Test-experiment-2']
         },
@@ -510,18 +502,19 @@ describe('(Redux) src/module/index.js', () => {
       });
       const action = { type: 'Test-action-type', payload: { example: 'payload' } };
       middleware(store)(next)(action);
-      expect(recordedActions).to.deep.equal([
-        action,
-        {
-          type:    WIN,
-          payload: Immutable.fromJS({
-            experiment:    experimentInStore,
-            variation:     variation_a,
-            actionType:    action.type,
-            actionPayload: action.payload
-          })
-        }
-      ]);
+      expect(recordedActions).to.have.length(2);
+      // 1st action is our input `action` above
+      expect(recordedActions[0]).to.deep.equal(action);
+      // 2nd action is the generated action from the win:
+      expect(recordedActions[1]).to.deep.equal({
+        type:    WIN,
+        payload: Immutable.fromJS({
+          experiment:    experiment,
+          variation:     variation_a,
+          actionType:    action.type,
+          actionPayload: action.payload
+        })
+      });
     });
 
   });

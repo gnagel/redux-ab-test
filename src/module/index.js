@@ -37,8 +37,8 @@ export const win           = createAction(WIN,              ({experiment, variat
 
 
 export const initialState = Immutable.fromJS({
-  allExperiments:       { /** "experiment id" => "experiment objects" */              },
-  availableExperiments: { /** Hash of experiments that match the current audience */  },
+  experiments:          [ /** Array of "experiment objects" */                        ],
+  availableExperiments: [ /** Array of "experiment objects" */                        ],
   running:              { /** "experiment id" => counter  */                          },
   active:               { /** "experiment id" => "variation id" */                    },
   winners:              { /** "experiment id" => "variation id" */                    },
@@ -90,25 +90,13 @@ const reducers = {
     const types_path    = flattenCompact(payload.get('types_path',    initialState.get('types_path')));
     const props_path    = flattenCompact(payload.get('props_path',    initialState.get('props_path')));
     const audience_path = flattenCompact(payload.get('audience_path', initialState.get('audience_path')));
+    const experiments   = payload.get('experiments');
+    const active        = payload.has('active')   ? payload.get('active')   : state.get('active');
+    const audience      = payload.has('audience') ? payload.get('audience') : state.get('audience');
 
-    // Convert the experiments array input into a Map, to do key-> value lookups with
-    // The keys of the experiments are the ID or NAME attributes.
-    const allExperiments = payload.get('experiments').reduce(
+    const win_action_types = experiments.reduce(
       (map, experiment) => {
-        const variations = experiment.get('variations').reduce(
-          (map, variation) => (map.set(getKey(variation), variation)),
-          Immutable.Map({}),
-        );
-        return map.set(getKey(experiment), experiment.merge({ variations }));
-      },
-      Immutable.Map({}),
-    );
-
-    const active   = payload.has('active')   ? payload.get('active')   : state.get('active');
-    const audience = payload.has('audience') ? payload.get('audience') : state.get('audience');
-
-    const win_action_types = allExperiments.reduce(
-      (map, experiment, key) => {
+        const key = getKey(experiment);
         const types = flattenCompact(experiment.getIn(types_path));
         types.forEach(type => {
           const list = map[type] || [];
@@ -122,7 +110,7 @@ const reducers = {
 
     return initialState.merge({
       availableExperiments: availableExperiments({experiments, audience_path, audience}),
-      allExperiments,
+      experiments,
       audience,
       active,
       types_path,
@@ -138,10 +126,10 @@ const reducers = {
    */
   [SET_AUDIENCE]: (state, { payload }) => {
     const audience       = payload.get('audience');
-    const allExperiments = state.get('allExperiments');
+    const experiments    = state.get('experiments');
     const audience_path  = state.get('audience_path');
     return state.merge({
-      availableExperiments: availableExperiments(allExperiments, audience_path, audience),
+      availableExperiments: availableExperiments({experiments, audience_path, audience}),
       audience,
     });
   },
