@@ -1,6 +1,6 @@
 /** @flow */
 import Immutable from 'immutable';
-import findExperiment from './find-experiment';
+import getKey from './get-key';
 
 type Props = {
   reduxAbTest:   Immutable.Map,
@@ -17,21 +17,21 @@ export default function generateWinActions(props:Props) {
     return Immutable.List([]);
   }
 
-  const experimentNames = win_action_types.get(actionType);
-  const reduceToActions = (list, experimentName) => {
-    if (!reduxAbTest.get('active').has(experimentName)) {
+  const experimentKeys = win_action_types.get(actionType);
+  const reduceToActions = (list, experimentKey) => {
+    if (!reduxAbTest.get('active').has(experimentKey)) {
       return list;
     }
 
-    const experiment = findExperiment(reduxAbTest, experimentName);
-    const variationName = reduxAbTest.get('active').get(experimentName);
-    const variation = experiment.get('variations').find( variation => (variation.get('name') === variationName) );
+    const experiment = reduxAbTest.get('experiments').find( experiment => (experimentKey === getKey(experiment)) );
+    const variationKey = reduxAbTest.get('active').get(experimentKey);
+    const variation = experiment.get('variations').find( variation => (variationKey === getKey(variation)) );
     if (!variation) {
       return list;
     }
 
     return list.push(win({experiment, variation, actionType, actionPayload}));
   };
-  const actionsQueue = experimentNames.reduce(reduceToActions, Immutable.List([]));
+  const actionsQueue = experimentKeys.reduce(reduceToActions, Immutable.List([]));
   return actionsQueue;
 }

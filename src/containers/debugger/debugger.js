@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import { canUseDOM } from 'fbjs/lib/ExecutionEnvironment';
 
 import Debugger from '../../components/debugger';
-import { registerAdhoc, activate, deactivate, play, win } from '../../module';
+import { activate, deactivate, play, win } from '../../module';
 
 
 /**
@@ -22,7 +22,6 @@ export const mapStateToProps = (state:Object) => {
  * Map the action creators to the the Experiment's props.
  */
 export const mapDispatchToProps = (dispatch:Function) => bindActionCreators({
-  dispatchRegisterAdhoc: registerAdhoc,
   dispatchActivate:      activate,
   dispatchDeactivate:    deactivate,
   dispatchPlay:          play,

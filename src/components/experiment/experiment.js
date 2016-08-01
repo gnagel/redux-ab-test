@@ -3,7 +3,6 @@ import React from "react";
 import Immutable from 'immutable';
 import VariationComponent from '../../components/variation';
 import VariationContainer from '../../containers/variation';
-import findExperiment from '../../utils/find-experiment';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
 
@@ -23,9 +22,18 @@ type Props = {
    */
   reduxAbTest: Immutable.Map,
   /**
+   * ID of the experiment
+   */
+  id: ?string,
+  /**
    * Name of the experiment
    */
   name: string,
+  /**
+   * Selector key for choosing an experiment from the redux store
+   * Eg:
+   */
+  selector: ?string,
   /**
    * Name of the default variation.
    * >  When defined, this value is used to choose a variation if a stored value is not present.
@@ -64,6 +72,10 @@ type State = {
    * The currenly active variation
    */
   variation: ?VariationType,
+  /**
+   * The experient was played
+   */
+  played: ?bool,
 };
 
 
@@ -71,8 +83,10 @@ export default class Experiment extends React.Component {
   props: Props;
   state: State;
   static defaultProps = {
-    reduxAbTest:          Immutable.Map({ experiments: [], active: {} }),
-    name:                 'Default Experiment Name',
+    reduxAbTest:          Immutable.Map({}),
+    id:                   null,
+    name:                 null,
+    selector:             null,
     defaultVariationName: null,
     dispatchActivate:     () => {},
     dispatchDeactivate:   () => {},
@@ -82,6 +96,7 @@ export default class Experiment extends React.Component {
   state = {
     variation:  null,
     experiment: null,
+    played:     false,
   };
 
 
@@ -89,10 +104,22 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
-    const experiment = findExperiment(reduxAbTest, name);
+    const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
+    const selector_path = reduxAbTest.get('selector_path');
+
+    const experiment = selector && reduxAbTest.get('availableExperiments').find(
+      experiment => (experiment.getIn(selector_path) === selector),
+      null
+    ) || reduxAbTest.getIn(['availableExperiments', id || name], null);
+
+    // If the experiment is un-available, then record it wasn't played and move on
+    if (!experiment) {
+      this.setState({ experiment: null, variation: null, played: false });
+      return;
+    }
+
     const variation = selectVariation({
-      reduxAbTest,
+      active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
       cacheStore
@@ -101,7 +128,12 @@ export default class Experiment extends React.Component {
     // These will trigger `componentWillReceiveProps`
     dispatchActivate({experiment});
     dispatchPlay({experiment, variation});
-    this.setState({ experiment, variation });
+    this.setState({ experiment, variation, played: true });
+  }
+
+  isNotVariationChildren() {
+    const { children } = this.props;
+    return (React.Children.count(children) === 1 && (!React.isValidElement(children) || React.Children.only(children).type !== VariationComponent || React.Children.only(children).type !== VariationContainer))
   }
 
 
@@ -109,15 +141,27 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { name, defaultVariationName, reduxAbTest } = nextProps;
-    const experiment = findExperiment(reduxAbTest, name);
+    const { id, name, defaultVariationName, reduxAbTest } = nextProps;
+    const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
+    if (!experiment) {
+      return;
+    }
+
     const variation = selectVariation({
-      reduxAbTest,
+      active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
       cacheStore
     });
-    this.setState({ experiment, variation });
+
+    if (!experiment.equals(this.state.experiment) || !variation.equals(this.state.variation)) {
+      // These will trigger `componentWillReceiveProps`
+      if (!this.state.played) {
+        dispatchActivate({experiment});
+        dispatchPlay({experiment, variation});
+      }
+      this.setState({ experiment, variation, played: true });
+    }
   }
 
 
@@ -128,7 +172,9 @@ export default class Experiment extends React.Component {
     const { dispatchDeactivate } = this.props;
     const { experiment } = this.state;
     // Dispatch the deactivation event
-    dispatchDeactivate({experiment});
+    if (experiment) {
+      dispatchDeactivate({experiment});
+    }
   }
 
 
@@ -138,8 +184,10 @@ export default class Experiment extends React.Component {
   render() {
     const { name, children } = this.props;
     const { experiment, variation } = this.state;
+
+    const notVariationChildren = this.isNotVariationChildren();
     if (!variation) {
-      return null;
+      return notVariationChildren ? children : null;
     }
 
     // If you specified something other than a `Variation` as the children,
@@ -169,9 +217,15 @@ export default class Experiment extends React.Component {
     //       <Variation name="Version B">  <h1 style={{...}}>BOLD fancy text!</h1>  </Variation>
     //     </Experiment>
     //
-    if (React.Children.count(children) === 1 && (!React.isValidElement(children) || React.Children.only(children).type !== VariationComponent || React.Children.only(children).type !== VariationContainer)) {
+    if (notVariationChildren) {
       return (
-        <VariationContainer name={variation.get('name')} experimentName={experiment.get('name')}>{children}</VariationContainer>
+        <VariationContainer
+          id={variation.get('id')}
+          name={variation.get('name')}
+          experiment={experiment}
+          variation={variation}>
+          {children}
+        </VariationContainer>
       );
     }
 
@@ -184,7 +238,12 @@ export default class Experiment extends React.Component {
     }
 
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(variationChildElement, { experimentName: name });
+    return React.cloneElement(variationChildElement, {
+      experiment,
+      variation,
+      id: variation.get('id'),
+      name: variation.get('name'),
+    });
   }
 }
 
