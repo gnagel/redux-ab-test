@@ -22,18 +22,28 @@ describe('(Container) Variation', () => {
     let component;
     beforeEach(() => {
       const props = {
-        name:           'Variation B',
-        experimentName: 'Test-experimentName',
-        children:       'Test Variation B',
+        name: 'Variation B',
+        experiment: Immutable.fromJS({
+          name: 'Test-experimentName',
+          variations: [
+            { name: 'Original',  weight: 10000 },
+            { name: 'Variation B', weight: 0 },
+          ]
+        }),
+        children: 'Test Variation B',
       };
       const store = {
-        reduxAbTest: initialState.set('experiments', Immutable.fromJS([{
-          name:       'Test-experimentName',
-          variations: [
-            { name: 'Original', weight: 10000 },
-            { name: 'Variation B', weight: 0 }
+        reduxAbTest: initialState.merge({
+          experiments: [
+            {
+              name: 'Test-experimentName',
+              variations: [
+                { name: 'Original', weight: 10000 },
+                { name: 'Variation B', weight: 0 }
+              ]
+            },
           ]
-        }]))
+        }),
       };
       component = renderContainer(Variation, props, store).find(Variation);
     });

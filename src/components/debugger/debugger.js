@@ -100,7 +100,7 @@ export default class Debugger extends React.Component {
 
   renderExperiment(experiment:Immutable.Map) {
     const experimentName = experiment.get('name');
-    const variations = experiment.get('variations').toList();
+    const variations = experiment.get('variations');
     const variationNames = variations.map( variation => variation.get('name') ).toJS();
     if (variationNames.length === 0) {
       return null;

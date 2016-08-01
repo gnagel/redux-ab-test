@@ -7,7 +7,6 @@ import { createAction, handleActions }   from 'redux-actions';
 import { cacheStore }                    from '../utils/create-cache-store';
 import availableExperiments              from '../utils/available-experiments';
 import getKey                            from '../utils/get-key';
-import toWinningActionTypes              from '../utils/experiment-action-types';
 import generateWinActions                from '../utils/generate-win-actions';
 import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
 
@@ -122,7 +121,7 @@ const reducers = {
     );
 
     return initialState.merge({
-      availableExperiments: availableExperiments(allExperiments, audience_path, audience),
+      availableExperiments: availableExperiments({experiments, audience_path, audience}),
       allExperiments,
       audience,
       active,

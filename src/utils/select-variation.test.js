@@ -27,7 +27,7 @@ const experiment:ExperimentType = {
 };
 
 
-describe.only('utils/select-variation.js', () => {
+describe('utils/select-variation.js', () => {
 
   it('exists', () => {
     expect(selectVariation).to.exist;

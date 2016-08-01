@@ -96,7 +96,7 @@ export default class Experiment extends React.Component {
     const { id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
     const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
     const variation = selectVariation({
-      reduxAbTest,
+      active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
       cacheStore
@@ -113,10 +113,10 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { name, defaultVariationName, reduxAbTest } = nextProps;
+    const { id, name, defaultVariationName, reduxAbTest } = nextProps;
     const experiment = reduxAbTest.getIn(['availableExperiments', id || name], null);
     const variation = selectVariation({
-      reduxAbTest,
+      active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
       cacheStore

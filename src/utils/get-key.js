@@ -1,3 +1,3 @@
 
-const experimentKey = experiment => (experiment.has('id') ? experiment.get('id') : experiment.get('name'));
+const experimentKey = experiment => (experiment.get('id', null) || experiment.get('name', null));
 export default experimentKey;

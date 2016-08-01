@@ -1,5 +1,6 @@
 /** @flow */
 import Immutable from 'immutable';
+import getKey from './get-key';
 
 type Props = {
   reduxAbTest:   Immutable.Map,
@@ -12,25 +13,23 @@ type Props = {
 export default function generateWinActions(props:Props) {
   const { reduxAbTest, win, actionType, actionPayload } = props;
 
-  // Experiment IDs that match the current action
-  const experimentKeys = reduxAbTest.getIn(['win_action_types', actionType], null);
-  if (!experimentKeys) {
-    return Immutable.List([]);
-  }
+  // Get only the experients that match this actionType and are currently active
+  const experimentKeys = reduxAbTest.getIn( ['win_action_types', actionType], Immutable.List([]) ).filter( experimentKey => reduxAbTest.hasIn(['active', experimentKey]) );
 
-  const actions = experimentKeys.map(experimentKey => {
-    const experiment = reduxAbTest.getIn(['allExperiments', experimentKey], null);
-    if (!experiment) {
-      return null;
-    }
-
+  // Map the experiments to variations and to redux `win` actions
+  const output = experimentKeys.map(experimentKey => {
     const variationKey = reduxAbTest.getIn(['active', experimentKey]);
-    const variation    = experiment.getIn(['variations', variationKey], null);
-    if (!variation) {
-      return null;
+    const experiment   = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === experimentKey), null);
+    if (!experiment) {
+      return;
     }
-
+    const variation = experiment.get('variations').find(variation => (getKey(variation) === variationKey), null);
+    if (!variation) {
+      return;
+    }
     return win({experiment, variation, actionType, actionPayload});
   });
-  return actions.filter( value => value );
+
+  // Return the collection of `win` actions that match the experiments
+  return output;
 }

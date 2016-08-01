@@ -9,10 +9,10 @@ const reduxAbTest = initialState.merge({
   'availableExperiments': {
     'Test-experimentName': {
       name:       'Test-experimentName',
-      variations: {
-        'Original':    { name: 'Original', weight: 10000 },
-        'Variation B': { name: 'Variation B', weight: 0 }
-      },
+      variations: [
+        { name: 'Original', weight: 10000 },
+        { name: 'Variation B', weight: 0 }
+      ],
     },
   },
   'active': { 'Test-experimentName': 'Variation B' }

@@ -5,35 +5,30 @@ import { initialState } from '../../module';
 import { expect, renderComponent } from 'test_helper';
 
 
-const reduxAbTest = initialState.merge({
-  'availableExperiments': {
-    'Test-experimentName': {
-      name:       'Test-experimentName',
-      variations: [
-        { name: 'Original', weight: 10000 },
-        { name: 'Variation B', weight: 0 }
-      ]
-    },
-  },
-  'active': { 'Test-experimentName': 'Variation B' }
-});
 
 describe('(Component) src/components/variation/variation.js', () => {
   let component;
   let props;
   beforeEach(() => {
+    const reduxAbTest = initialState.merge({
+      'experiments': [
+        {
+          id:         'test-experimentId',
+          name:       'Test-experimentName',
+          variations: [
+            { id: 'test-id-original',    name: 'Original',    weight: 10000 },
+            { id: 'test-id-variation-b', name: 'Variation B', weight: 0 }
+          ]
+        },
+      ],
+      'active': { 'Test-experimentName': 'Variation B' }
+    });
+
     props = {
-      name:           'Variation B',
-      experimentName: 'Test-experimentName',
-      children:       'Test-children',
-      reduxAbTest:    initialState.set('experiments', Immutable.fromJS([{
-        id:         'test-experimentId',
-        name:       'Test-experimentName',
-        variations: [
-          { id: 'test-id-original', name: 'Original', weight: 10000 },
-          { id: 'test-id-variation-b', name: 'Variation B', weight: 0 }
-        ]
-      }]))
+      name:         'Variation B',
+      experiment:   reduxAbTest.getIn(['experiments', 0]),
+      children:     'Test-children',
+      reduxAbTest,
     };
     component = renderComponent(Variation, props);
   });
@@ -44,7 +39,7 @@ describe('(Component) src/components/variation/variation.js', () => {
 
   it('has the correct props', () => {
     expect(component).to.have.prop('name', 'Variation B');
-    expect(component).to.have.prop('experimentName', 'Test-experimentName');
+    expect(component).to.have.prop('experiment');
     expect(component).to.have.prop('reduxAbTest');
   });
 

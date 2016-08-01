@@ -403,7 +403,7 @@ describe('(Redux) src/module/index.js', () => {
 
       it('chooses the active variation from redux store', () => {
         const output = selectVariation({
-          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])).set('active', Immutable.fromJS({"Test-Name": "Variation #B"})),
+          active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
           experiment:           Immutable.fromJS(experiment),
           defaultVariationName: null,
           cacheStore
@@ -414,7 +414,7 @@ describe('(Redux) src/module/index.js', () => {
 
       it('chooses the defaultVariationName variation', () => {
         const output = selectVariation({
-          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+          active:               Immutable.Map(),
           experiment:           Immutable.fromJS(experiment),
           defaultVariationName: "Variation #B",
           cacheStore
@@ -426,7 +426,7 @@ describe('(Redux) src/module/index.js', () => {
       it('chooses the active variation from localcache', () => {
         cacheStore.setItem(experiment.name, variation_b.name);
         const output = selectVariation({
-          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+          active:               Immutable.Map(),
           experiment:           Immutable.fromJS(experiment),
           defaultVariationName: null,
           cacheStore
@@ -437,7 +437,7 @@ describe('(Redux) src/module/index.js', () => {
 
       it('randomly assigns a variation, ignoring weight=0 records', () => {
         const output = selectVariation({
-          reduxAbTest:          initialState.set('experiments', Immutable.fromJS([experiment])),
+          active:               Immutable.Map(),
           experiment:           Immutable.fromJS(experiment),
           defaultVariationName: null,
           cacheStore
