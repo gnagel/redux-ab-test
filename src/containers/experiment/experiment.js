@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import Experiment from '../../components/experiment';
-import { registerAdhoc, activate, deactivate, play, win } from '../../module';
+import { activate, deactivate, play, win } from '../../module';
 
 
 /**
@@ -21,7 +21,6 @@ export const mapStateToProps = (state:Object) => {
  */
 export const mapDispatchToProps = (dispatch:Function) => bindActionCreators(
   {
-    dispatchRegisterAdhoc: registerAdhoc,
     dispatchActivate:      activate,
     dispatchDeactivate:    deactivate,
     dispatchPlay:          play,
