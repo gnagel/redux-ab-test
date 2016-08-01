@@ -131,7 +131,7 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { selector, id, name, defaultVariationName, reduxAbTest } = nextProps;
+    const { selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
     if (!experiment) {
       // If we no-longer have an experiment anymore, then update the internal state
