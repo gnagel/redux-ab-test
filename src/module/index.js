@@ -43,10 +43,12 @@ export const initialState = Immutable.fromJS({
   active:               { /** "experiment id" => "variation id" */                    },
   winners:              { /** "experiment id" => "variation id" */                    },
   audience:             { /** Any props you want to use for user/session targeting */ },
+  route:                { pathName: null, search: null, action: null, query: {}, params: {} },
   key_path:             ['key'],
   types_path:           ['win_action_types'],
   props_path:           ['componentProps'],
   audience_path:        ['audienceProps'],
+  route_path:           ['routeProps'],
   win_action_types:     { /** Array of Redux Action Types */ },
 });
 
@@ -92,9 +94,12 @@ const reducers = {
     const types_path    = flattenCompact(payload.get('types_path',    state.get('types_path')));
     const props_path    = flattenCompact(payload.get('props_path',    state.get('props_path')));
     const audience_path = flattenCompact(payload.get('audience_path', state.get('audience_path')));
+    const route_path    = flattenCompact(payload.get('route_path',    state.get('route_path')));
     const experiments   = payload.get('experiments');
     const active        = payload.has('active')   ? payload.get('active')   : state.get('active');
     const audience      = payload.has('audience') ? payload.get('audience') : state.get('audience');
+    const route         = payload.has('route')    ? payload.get('route')    : state.get('route');
+    const audience      = payload.get('audience').mergeDeep(route);
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
@@ -111,14 +116,16 @@ const reducers = {
     );
 
     return initialState.merge({
-      availableExperiments: availableExperiments({experiments, audience_path, audience}),
+      availableExperiments: availableExperiments({experiments, audience_path, audience, route, route_path}),
       experiments,
       audience,
+      route,
       active,
       key_path,
       types_path,
       props_path,
       audience_path,
+      route_path,
       win_action_types
     });
   },
@@ -128,12 +135,26 @@ const reducers = {
    * Set the Audience for the experiments
    */
   [SET_AUDIENCE]: (state, { payload }) => {
+    const route          = state.get('route');
+    const route_path     = state.get('route_path');
     const audience       = payload.get('audience');
     const experiments    = state.get('experiments');
     const audience_path  = state.get('audience_path');
     return state.merge({
-      availableExperiments: availableExperiments({experiments, audience_path, audience}),
+      availableExperiments: availableExperiments({experiments, audience_path, audience, route, route_path}),
       audience,
+    });
+  },
+
+  /**
+   * Intercept the redux-router events, this is specifically for reac-router integration
+   */
+  ['@@reduxReactRouter/routerDidChange']: (state, { payload }) => {
+    const params = payload.params || {};
+    const location = payload.location || {};
+    const { pathname, search, action, query = {} } = location;
+    return state.merge({
+      'route': { pathName: pathname, search, action, query, params }
     });
   },
 
