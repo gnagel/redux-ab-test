@@ -152,8 +152,16 @@ const reducers = {
     const { location = {}, params = {}, routes = [] } = payload;
     const { pathname, search, action, query = {} } = location;
     const path = Immutable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
+    const route = Immutable.fromJS({ path: (path || pathname), pathName: pathname, search, action, query, params });
     return state.merge({
-      'route': { path: (path || pathname), pathName: pathname, search, action, query, params }
+      route,
+      availableExperiments: availableExperiments({
+        experiments:   state.get('experiments'),
+        audience_path: state.get('audience_path'),
+        audience:      state.get('audience'),
+        route,
+        route_path:    state.get('route_path'),
+      }),
     });
   },
 
