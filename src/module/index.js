@@ -151,7 +151,7 @@ const reducers = {
   ['@@reduxReactRouter/routerDidChange']: (state, { payload }) => {
     const { location = {}, params = {}, routes = [] } = payload;
     const { pathname, search, action, query = {} } = location;
-    const path = Immuable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
+    const path = Immutable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
     return state.merge({
       'route': { path: (path || pathname), pathName: pathname, search, action, query, params }
     });
