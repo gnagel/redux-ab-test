@@ -99,7 +99,6 @@ const reducers = {
     const active        = payload.has('active')   ? payload.get('active')   : state.get('active');
     const audience      = payload.has('audience') ? payload.get('audience') : state.get('audience');
     const route         = payload.has('route')    ? payload.get('route')    : state.get('route');
-    const audience      = payload.get('audience').mergeDeep(route);
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
@@ -150,11 +149,11 @@ const reducers = {
    * Intercept the redux-router events, this is specifically for reac-router integration
    */
   ['@@reduxReactRouter/routerDidChange']: (state, { payload }) => {
-    const params = payload.params || {};
-    const location = payload.location || {};
+    const { location = {}, params = {}, routes = [] } = payload;
     const { pathname, search, action, query = {} } = location;
+    const path = Immuable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
     return state.merge({
-      'route': { pathName: pathname, search, action, query, params }
+      'route': { path: (path || pathname), pathName: pathname, search, action, query, params }
     });
   },
 
