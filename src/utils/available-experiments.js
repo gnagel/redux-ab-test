@@ -20,9 +20,10 @@ export const matchesField = (hash, field, operator, value) => {
 export const filterNotHash = (hash, value, field) => {
   // console.log(`hash=${hash}, field=${field}, value=${value}`);
   if (!Immutable.Map.isMap(value)) {
-    console.log(`hash=${hash}, field=${field}, value=${value}, === : ${matchesField(hash, field, '===', value)}`);
+    // console.log(`hash=${hash}, field=${field}, value=${value}, === : ${matchesField(hash, field, '===', value)}`);
     return matchesField(hash, field, '===', value);
   }
+  // console.log(`hash=${hash}, field=${field}, value=${value} : ${value.filterNot( (value, operator) => matchesField(hash, field, operator, value) ).isEmpty()}`);
   return value.filterNot( (value, operator) => matchesField(hash, field, operator, value) ).isEmpty();
 };
 
@@ -44,10 +45,8 @@ export const matchesRoute = (route, routeProps) => {
   return routeProps.filterNot((value, field) => {
     if (['query', 'params'].includes(field)) {
       const hash = route.get(field);
-      // console.log(`hash=${hash}, field=${field}, value=${value}`);
-      return value.filterNot(
-        (value, field) => filterNotHash(hash, value, field)
-       ).isEmpty();
+      // console.log(`hash=${hash}, field=${field}, value=${value}, output=${value.filterNot((value, field) => filterNotHash(hash, value, field)).isEmpty()}`);
+      return value.filterNot((value, field) => filterNotHash(hash, value, field)).isEmpty();
     }
     return filterNotHash(route, value, field);
   }).isEmpty();

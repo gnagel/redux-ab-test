@@ -4,59 +4,8 @@ import { expect } from 'test_helper';
 import { initialState } from '../module';
 import availableExperiments, { matchesField, matchesAudience, matchesRoute } from './available-experiments';
 
-const experiment_0 = Immutable.fromJS({
-  name:       'No Audience',
-  variations: [
-    { name: 'Original', weight: 5000 },
-    { name: 'Variation #A', weight: 5000 },
-    { name: 'Variation #B', weight: 0 }
-  ],
-});
 
-const experiment_a = Immutable.fromJS({
-  name:          'Blank Audience',
-  audienceProps: {},
-  variations:    [
-    { name: 'Original', weight: 5000 },
-    { name: 'Variation #A', weight: 5000 },
-    { name: 'Variation #B', weight: 0 }
-  ],
-});
-
-const experiment_b = Immutable.fromJS({
-  name:          'Simple Audience Type',
-  audienceProps: {
-    type: 'vip',
-  },
-  routeProps: {
-    pathName: { in: ['/magic', '/'] }
-  },
-  variations: [
-    { name: 'Original', weight: 5000 },
-    { name: 'Variation #A', weight: 5000 },
-    { name: 'Variation #B', weight: 0 }
-  ],
-});
-
-const experiment_c = Immutable.fromJS({
-  name:          'Complex Audience Type',
-  audienceProps: {
-    type:   'vip',
-    orders: { '>=': 1 },
-    state:  { 'in': [ 'NY', 'FL', 'CA' ] },
-  },
-  routeProps: {
-    pathName: '/magic',
-  },
-  variations: [
-    { name: 'Original', weight: 5000 },
-    { name: 'Variation #A', weight: 5000 },
-    { name: 'Variation #B', weight: 0 }
-  ],
-});
-
-
-describe.only('utils/available-experiments.js', () => {
+describe('utils/available-experiments.js', () => {
   describe('matchesField', () => {
     it('exists', () => {
       expect(matchesField).to.exist;
@@ -97,10 +46,10 @@ describe.only('utils/available-experiments.js', () => {
       expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [1])).to.be.true;
       expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [10])).to.be.false;
     });
-
   });
 
-  describe.only('matchesRoute', () => {
+
+  describe('matchesRoute', () => {
     const blankRoute    = initialState.get('route');
     const homepageRoute = initialState.get('route').merge({ pathName: '/', path: '/' });
     const dynamicRoute  = initialState.get('route').merge({ pathName: '/posts/2', path: '/posts:id', params: { 'id': '2' } });
@@ -121,18 +70,6 @@ describe.only('utils/available-experiments.js', () => {
 
     it('empty hash matches any route', () => {
       expect(matchesRoute( homepageRoute, Immutable.fromJS({}) )).to.be.true;
-    });
-
-    it('undefined matches any route', () => {
-      expect(matchesRoute(blankRoute, experiment_0.get('routeProps'))).to.be.true;
-      expect(matchesRoute(Immutable.fromJS({ type: 'vip' }), experiment_0.get('routeProps'))).to.be.true;
-      expect(matchesRoute(Immutable.fromJS({ type: 'vip', orders: 10 }), experiment_0.get('routeProps'))).to.be.true;
-    });
-
-    it('empty hash matches any route', () => {
-      expect(matchesRoute(Immutable.Map(), experiment_a.get('routeProps'))).to.be.true;
-      expect(matchesRoute(Immutable.fromJS({ type: 'vip' }), experiment_a.get('routeProps'))).to.be.true;
-      expect(matchesRoute(Immutable.fromJS({ type: 'vip', orders: 10 }), experiment_a.get('routeProps'))).to.be.true;
     });
 
     it('exactly matches pathName', () => {
@@ -176,7 +113,7 @@ describe.only('utils/available-experiments.js', () => {
     });
 
     it('doesnt match path with missing params', () => {
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'invalid-param': 'n/a'              } }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'invalid-param': 'n/a'              } }) )).to.be.false; // eslint-disable-line
     });
 
     it('doesnt match path with params', () => {
@@ -187,26 +124,28 @@ describe.only('utils/available-experiments.js', () => {
       expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'not in': ['2']             }} }) )).to.be.false; // eslint-disable-line
     });
 
-    it('exactly matches path with query', () => {
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':              '2'              }}  ) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'in':     ['2']             }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'in':     ['2', 'slug']     }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'in':     ['2', '3']        }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'not in': ['404']           }} }) )).to.be.true; // eslint-disable-line
+    it('exactly matches pathName with query', () => {
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign':              'test-campaignName'              }}  ) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName']             }} }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName', 'slug']     }} }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName', '3']        }} }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'not in': ['404']                           }} }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'not in': ['2']                             }} }) )).to.be.true; // eslint-disable-line
     });
 
-    it('doesnt match path with missing query', () => {
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'invalid-param': 'n/a'              } }) )).to.be.true; // eslint-disable-line
+    it('doesnt match pathName with missing query', () => {
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'invalid-param': 'n/a'              } }) )).to.be.false; // eslint-disable-line
     });
 
-    it('doesnt match path with query', () => {
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':              '3'              }}  ) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'in':     ['3']             }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'in':     ['3', 'slug']     }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'in':     ['3', '15']       }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id': { 'not in': ['2']             }} }) )).to.be.false; // eslint-disable-line
+    it('doesnt match pathName with query', () => {
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':                        '3'                  }}  ) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3']                 }} }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3', 'slug']         }} }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3', '15']           }} }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'not in': ['test-campaignName'] }} }) )).to.be.false; // eslint-disable-line
     });
   });
+
 
   describe('matchesAudience', () => {
     const blankAudience   = Immutable.fromJS({});
@@ -314,7 +253,60 @@ describe.only('utils/available-experiments.js', () => {
     });
   });
 
+
   describe('availableExperiments', () => {
+    const experiment_0 = Immutable.fromJS({
+      name:       'No Audience',
+      variations: [
+        { name: 'Original', weight: 5000 },
+        { name: 'Variation #A', weight: 5000 },
+        { name: 'Variation #B', weight: 0 }
+      ],
+    });
+
+    const experiment_a = Immutable.fromJS({
+      name:          'Blank Audience',
+      audienceProps: {},
+      variations:    [
+        { name: 'Original', weight: 5000 },
+        { name: 'Variation #A', weight: 5000 },
+        { name: 'Variation #B', weight: 0 }
+      ],
+    });
+
+    const experiment_b = Immutable.fromJS({
+      name:          'Simple Audience Type',
+      audienceProps: {
+        type: 'vip',
+      },
+      routeProps: {
+        pathName: { in: ['/magic', '/'] }
+      },
+      variations: [
+        { name: 'Original', weight: 5000 },
+        { name: 'Variation #A', weight: 5000 },
+        { name: 'Variation #B', weight: 0 }
+      ],
+    });
+
+    const experiment_c = Immutable.fromJS({
+      name:          'Complex Audience Type',
+      audienceProps: {
+        type:   'vip',
+        orders: { '>=': 1 },
+        state:  { 'in': [ 'NY', 'FL', 'CA' ] },
+      },
+      routeProps: {
+        pathName: '/magic',
+      },
+      variations: [
+        { name: 'Original', weight: 5000 },
+        { name: 'Variation #A', weight: 5000 },
+        { name: 'Variation #B', weight: 0 }
+      ],
+    });
+
+
     it('exists', () => {
       expect(availableExperiments).to.exist;
       expect(availableExperiments).to.be.a('function');
@@ -324,7 +316,9 @@ describe.only('utils/available-experiments.js', () => {
       let output = availableExperiments({
         audience:      Immutable.Map(),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        route_path:    initialState.get('route_path'),
+        route:         initialState.get('route'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
@@ -332,7 +326,9 @@ describe.only('utils/available-experiments.js', () => {
       output = availableExperiments({
         audience:      Immutable.fromJS({ type: 'new user' }),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        route_path:    initialState.get('route_path'),
+        route:         initialState.get('route'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
@@ -342,7 +338,9 @@ describe.only('utils/available-experiments.js', () => {
       const output = availableExperiments({
         audience:      Immutable.fromJS({ type: 'vip' }),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        route_path:    initialState.get('route_path'),
+        route:         initialState.get('route').merge({pathName: '/magic'}),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type' ]);
@@ -352,7 +350,9 @@ describe.only('utils/available-experiments.js', () => {
       const output = availableExperiments({
         audience:      Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        route_path:    initialState.get('route_path'),
+        route:         initialState.get('route').merge({pathName: '/magic'}),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type', 'Complex Audience Type' ]);
