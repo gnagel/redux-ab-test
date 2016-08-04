@@ -95,10 +95,11 @@ const reducers = {
     const props_path    = flattenCompact(payload.get('props_path',    state.get('props_path')));
     const audience_path = flattenCompact(payload.get('audience_path', state.get('audience_path')));
     const route_path    = flattenCompact(payload.get('route_path',    state.get('route_path')));
-    const experiments   = payload.get('experiments');
-    const active        = payload.has('active')   ? payload.get('active')   : state.get('active');
-    const audience      = payload.has('audience') ? payload.get('audience') : state.get('audience');
-    const route         = payload.has('route')    ? payload.get('route')    : state.get('route');
+    const experiments   = payload.has('experiments') ? payload.get('experiments') : state.get('experiments');
+    const active        = payload.has('active')      ? payload.get('active')      : state.get('active');
+    const winners       = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
+    const audience      = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
+    const route         = payload.has('route')       ? payload.get('route')       : state.get('route');
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
@@ -120,6 +121,7 @@ const reducers = {
       audience,
       route,
       active,
+      winners,
       key_path,
       types_path,
       props_path,
