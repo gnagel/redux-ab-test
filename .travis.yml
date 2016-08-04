@@ -11,7 +11,9 @@ before_install:
   - npm i -g npm@^3.9.3
 before_script:
   - npm prune
+  - npm run build
 after_success:
+  - npm run build
   - npm run semantic-release
 branches:
   except:
