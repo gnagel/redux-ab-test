@@ -1,4 +1,5 @@
 {
+  "engines" : { "npm" : ">=6.3.0" },
   "name": "redux-ab-test",
   "keywords": [
     "react",
