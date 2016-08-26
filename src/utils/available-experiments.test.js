@@ -278,6 +278,7 @@ describe('utils/available-experiments.js', () => {
     const experiment_a2 = Immutable.fromJS({
       key:           'BlankAudienceComponent',
       name:          'Blank Audience 2',
+      persistentExperience: true,
       audienceProps: {},
       variations:    [
         { name: 'Original', weight: 5000 },
@@ -328,89 +329,78 @@ describe('utils/available-experiments.js', () => {
 
     it('undefined/blank matches any audience', () => {
       let output = availableExperiments({
-        key_path:      ['key'],
-        audience:      Immutable.Map(),
-        audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
-        route_path:    initialState.get('route_path'),
-        route:         initialState.get('route'),
+        key_path:           ['key'],
+        active:             Immutable.Map(),
+        persistent_path:    ['persistentExperience'],
+        audience:           Immutable.Map(),
+        audience_path:      ['audienceProps'],
+        experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
+        route_path:         initialState.get('route_path'),
+        route:              initialState.get('route'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(output.toJS()).to.deep.equal({
-        '': [
-          'No Audience',
-        ],
-        'BlankAudienceComponent': [
-          'Blank Audience 1', 'Blank Audience 2'
-        ],
+        'No Audience': 'No Audience',
+        'BlankAudienceComponent': 'Blank Audience 1',
       });
+    });
 
-
-      output = availableExperiments({
-        key_path:      ['key'],
-        audience:      Immutable.fromJS({ type: 'new user' }),
-        audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
-        route_path:    initialState.get('route_path'),
-        route:         initialState.get('route'),
+    it('undefined/blank gives preference to active w/persistentExperience', () => {
+      let output = availableExperiments({
+        key_path:           ['key'],
+        active:             Immutable.Map({
+          'Blank Audience 2': 'Variation #A',
+        }),
+        persistent_path:    ['persistentExperience'],
+        audience:           Immutable.fromJS({ type: 'new user' }),
+        audience_path:      ['audienceProps'],
+        experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
+        route_path:         initialState.get('route_path'),
+        route:              initialState.get('route'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(output.toJS()).to.deep.equal({
-        '': [
-          'No Audience',
-        ],
-        'BlankAudienceComponent': [
-          'Blank Audience 1', 'Blank Audience 2'
-        ],
+        'No Audience': 'No Audience',
+        'BlankAudienceComponent': 'Blank Audience 2',
       });
     });
 
     it('matches vip', () => {
       const output = availableExperiments({
-        key_path:      ['key'],
-        audience:      Immutable.fromJS({ type: 'vip' }),
-        audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
-        route_path:    initialState.get('route_path'),
-        route:         initialState.get('route').merge({pathName: '/magic'}),
+        key_path:           ['key'],
+        active:             Immutable.Map(),
+        persistent_path:    ['persistentExperience'],
+        audience:           Immutable.fromJS({ type: 'vip' }),
+        audience_path:      ['audienceProps'],
+        experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
+        route_path:         initialState.get('route_path'),
+        route:              initialState.get('route').merge({pathName: '/magic'}),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(output.toJS()).to.deep.equal({
-        '': [
-          'No Audience',
-        ],
-        'BlankAudienceComponent': [
-          'Blank Audience 1', 'Blank Audience 2'
-        ],
-        'SimpleAudienceComponent': [
-          'Simple Audience Type',
-        ]
+        'No Audience': 'No Audience',
+        'BlankAudienceComponent': 'Blank Audience 1',
+        'SimpleAudienceComponent': 'Simple Audience Type',
       });
     });
 
     it('matches vip and orders', () => {
       const output = availableExperiments({
-        key_path:      ['key'],
-        audience:      Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
-        audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
-        route_path:    initialState.get('route_path'),
-        route:         initialState.get('route').merge({pathName: '/magic'}),
+        key_path:           ['key'],
+        active:             Immutable.Map(),
+        persistent_path:    ['persistentExperience'],
+        audience:           Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
+        audience_path:      ['audienceProps'],
+        experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
+        route_path:         initialState.get('route_path'),
+        route:              initialState.get('route').merge({pathName: '/magic'}),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(output.toJS()).to.deep.equal({
-        '': [
-          'No Audience',
-        ],
-        'BlankAudienceComponent': [
-          'Blank Audience 1', 'Blank Audience 2'
-        ],
-        'SimpleAudienceComponent': [
-          'Simple Audience Type',
-        ],
-        'ComplexAudienceComponent': [
-          'Complex Audience Type',
-        ],
+        'No Audience': 'No Audience',
+        'BlankAudienceComponent': 'Blank Audience 1',
+        'SimpleAudienceComponent': 'Simple Audience Type',
+        'ComplexAudienceComponent': 'Complex Audience Type',
       });
     });
   });

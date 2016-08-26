@@ -84,7 +84,7 @@ export const matchesRoute = (route, routeProps) => {
  * 1. 'route' matches the given experiment.getIn(route_path)
  * 2. 'audience' matches the given experiment.getIn(audience_path)
  */
-const availableExperiments = ({experiments, key_path, audience_path, route_path, audience, route}) => {
+const availableExperiments = ({experiments, active, key_path, persistent_path, audience_path, route_path, audience, route}) => {
   // Filter by routes
   experiments = experiments.filter(
     (experiment) => matchesRoute(route, experiment.getIn(route_path, null))
@@ -92,17 +92,30 @@ const availableExperiments = ({experiments, key_path, audience_path, route_path,
 
   // Filter by audience
   experiments = experiments.filter(
-    (experiment) => matchesAudience(audience, experiment.getIn(audience_path, null))
+    (experiment) => {
+      // If it is active && is persistent, then this stays available to the system
+      if (active.has(getKey(experiment)) && experiment.getIn(persistent_path)) {
+        return true;
+      }
+      return matchesAudience(audience, experiment.getIn(audience_path, null))
+    },
   );
 
   // Map the results together into a hash of `selector` => `key` => `experiment`
   const output = experiments.reduce(
     (hash, experiment) => {
-      const selector = experiment.getIn(key_path, '');
       const key      = getKey(experiment);
-      let list     = hash.get(selector, Immutable.List());
-      list = list.push(key);
-      return hash.set(selector, list);
+      const selector = experiment.getIn(key_path, key);
+      // If this is a new selector => key, then add it to the hash
+      if (!hash.has(selector)) {
+        return hash.set(selector, key);
+      }
+      // If this is am active & persistent experiment, it is the winner
+      if (active.has(getKey(experiment)) && experiment.getIn(persistent_path)) {
+        return hash.set(selector, key);
+      }
+      // No changes to the map!
+      return hash;
     },
     Immutable.Map({}),
   );

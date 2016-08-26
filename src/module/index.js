@@ -48,6 +48,7 @@ export const initialState = Immutable.fromJS({
   types_path:           ['win_action_types'],
   props_path:           ['componentProps'],
   audience_path:        ['audienceProps'],
+  persistent_path:      ['persistentExperience'],
   route_path:           ['routeProps'],
   win_action_types:     { /** Array of Redux Action Types */ },
 });
@@ -90,16 +91,17 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [LOAD]: (state, { payload }) => {
-    const key_path      = flattenCompact(payload.get('key_path',      state.get('key_path')));
-    const types_path    = flattenCompact(payload.get('types_path',    state.get('types_path')));
-    const props_path    = flattenCompact(payload.get('props_path',    state.get('props_path')));
-    const audience_path = flattenCompact(payload.get('audience_path', state.get('audience_path')));
-    const route_path    = flattenCompact(payload.get('route_path',    state.get('route_path')));
-    const experiments   = payload.has('experiments') ? payload.get('experiments') : state.get('experiments');
-    const active        = payload.has('active')      ? payload.get('active')      : state.get('active');
-    const winners       = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
-    const audience      = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
-    const route         = payload.has('route')       ? payload.get('route')       : state.get('route');
+    const key_path        = flattenCompact(payload.get('key_path',      state.get('key_path')));
+    const types_path      = flattenCompact(payload.get('types_path',    state.get('types_path')));
+    const props_path      = flattenCompact(payload.get('props_path',    state.get('props_path')));
+    const audience_path   = flattenCompact(payload.get('audience_path', state.get('audience_path')));
+    const persistent_path = flattenCompact(payload.get('persistent_path', state.get('persistent_path')));
+    const route_path      = flattenCompact(payload.get('route_path',    state.get('route_path')));
+    const experiments     = payload.has('experiments') ? payload.get('experiments') : state.get('experiments');
+    const active          = payload.has('active')      ? payload.get('active')      : state.get('active');
+    const winners         = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
+    const audience        = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
+    const route           = payload.has('route')       ? payload.get('route')       : state.get('route');
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
@@ -116,7 +118,16 @@ const reducers = {
     );
 
     return initialState.merge({
-      availableExperiments: availableExperiments({experiments, key_path, audience_path, audience, route, route_path}),
+      availableExperiments: availableExperiments({
+        experiments,
+        key_path,
+        active,
+        persistent_path,
+        audience_path,
+        audience,
+        route,
+        route_path,
+      }),
       experiments,
       audience,
       route,
@@ -125,6 +136,7 @@ const reducers = {
       key_path,
       types_path,
       props_path,
+      persistent_path,
       audience_path,
       route_path,
       win_action_types
@@ -137,13 +149,17 @@ const reducers = {
    */
   [SET_AUDIENCE]: (state, { payload }) => {
     const audience       = payload.get('audience');
-    const audience_path  = state.get('audience_path');
-    const route          = state.get('route');
-    const route_path     = state.get('route_path');
-    const key_path       = state.get('key_path');
-    const experiments    = state.get('experiments');
     return state.merge({
-      availableExperiments: availableExperiments({experiments, key_path, audience_path, audience, route, route_path}),
+      availableExperiments: availableExperiments({
+        experiments:     state.get('experiments'),
+        key_path:        state.get('key_path'),
+        active:          state.get('active'),
+        persistent_path: state.get('persistent_path'),
+        audience_path:   state.get('audience_path'),
+        route:           state.get('route'),
+        route_path:      state.get('route_path'),
+        audience,
+      }),
       audience,
     });
   },

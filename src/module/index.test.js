@@ -314,7 +314,7 @@ describe('(Redux) src/module/index.js', () => {
       newState: initialState.merge({
         active:               { "Test-Name": "Variation #A" },
         experiments:          [ experiment ],
-        availableExperiments: { '' : ["Test-Name"] },
+        availableExperiments: { 'Test-Name' : "Test-Name" },
       }),
     });
 

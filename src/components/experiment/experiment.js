@@ -163,19 +163,14 @@ export default class Experiment extends React.Component {
   }
 
   getExperiment(reduxAbTest, selector, id, name) {
-    const key = getKey(Immutable.Map({id, name}));
-    const experiments = reduxAbTest.getIn(['availableExperiments', selector || ''], Immutable.Map());
-    if (experiments.isEmpty()) {
+    const key = selector && reduxAbTest.getIn(['availableExperiments', selector || id || name], null);
+    if (!key) {
       return null;
     }
-    if (key && experiments.has(key)) {
-      return experiments.get(key);
-    }
-    // const active = experiments.values().filter( experiment => reduxAbTest.hasIn(['active', key]) ).first();
-    // if (active) {
-    //   return active;
-    // }
-    return experiments.values().first();
+    const experiment = reduxAbTest.get('experiments').find(experiment => {
+      return getKey(experiment) === key;
+    }, null);
+    return experiment;
   }
 
   isNotVariationChildren() {
