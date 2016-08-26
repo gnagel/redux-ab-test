@@ -99,6 +99,12 @@
     "shipit": "npm run build && npm publish && npm run clean",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
+  "version": "3.4.0",
+  "release": {
+    "verifyConditions": {
+      "path": "./test/release"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gnagel/redux-ab-test.git"
