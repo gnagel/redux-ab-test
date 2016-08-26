@@ -6,13 +6,22 @@ import { expect, renderContainer, spy } from 'test_helper';
 
 
 const reduxAbTest = initialState.merge({
+  experiments: [
+    {
+      name:       'Test-experimentName',
+      variations: [
+        { name: 'Original', weight: 10000 },
+        { name: 'Variation B', weight: 0 }
+      ],
+    },
+  ],
   'availableExperiments': {
     'Test-experimentName': 'Test-experimentName',
   },
   'active': { 'Test-experimentName': 'Variation B' }
 });
 
-describe.only('(Component) src/components/experiment/experiment.js', () => {
+describe('(Component) src/components/experiment/experiment.js', () => {
   let component;
   let props;
   let dispatchActivate;
@@ -87,6 +96,16 @@ describe.only('(Component) src/components/experiment/experiment.js', () => {
 
   describe('find by :id', () => {
     const reduxAbTest = initialState.merge({
+      experiments: [
+        {
+          id:         'Test-id',
+          name:       'Test-experimentName',
+          variations: [
+            { name: 'Original', weight: 10000 },
+            { name: 'Variation B', weight: 0 }
+          ],
+        },
+      ],
       'availableExperiments': { 'Test-id': 'Test-id' },
       'active': { 'Test-id': 'Variation B' }
     });
@@ -121,6 +140,19 @@ describe.only('(Component) src/components/experiment/experiment.js', () => {
 
   describe('find by :selector', () => {
     const reduxAbTest = initialState.merge({
+      experiments: [
+        {
+          id:         'Test-id',
+          name:       'Test-experimentName',
+          component: {
+            key: 'Example component key selector',
+          },
+          variations: [
+            { name: 'Original', weight: 10000 },
+            { name: 'Variation B', weight: 0 }
+          ],
+        },
+      ],
       availableExperiments: {
         'Example component key selector': 'Test-id',
       },

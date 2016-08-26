@@ -90,7 +90,7 @@ export default class Experiment extends React.Component {
     reduxAbTest:          Immutable.Map({}),
     id:                   null,
     name:                 null,
-    selector:             '',
+    selector:             null,
     defaultVariationName: null,
     dispatchActivate:     () => {},
     dispatchDeactivate:   () => {},
@@ -163,13 +163,14 @@ export default class Experiment extends React.Component {
   }
 
   getExperiment(reduxAbTest, selector, id, name) {
-    const key = selector && reduxAbTest.getIn(['availableExperiments', selector || id || name], null);
+    // Find the key of the currently available experiment
+    const key = reduxAbTest.getIn(['availableExperiments', selector || id || name], null);
     if (!key) {
       return null;
     }
-    const experiment = reduxAbTest.get('experiments').find(experiment => {
-      return getKey(experiment) === key;
-    }, null);
+    // Select the experiment from the redux store
+    const experiment = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === key), null);
+    // Return the resulting experiment
     return experiment;
   }
 
