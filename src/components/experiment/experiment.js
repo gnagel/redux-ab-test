@@ -5,6 +5,7 @@ import VariationComponent from '../../components/variation';
 import VariationContainer from '../../containers/variation';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
+import getKey from '../../utils/get-key';
 
 type Props = {
   /**
@@ -22,18 +23,21 @@ type Props = {
    */
   reduxAbTest: Immutable.Map,
   /**
-   * ID of the experiment
+   * Selector key for choosing an experiment from the redux store.
+   * This can be used as such:
+   *  <Experiment selector=`Homepage Header Experiment`> ... </Experiment>
+   */
+  selector: ?string,
+  /**
+   * ID of the experiment, this is used to pick a specific experient from the redux store.
+   * We use getKey to generate the `key` for this experiment.
    */
   id: ?string,
   /**
-   * Name of the experiment
+   * Name of the experiment, this is used to pick a specific experient from the redux store.
+   * This should only be used as a fallback if `id` is unavailable
    */
   name: string,
-  /**
-   * Selector key for choosing an experiment from the redux store
-   * Eg:
-   */
-  selector: ?string,
   /**
    * Name of the default variation.
    * >  When defined, this value is used to choose a variation if a stored value is not present.
@@ -86,7 +90,7 @@ export default class Experiment extends React.Component {
     reduxAbTest:          Immutable.Map({}),
     id:                   null,
     name:                 null,
-    selector:             null,
+    selector:             '',
     defaultVariationName: null,
     dispatchActivate:     () => {},
     dispatchDeactivate:   () => {},
@@ -107,7 +111,7 @@ export default class Experiment extends React.Component {
     const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
 
-    // If the experiment is un-available, then record it wasn't played and move on
+    // If the experiment is unavailable, then record it wasn't played and move on
     if (!experiment) {
       this.setState({ experiment: null, variation: null, played: false });
       return;
@@ -158,14 +162,20 @@ export default class Experiment extends React.Component {
     }
   }
 
-
   getExperiment(reduxAbTest, selector, id, name) {
-    const key_path = reduxAbTest.get('key_path');
-    const experiment = selector && reduxAbTest.get('availableExperiments').find(
-      experiment => (experiment.getIn(key_path) === selector),
-      null
-    ) || reduxAbTest.getIn(['availableExperiments', id || name], null);
-    return experiment;
+    const key = getKey(Immutable.Map({id, name}));
+    const experiments = reduxAbTest.getIn(['availableExperiments', selector || ''], Immutable.Map());
+    if (experiments.isEmpty()) {
+      return null;
+    }
+    if (key && experiments.has(key)) {
+      return experiments.get(key);
+    }
+    // const active = experiments.values().filter( experiment => reduxAbTest.hasIn(['active', key]) ).first();
+    // if (active) {
+    //   return active;
+    // }
+    return experiments.values().first();
   }
 
   isNotVariationChildren() {

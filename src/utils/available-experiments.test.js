@@ -265,7 +265,19 @@ describe('utils/available-experiments.js', () => {
     });
 
     const experiment_a = Immutable.fromJS({
-      name:          'Blank Audience',
+      key:           'BlankAudienceComponent',
+      name:          'Blank Audience 1',
+      audienceProps: {},
+      variations:    [
+        { name: 'Original', weight: 5000 },
+        { name: 'Variation #A', weight: 5000 },
+        { name: 'Variation #B', weight: 0 }
+      ],
+    });
+
+    const experiment_a2 = Immutable.fromJS({
+      key:           'BlankAudienceComponent',
+      name:          'Blank Audience 2',
       audienceProps: {},
       variations:    [
         { name: 'Original', weight: 5000 },
@@ -275,6 +287,7 @@ describe('utils/available-experiments.js', () => {
     });
 
     const experiment_b = Immutable.fromJS({
+      key:           'SimpleAudienceComponent',
       name:          'Simple Audience Type',
       audienceProps: {
         type: 'vip',
@@ -290,6 +303,7 @@ describe('utils/available-experiments.js', () => {
     });
 
     const experiment_c = Immutable.fromJS({
+      key:           'ComplexAudienceComponent',
       name:          'Complex Audience Type',
       audienceProps: {
         type:   'vip',
@@ -314,48 +328,90 @@ describe('utils/available-experiments.js', () => {
 
     it('undefined/blank matches any audience', () => {
       let output = availableExperiments({
+        key_path:      ['key'],
         audience:      Immutable.Map(),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
         route_path:    initialState.get('route_path'),
         route:         initialState.get('route'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
+      expect(output.toJS()).to.deep.equal({
+        '': [
+          'No Audience',
+        ],
+        'BlankAudienceComponent': [
+          'Blank Audience 1', 'Blank Audience 2'
+        ],
+      });
+
 
       output = availableExperiments({
+        key_path:      ['key'],
         audience:      Immutable.fromJS({ type: 'new user' }),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
         route_path:    initialState.get('route_path'),
         route:         initialState.get('route'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience' ]);
+      expect(output.toJS()).to.deep.equal({
+        '': [
+          'No Audience',
+        ],
+        'BlankAudienceComponent': [
+          'Blank Audience 1', 'Blank Audience 2'
+        ],
+      });
     });
 
     it('matches vip', () => {
       const output = availableExperiments({
+        key_path:      ['key'],
         audience:      Immutable.fromJS({ type: 'vip' }),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
         route_path:    initialState.get('route_path'),
         route:         initialState.get('route').merge({pathName: '/magic'}),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type' ]);
+      expect(output.toJS()).to.deep.equal({
+        '': [
+          'No Audience',
+        ],
+        'BlankAudienceComponent': [
+          'Blank Audience 1', 'Blank Audience 2'
+        ],
+        'SimpleAudienceComponent': [
+          'Simple Audience Type',
+        ]
+      });
     });
 
     it('matches vip and orders', () => {
       const output = availableExperiments({
+        key_path:      ['key'],
         audience:      Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
         audience_path: ['audienceProps'],
-        experiments:   Immutable.List([experiment_0, experiment_a, experiment_b, experiment_c]),
+        experiments:   Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
         route_path:    initialState.get('route_path'),
         route:         initialState.get('route').merge({pathName: '/magic'}),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(Object.keys(output.toJS())).to.be.have.deep.equal([ 'No Audience', 'Blank Audience', 'Simple Audience Type', 'Complex Audience Type' ]);
+      expect(output.toJS()).to.deep.equal({
+        '': [
+          'No Audience',
+        ],
+        'BlankAudienceComponent': [
+          'Blank Audience 1', 'Blank Audience 2'
+        ],
+        'SimpleAudienceComponent': [
+          'Simple Audience Type',
+        ],
+        'ComplexAudienceComponent': [
+          'Complex Audience Type',
+        ],
+      });
     });
   });
 

@@ -116,7 +116,7 @@ const reducers = {
     );
 
     return initialState.merge({
-      availableExperiments: availableExperiments({experiments, audience_path, audience, route, route_path}),
+      availableExperiments: availableExperiments({experiments, key_path, audience_path, audience, route, route_path}),
       experiments,
       audience,
       route,
@@ -136,13 +136,14 @@ const reducers = {
    * Set the Audience for the experiments
    */
   [SET_AUDIENCE]: (state, { payload }) => {
+    const audience       = payload.get('audience');
+    const audience_path  = state.get('audience_path');
     const route          = state.get('route');
     const route_path     = state.get('route_path');
-    const audience       = payload.get('audience');
+    const key_path       = state.get('key_path');
     const experiments    = state.get('experiments');
-    const audience_path  = state.get('audience_path');
     return state.merge({
-      availableExperiments: availableExperiments({experiments, audience_path, audience, route, route_path}),
+      availableExperiments: availableExperiments({experiments, key_path, audience_path, audience, route, route_path}),
       audience,
     });
   },
@@ -159,6 +160,7 @@ const reducers = {
       route,
       availableExperiments: availableExperiments({
         experiments:   state.get('experiments'),
+        key_path:      state.get('key_path'),
         audience_path: state.get('audience_path'),
         audience:      state.get('audience'),
         route,

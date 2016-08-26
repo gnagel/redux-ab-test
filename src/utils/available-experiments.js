@@ -84,20 +84,26 @@ export const matchesRoute = (route, routeProps) => {
  * 1. 'route' matches the given experiment.getIn(route_path)
  * 2. 'audience' matches the given experiment.getIn(audience_path)
  */
-const availableExperiments = ({experiments, audience_path, route_path, audience, route}) => {
+const availableExperiments = ({experiments, key_path, audience_path, route_path, audience, route}) => {
   // Filter by routes
-  let output = experiments.filter(
+  experiments = experiments.filter(
     (experiment) => matchesRoute(route, experiment.getIn(route_path, null))
   );
 
   // Filter by audience
-  output = output.filter(
+  experiments = experiments.filter(
     (experiment) => matchesAudience(audience, experiment.getIn(audience_path, null))
   );
 
-  // Map the results together into a hash of `key` => `experiment`
-  output = output.reduce(
-    (hash, experiment) => hash.set(getKey(experiment), experiment),
+  // Map the results together into a hash of `selector` => `key` => `experiment`
+  const output = experiments.reduce(
+    (hash, experiment) => {
+      const selector = experiment.getIn(key_path, '');
+      const key      = getKey(experiment);
+      let list     = hash.get(selector, Immutable.List());
+      list = list.push(key);
+      return hash.set(selector, list);
+    },
     Immutable.Map({}),
   );
   return output;
