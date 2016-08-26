@@ -176,6 +176,7 @@ const reducers = {
       route,
       availableExperiments: availableExperiments({
         experiments:   state.get('experiments'),
+        audience:      state.get('audience'),
         key_path:      state.get('key_path'),
         audience_path: state.get('audience_path'),
         audience:      state.get('audience'),
