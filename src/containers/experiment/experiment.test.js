@@ -41,14 +41,17 @@ describe('(Container) Experiment', () => {
       };
       const store = {
         reduxAbTest: initialState.merge({
-          availableExperiments: {
-            'Test-experimentName': {
+          experiments: [
+            {
               name:       'Test-experimentName',
               variations: [
                 { name: 'Original', weight: 10000 },
                 { name: 'Variation B', weight: 0 }
               ]
             }
+          ],
+          availableExperiments: {
+            'Test-experimentName': 'Test-experimentName',
           }
         })
       };
