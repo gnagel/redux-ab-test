@@ -1,5 +1,7 @@
 {
-  "engines" : { "npm" : ">=6.3.0" },
+  "engines": {
+    "npm": ">=6.3.0"
+  },
   "name": "redux-ab-test",
   "keywords": [
     "react",
@@ -99,7 +101,7 @@
     "shipit": "npm run build && npm publish && npm run clean",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
-  "version": "3.4.0",
+  "version": "3.4.1",
   "release": {
     "verifyConditions": {
       "path": "./test/release"
