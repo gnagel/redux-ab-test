@@ -175,13 +175,14 @@ const reducers = {
     return state.merge({
       route,
       availableExperiments: availableExperiments({
-        experiments:   state.get('experiments'),
-        active:        state.get('active'),
-        key_path:      state.get('key_path'),
-        audience_path: state.get('audience_path'),
-        audience:      state.get('audience'),
+        experiments:     state.get('experiments'),
+        active:          state.get('active'),
+        key_path:        state.get('key_path'),
+        persistent_path: state.get('persistent_path'),
+        audience_path:   state.get('audience_path'),
+        audience:        state.get('audience'),
         route,
-        route_path:    state.get('route_path'),
+        route_path:      state.get('route_path'),
       }),
     });
   },
