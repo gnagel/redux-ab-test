@@ -46,6 +46,15 @@ describe('utils/available-experiments.js', () => {
       expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [1])).to.be.true;
       expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [10])).to.be.false;
     });
+
+    it('has the correct output for not intersect', () => {
+      expect(matchesField(Immutable.fromJS({ orders: [1, 10, 20] }), 'orders', 'intersect', [10] )).to.be.true;
+      expect(matchesField(Immutable.fromJS({ orders: [10]        }), 'orders', 'intersect',  10  )).to.be.true;
+      expect(matchesField(Immutable.fromJS({ orders: 10          }), 'orders', 'intersect',  10  )).to.be.true;
+      expect(matchesField(Immutable.fromJS({ orders: [0, 15, 20] }), 'orders', 'intersect', [10] )).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: []          }), 'orders', 'intersect', [10] )).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: []          }), 'orders', 'intersect',  10  )).to.be.false;
+    });
   });
 
 

@@ -25,7 +25,16 @@ export const matchesField = (hash, field, operator, value) => {
   case '<':       return hash.has(field) && hash.get(field, undefined) <   value;
   case 'in':      return hash.has(field) && Immutable.List(value).flatten().includes(hash.get(field, undefined));
   case 'not in':  return !hash.has(field) || !Immutable.List(value).flatten().includes(hash.get(field, undefined));
-  default:        throw new Error(`Unknown operator=${operator} for field=${field} &, value=${value}`);
+  case 'intersect': {
+    if (!hash.has(field)) {
+      return false;
+    }
+    const valueList = Immutable.fromJS([value]).flatten().toSet();
+    const hashList  = Immutable.fromJS([hash.get(field, undefined)]).flatten().toSet();
+    console.log(`valueList=${valueList}.size=${valueList.size}, hashList=${hashList}.size=${hashList.size}, hashList.intersect(valueList).size=${hashList.intersect(valueList)}`);
+    return hashList.intersect(valueList).size == valueList.size;
+  }
+  default: throw new Error(`Unknown operator=${operator} for field=${field} &, value=${value}`);
   }
 };
 
