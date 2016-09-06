@@ -84,4 +84,16 @@ describe('(Component) src/components/variation/variation.js', () => {
     expect(component).to.have.data('experiment-name', 'Test-experimentName');
     expect(component).to.have.text('Test-children');
   });
+
+  it('doesnt add the dispatchWin prop', () => {
+    props = { ...props, children: (<div id="test-id">Test-children</div>) };
+    component = renderComponent(Variation, props);
+    expect(component.find('div')).to.not.have.prop('dispatchWin');
+  });
+
+  it('adds the bound dispatchWin prop', () => {
+    props = { ...props, dispatchWin: () => {}, bindDispatchWin: true, children: (<div id="test-id">Test-children</div>) };
+    component = renderComponent(Variation, props);
+    expect(component.find('div')).to.have.prop('dispatchWin');
+  });
 });
