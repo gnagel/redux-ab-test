@@ -61,6 +61,11 @@ type Props = {
    */
   dispatchWin: Function,
   /**
+   * Optional: Add the prop `dispatchWin({ actionType, actionPayload })` to the rendered component.
+   * The experiment & variation are automatically bound for you.
+   */
+  bindDispatchWin: ?bool,
+  /**
    * Variation Children to render
    */
   children: any,
@@ -96,6 +101,7 @@ export default class Experiment extends React.Component {
     dispatchDeactivate:   () => {},
     dispatchPlay:         () => {},
     dispatchWin:          () => {},
+    bindDispatchWin:      false,
   };
   state = {
     variation:  null,
@@ -197,7 +203,7 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
-    const { children } = this.props;
+    const { children, dispatchWin, bindDispatchWin } = this.props;
     const { experiment, variation } = this.state;
 
     const notVariationChildren = this.isNotVariationChildren();
@@ -238,7 +244,10 @@ export default class Experiment extends React.Component {
           id={variation.get('id')}
           name={variation.get('name')}
           experiment={experiment}
-          variation={variation}>
+          variation={variation}
+          dispatchWin={dispatchWin}
+          bindDispatchWin={bindDispatchWin}
+          >
           {children}
         </VariationContainer>
       );
@@ -256,6 +265,8 @@ export default class Experiment extends React.Component {
     return React.cloneElement(variationChildElement, {
       experiment,
       variation,
+      dispatchWin,
+      bindDispatchWin,
       id:   variation.get('id'),
       name: variation.get('name'),
     });
