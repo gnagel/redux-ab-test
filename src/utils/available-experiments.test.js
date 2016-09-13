@@ -330,6 +330,25 @@ describe('utils/available-experiments.js', () => {
       ],
     });
 
+    const experiment_d = Immutable.fromJS({
+      key:           'ComplexAudienceComponent',
+      name:          'Single Success Type',
+      singleSuccess: true,
+      audienceProps: {
+        type:   'vip',
+        orders: { '>=': 1 },
+        state:  { 'in': [ 'NY', 'FL', 'CA' ] },
+      },
+      routeProps: {
+        pathName: '/magic',
+      },
+      variations: [
+        { name: 'Original', weight: 5000 },
+        { name: 'Variation #A', weight: 5000 },
+        { name: 'Variation #B', weight: 0 }
+      ],
+    });
+
 
     it('exists', () => {
       expect(availableExperiments).to.exist;
@@ -340,7 +359,9 @@ describe('utils/available-experiments.js', () => {
       let output = availableExperiments({
         key_path:           ['key'],
         active:             Immutable.Map(),
+        winners:            Immutable.Map(),
         persistent_path:    ['persistentExperience'],
+        single_success_path:['singleSuccess'],
         audience:           Immutable.Map(),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -360,7 +381,9 @@ describe('utils/available-experiments.js', () => {
         active:             Immutable.Map({
           'Blank Audience 2': 'Variation #A',
         }),
+        winners:            Immutable.Map(),
         persistent_path:    ['persistentExperience'],
+        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'new user' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -378,7 +401,9 @@ describe('utils/available-experiments.js', () => {
       const output = availableExperiments({
         key_path:           ['key'],
         active:             Immutable.Map(),
+        winners:            Immutable.Map(),
         persistent_path:    ['persistentExperience'],
+        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'vip' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -397,7 +422,9 @@ describe('utils/available-experiments.js', () => {
       const output = availableExperiments({
         key_path:           ['key'],
         active:             Immutable.Map(),
+        winners:            Immutable.Map(),
         persistent_path:    ['persistentExperience'],
+        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -411,6 +438,36 @@ describe('utils/available-experiments.js', () => {
         'SimpleAudienceComponent': 'Simple Audience Type',
         'ComplexAudienceComponent': 'Complex Audience Type',
       });
+    });
+
+    it('experiment_d matches vip and orders', () => {
+      let args = {
+        key_path:           ['key'],
+        active:             Immutable.Map(),
+        winners:            Immutable.Map(),
+        persistent_path:    ['persistentExperience'],
+        single_success_path:['singleSuccess'],
+        audience:           Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
+        audience_path:      ['audienceProps'],
+        experiments:        Immutable.List([experiment_d]),
+        route_path:         initialState.get('route_path'),
+        route:              initialState.get('route').merge({pathName: '/magic'}),
+      };
+      let output = availableExperiments(args);
+      expect(output).to.be.an.instanceOf(Immutable.Map);
+      expect(output.toJS()).to.deep.equal({
+        'ComplexAudienceComponent': 'Single Success Type',
+      });
+
+      // Once won, it is excluded from the output
+      output = availableExperiments({
+        ...args,
+        winners:            Immutable.Map({
+          'Single Success Type': 'Original',
+        }),
+      });
+      expect(output).to.be.an.instanceOf(Immutable.Map);
+      expect(output.toJS()).to.deep.equal({});
     });
   });
 

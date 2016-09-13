@@ -49,6 +49,7 @@ export const initialState = Immutable.fromJS({
   props_path:           ['componentProps'],
   audience_path:        ['audienceProps'],
   persistent_path:      ['persistentExperience'],
+  single_success_path:  ['singleSuccess'],  // Should the experiment be removed from availableExperiments once it has been won?
   route_path:           ['routeProps'],
   win_action_types:     { /** Array of Redux Action Types */ },
 });
@@ -77,6 +78,19 @@ export const middleware = (store:Object) => (next:Function) => (action:Object) =
 
 export const flattenCompact = (list) => Immutable.List( _compact(_flattenDeep(Immutable.fromJS([list]).toJS())) );
 
+const computeAvailableExperiments = (state) => state.set('availableExperiments', availableExperiments({
+  experiments:          state.get('experiments'),
+  key_path:             state.get('key_path'),
+  active:               state.get('active'),
+  winners:              state.get('winners'),
+  persistent_path:      state.get('persistent_path'),
+  audience_path:        state.get('audience_path'),
+  audience:             state.get('audience'),
+  route:                state.get('route'),
+  route_path:           state.get('route_path'),
+  single_success_path:  state.get('single_success_path'),
+}));
+
 
 const reducers = {
   /**
@@ -91,17 +105,18 @@ const reducers = {
    * LOAD the available experiments. and reset the state of the server
    */
   [LOAD]: (state, { payload }) => {
-    const key_path        = flattenCompact(payload.get('key_path',      state.get('key_path')));
-    const types_path      = flattenCompact(payload.get('types_path',    state.get('types_path')));
-    const props_path      = flattenCompact(payload.get('props_path',    state.get('props_path')));
-    const audience_path   = flattenCompact(payload.get('audience_path', state.get('audience_path')));
-    const persistent_path = flattenCompact(payload.get('persistent_path', state.get('persistent_path')));
-    const route_path      = flattenCompact(payload.get('route_path',    state.get('route_path')));
-    const experiments     = payload.has('experiments') ? payload.get('experiments') : state.get('experiments');
-    const active          = payload.has('active')      ? payload.get('active')      : state.get('active');
-    const winners         = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
-    const audience        = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
-    const route           = payload.has('route')       ? payload.get('route')       : state.get('route');
+    const key_path             = flattenCompact(payload.get('key_path',            state.get('key_path')));
+    const types_path           = flattenCompact(payload.get('types_path',          state.get('types_path')));
+    const props_path           = flattenCompact(payload.get('props_path',          state.get('props_path')));
+    const audience_path        = flattenCompact(payload.get('audience_path',       state.get('audience_path')));
+    const persistent_path      = flattenCompact(payload.get('persistent_path',     state.get('persistent_path')));
+    const single_success_path  = flattenCompact(payload.get('single_success_path', state.get('single_success_path')));
+    const route_path           = flattenCompact(payload.get('route_path',          state.get('route_path')));
+    const experiments          = payload.has('experiments') ? payload.get('experiments') : state.get('experiments');
+    const active               = payload.has('active')      ? payload.get('active')      : state.get('active');
+    const winners              = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
+    const audience             = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
+    const route                = payload.has('route')       ? payload.get('route')       : state.get('route');
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
@@ -117,17 +132,7 @@ const reducers = {
       {}
     );
 
-    return initialState.merge({
-      availableExperiments: availableExperiments({
-        experiments,
-        key_path,
-        active,
-        persistent_path,
-        audience_path,
-        audience,
-        route,
-        route_path,
-      }),
+    return computeAvailableExperiments(initialState.merge({
       experiments,
       audience,
       route,
@@ -139,8 +144,9 @@ const reducers = {
       persistent_path,
       audience_path,
       route_path,
-      win_action_types
-    });
+      win_action_types,
+      single_success_path,
+    }));
   },
 
 
@@ -148,20 +154,8 @@ const reducers = {
    * Set the Audience for the experiments
    */
   [SET_AUDIENCE]: (state, { payload }) => {
-    const audience       = payload.get('audience');
-    return state.merge({
-      availableExperiments: availableExperiments({
-        experiments:     state.get('experiments'),
-        key_path:        state.get('key_path'),
-        active:          state.get('active'),
-        persistent_path: state.get('persistent_path'),
-        audience_path:   state.get('audience_path'),
-        route:           state.get('route'),
-        route_path:      state.get('route_path'),
-        audience,
-      }),
-      audience,
-    });
+    const audience = payload.get('audience');
+    return computeAvailableExperiments(state.set('audience', audience));
   },
 
   /**
@@ -172,19 +166,7 @@ const reducers = {
     const { pathname, search, action, query = {} } = location;
     const path = Immutable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
     const route = Immutable.fromJS({ path: (path || pathname), pathName: pathname, search, action, query, params });
-    return state.merge({
-      route,
-      availableExperiments: availableExperiments({
-        experiments:     state.get('experiments'),
-        active:          state.get('active'),
-        key_path:        state.get('key_path'),
-        persistent_path: state.get('persistent_path'),
-        audience_path:   state.get('audience_path'),
-        audience:        state.get('audience'),
-        route,
-        route_path:      state.get('route_path'),
-      }),
-    });
+    return computeAvailableExperiments(state.set('route', route));
   },
 
 
@@ -192,7 +174,7 @@ const reducers = {
    * Set the Active variations
    */
   [SET_ACTIVE]: (state, { payload }) => {
-    return state.set('active', payload.get('active'));
+    return computeAvailableExperiments(state.set('active', payload.get('active')));
   },
 
 
@@ -203,7 +185,7 @@ const reducers = {
     const experimentKey = getKey(payload.get('experiment'));
     const counter = (state.get('running').get(experimentKey) || 0) + 1;
     const running = state.get('running').set(experimentKey, counter);
-    return state.set('running', running);
+    return computeAvailableExperiments(state.set('running', running));
   },
 
 
@@ -214,7 +196,7 @@ const reducers = {
     const experimentKey = getKey(payload.get('experiment'));
     const counter = (state.get('running').get(experimentKey) || 0) - 1;
     const running = (counter <= 0) ? state.get('running').delete(experimentKey) : state.get('running').set(experimentKey, counter);
-    return state.set('running', running);
+    return computeAvailableExperiments(state.set('running', running));
   },
 
 
@@ -227,7 +209,7 @@ const reducers = {
     const variationKey  = getKey(payload.get('variation'));
     const active        = state.get('active').set(experimentKey, variationKey);
     cacheStore.removeItem(experimentKey);
-    return state.set('active', active);
+    return computeAvailableExperiments(state.set('active', active));
   },
 
 
@@ -239,7 +221,7 @@ const reducers = {
     const experimentKey = getKey(payload.get('experiment'));
     const variationKey  = getKey(payload.get('variation'));
     const winners       = state.get('winners').set(experimentKey, variationKey);
-    return state.set('winners', winners);
+    return computeAvailableExperiments(state.set('winners', winners));
   },
 };
 
