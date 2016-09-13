@@ -93,7 +93,7 @@ export const matchesRoute = (route, routeProps) => {
  * 1. 'route' matches the given experiment.getIn(route_path)
  * 2. 'audience' matches the given experiment.getIn(audience_path)
  */
-const availableExperiments = ({experiments, active, winners, key_path, persistent_path, audience_path, route_path, audience, route, single_success_path}) => {
+const availableExperiments = ({experiments, active, /*winners,*/ key_path, persistent_path, audience_path, route_path, audience, route/*, single_success_path*/}) => {
   // Filter by routes
   experiments = experiments.filter(
     (experiment) => matchesRoute(route, experiment.getIn(route_path, null))
@@ -110,16 +110,16 @@ const availableExperiments = ({experiments, active, winners, key_path, persisten
     },
   );
 
-  // Filter out experiments that can only be played once
-  experiments = experiments.filter(
-    (experiment) => {
-      // If it has won && can should be rejected once successful, then remove it now
-      if (winners.has(getKey(experiment)) && experiment.getIn(single_success_path, false)) {
-        return false;
-      }
-      return true;
-    },
-  );
+  // // Filter out experiments that can only be played once
+  // experiments = experiments.filter(
+  //   (experiment) => {
+  //     // If it has won && can should be rejected once successful, then remove it now
+  //     if (winners.has(getKey(experiment)) && experiment.getIn(single_success_path, false)) {
+  //       return false;
+  //     }
+  //     return true;
+  //   },
+  // );
 
   // Map the results together into a hash of `selector` => `key` => `experiment`
   const output = experiments.reduce(

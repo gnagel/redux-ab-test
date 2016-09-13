@@ -467,7 +467,11 @@ describe('utils/available-experiments.js', () => {
         }),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({});
+      expect(output.toJS()).to.deep.equal({
+        // Remove this if you un-comment the winner and single_success_path params to availableExperiments
+        //   'Single Success Type': 'Original',
+        'ComplexAudienceComponent': 'Single Success Type',
+      });
     });
   });
 
