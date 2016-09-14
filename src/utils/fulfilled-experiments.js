@@ -6,6 +6,6 @@ import getKey from './get-key';
  */
 const fulfilledExperiments = ({experiments, active, winners, key_path, single_success_path}) => {
   experiments = experiments.filter( experiment => experiment.getIn(single_success_path, false) );
-  return experiments.map(getKey).filter(active.has).filter(winners.has);
+  return experiments.map(getKey).filter(key => active.has(key)).filter(key => winners.has(key));
 };
 export default fulfilledExperiments;
