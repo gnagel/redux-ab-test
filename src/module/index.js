@@ -6,6 +6,7 @@ import _compact                          from 'lodash/compact';
 import { createAction, handleActions }   from 'redux-actions';
 import { cacheStore }                    from '../utils/create-cache-store';
 import availableExperiments              from '../utils/available-experiments';
+import fulfilledExperiments              from '../utils/fulfilled-experiments';
 import getKey                            from '../utils/get-key';
 import generateWinActions                from '../utils/generate-win-actions';
 import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
@@ -38,6 +39,7 @@ export const win           = createAction(WIN,              ({experiment, variat
 
 export const initialState = Immutable.fromJS({
   experiments:          [ /** Array of "experiment objects" */                        ],
+  fulfilled:            [ /** Array of "experiment keys" */ ],
   availableExperiments: { /** Hash of  "experiment key" => "experiment objects" */    },
   running:              { /** "experiment id" => counter  */                          },
   active:               { /** "experiment id" => "variation id" */                    },
@@ -80,6 +82,7 @@ export const flattenCompact = (list) => Immutable.List( _compact(_flattenDeep(Im
 
 const computeAvailableExperiments = (state) => state.set('availableExperiments', availableExperiments({
   experiments:          state.get('experiments'),
+  fulfilled:            state.get('fulfilled'),
   key_path:             state.get('key_path'),
   active:               state.get('active'),
   winners:              state.get('winners'),
@@ -117,6 +120,9 @@ const reducers = {
     const winners              = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
     const audience             = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
     const route                = payload.has('route')       ? payload.get('route')       : state.get('route');
+    const fulfilled            = payload.has('fulfilled')   ? payload.get('fulfilled')   : fulfilledExperiments({experiments, active, winners, key_path, single_success_path});
+
+
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
@@ -134,6 +140,7 @@ const reducers = {
 
     return computeAvailableExperiments(initialState.merge({
       experiments,
+      fulfilled,
       audience,
       route,
       active,
