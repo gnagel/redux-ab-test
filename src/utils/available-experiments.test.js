@@ -359,9 +359,8 @@ describe('utils/available-experiments.js', () => {
       let output = availableExperiments({
         key_path:           ['key'],
         active:             Immutable.Map(),
-        winners:            Immutable.Map(),
+        fulfilled:          Immutable.List(),
         persistent_path:    ['persistentExperience'],
-        single_success_path:['singleSuccess'],
         audience:           Immutable.Map(),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -381,9 +380,8 @@ describe('utils/available-experiments.js', () => {
         active:             Immutable.Map({
           'Blank Audience 2': 'Variation #A',
         }),
-        winners:            Immutable.Map(),
+        fulfilled:          Immutable.List(),
         persistent_path:    ['persistentExperience'],
-        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'new user' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -403,7 +401,6 @@ describe('utils/available-experiments.js', () => {
         active:             Immutable.Map(),
         winners:            Immutable.Map(),
         persistent_path:    ['persistentExperience'],
-        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'vip' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -422,9 +419,8 @@ describe('utils/available-experiments.js', () => {
       const output = availableExperiments({
         key_path:           ['key'],
         active:             Immutable.Map(),
-        winners:            Immutable.Map(),
+        fulfilled:          Immutable.List(),
         persistent_path:    ['persistentExperience'],
-        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_0, experiment_a, experiment_a2, experiment_b, experiment_c]),
@@ -444,9 +440,8 @@ describe('utils/available-experiments.js', () => {
       let args = {
         key_path:           ['key'],
         active:             Immutable.Map(),
-        winners:            Immutable.Map(),
+        fulfilled:          Immutable.List(),
         persistent_path:    ['persistentExperience'],
-        single_success_path:['singleSuccess'],
         audience:           Immutable.fromJS({ type: 'vip', orders: 10, state: 'NY' }),
         audience_path:      ['audienceProps'],
         experiments:        Immutable.List([experiment_d]),
@@ -459,10 +454,10 @@ describe('utils/available-experiments.js', () => {
         'ComplexAudienceComponent': 'Single Success Type',
       });
 
-      // Once won, it is excluded from the output
+      // if fulfilled, it is excluded from the output
       output = availableExperiments({
         ...args,
-        winners:            Immutable.Map({
+        fulfilled:          Immutable.List(),
           'Single Success Type': 'Original',
         }),
       });
