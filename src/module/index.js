@@ -142,6 +142,7 @@ const reducers = {
     return computeAvailableExperiments(initialState.merge({
       experiments,
       fulfilled,
+      fulfilled_path,
       audience,
       route,
       active,
