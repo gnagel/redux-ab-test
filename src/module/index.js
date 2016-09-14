@@ -47,6 +47,7 @@ export const initialState = Immutable.fromJS({
   audience:             { /** Any props you want to use for user/session targeting */ },
   route:                { pathName: null, search: null, action: null, query: {}, params: {} },
   key_path:             ['key'],
+  fulfilled_path:       ['fulfilled_action_types'],
   types_path:           ['win_action_types'],
   props_path:           ['componentProps'],
   audience_path:        ['audienceProps'],
@@ -109,6 +110,7 @@ const reducers = {
    */
   [LOAD]: (state, { payload }) => {
     const key_path             = flattenCompact(payload.get('key_path',            state.get('key_path')));
+    const fulfilled_path       = flattenCompact(payload.get('fulfilled_path',      state.get('fulfilled_path')));
     const types_path           = flattenCompact(payload.get('types_path',          state.get('types_path')));
     const props_path           = flattenCompact(payload.get('props_path',          state.get('props_path')));
     const audience_path        = flattenCompact(payload.get('audience_path',       state.get('audience_path')));
@@ -120,14 +122,13 @@ const reducers = {
     const winners              = payload.has('winners')     ? payload.get('winners')     : state.get('winners');
     const audience             = payload.has('audience')    ? payload.get('audience')    : state.get('audience');
     const route                = payload.has('route')       ? payload.get('route')       : state.get('route');
-    const fulfilled            = payload.has('fulfilled')   ? payload.get('fulfilled')   : fulfilledExperiments({experiments, active, winners, key_path, single_success_path});
-
+    const fulfilled            = payload.has('fulfilled')   ? payload.get('fulfilled')   : state.get('fulfilled');
 
 
     const win_action_types = experiments.reduce(
       (map, experiment) => {
         const key = getKey(experiment);
-        const types = flattenCompact(experiment.getIn(types_path));
+        const types = flattenCompact([experiment.getIn(types_path), experiment.getIn(fulfilled_path)]);
         types.forEach(type => {
           const list = map[type] || [];
           list.push(key);
@@ -228,7 +229,16 @@ const reducers = {
     const experimentKey = getKey(payload.get('experiment'));
     const variationKey  = getKey(payload.get('variation'));
     const winners       = state.get('winners').set(experimentKey, variationKey);
-    return computeAvailableExperiments(state.set('winners', winners));
+    let   fulfilled     = state.get('fulfilled');
+
+    // Get the action types from the experiment
+    const actionType     = payload.get('actionType');
+    const experiment     = payload.get('experiment');
+    const types          = flattenCompact(experiment.getIn(state.get('fulfilled_path')));
+    if (!types.isEmpty() && actionType && types.includes(actionType)) {
+      fulfilled = Immutable.List([...Immutable.fromJS(fulfilled).toJS(), experimentKey])
+    }
+    return computeAvailableExperiments(state.set('winners', winners).set('fulfilled', fulfilled));
   },
 };
 

@@ -365,7 +365,7 @@ describe('(Redux) src/module/index.js', () => {
       state:   undefined,
       payload: Immutable.fromJS({
         experiment: experiment,
-        variation:  variation_a
+        variation:  variation_a,
       }),
       newState: initialState.set('active', Immutable.fromJS({ "Test-Name": "Variation #A" }))
     });
@@ -377,7 +377,70 @@ describe('(Redux) src/module/index.js', () => {
         experiment: experiment,
         variation:  variation_b
       }),
-      newState: initialState.set('winners', Immutable.fromJS({ "Test-Name": "Variation #B" }))
+      newState: initialState.merge({
+        winners: { "Test-Name": "Variation #B" },
+        fulfilled: [],
+      }),
+    });
+
+    // Action types filtering
+    sharedReducerExamples({
+      type:    WIN,
+      state:   undefined,
+      payload: Immutable.fromJS({
+        experiment: experiment,
+        variation:  variation_b,
+        actionType: 'Not a fulfillment action',
+      }),
+      newState: initialState.merge({
+        winners: { "Test-Name": "Variation #B" },
+        fulfilled: [],
+      }),
+    });
+
+    // Action types filtering
+    sharedReducerExamples({
+      type:    WIN,
+      state:   undefined,
+      payload: Immutable.fromJS({
+        experiment: {...experiment, fulfilled_action_types: ['Fulfilled Action'], types_path: ['Generic Action'] },
+        variation:  variation_b,
+        actionType: 'Not a registered action',
+      }),
+      newState: initialState.merge({
+        winners: { "Test-Name": "Variation #B" },
+        fulfilled: [],
+      }),
+    });
+
+    // Action types filtering
+    sharedReducerExamples({
+      type:    WIN,
+      state:   undefined,
+      payload: Immutable.fromJS({
+        experiment: {...experiment, fulfilled_action_types: ['Fulfilled Action'], types_path: ['Generic Action'] },
+        variation:  variation_b,
+        actionType: 'Fulfilled Action',
+      }),
+      newState: initialState.merge({
+        winners: { "Test-Name": "Variation #B" },
+        fulfilled: [ "Test-Name" ],
+      }),
+    });
+
+    // Action types filtering
+    sharedReducerExamples({
+      type:    WIN,
+      state:   undefined,
+      payload: Immutable.fromJS({
+        experiment: {...experiment, fulfilled_action_types: ['Fulfilled Action'], types_path: ['Generic Action'] },
+        variation:  variation_b,
+        actionType: 'Fulfilled Action',
+      }),
+      newState: initialState.merge({
+        winners: { "Test-Name": "Variation #B" },
+        fulfilled: [ "Test-Name" ],
+      }),
     });
   });
 
