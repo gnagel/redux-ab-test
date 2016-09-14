@@ -457,9 +457,7 @@ describe('utils/available-experiments.js', () => {
       // if fulfilled, it is excluded from the output
       output = availableExperiments({
         ...args,
-        fulfilled:          Immutable.List(),
-          'Single Success Type': 'Original',
-        }),
+        fulfilled:          Immutable.List('Single Success Type'),
       });
       expect(output).to.be.an.instanceOf(Immutable.Map);
       expect(output.toJS()).to.deep.equal({
