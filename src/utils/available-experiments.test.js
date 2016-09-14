@@ -399,7 +399,7 @@ describe('utils/available-experiments.js', () => {
       const output = availableExperiments({
         key_path:           ['key'],
         active:             Immutable.Map(),
-        winners:            Immutable.Map(),
+        fulfilled:          Immutable.List(),
         persistent_path:    ['persistentExperience'],
         audience:           Immutable.fromJS({ type: 'vip' }),
         audience_path:      ['audienceProps'],
