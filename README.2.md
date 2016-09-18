@@ -104,9 +104,19 @@ export default finalCreateStore(reducers, {});
 
 Please [★ on GitHub](https://github.com/gnagel/redux-ab-test)!
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 <h1>Table of Contents</h1>
 
 - [Installation](#installation)
+- [Usage](#usage)
+  - [Standalone Component](#standalone-component)
+  - [Coordinate Multiple Components](#coordinate-multiple-components)
+  - [Weighting Variants](#weighting-variants)
+  - [Debugging](#debugging)
+  - [Server Rendering](#server-rendering)
+    - [Example](#example)
+  - [With Babel](#with-babel)
 - [Alternative Libraries](#alternative-libraries)
 - [Resources for A/B Testing with React](#resources-for-ab-testing-with-react)
 - [API Reference](#api-reference)
@@ -115,6 +125,8 @@ Please [★ on GitHub](https://github.com/gnagel/redux-ab-test)!
 - [Tests](#tests)
   - [Running Tests](#running-tests)
 
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Installation
 
 `redux-ab-test` is compatible with React 0.15.x.
@@ -122,6 +134,296 @@ Please [★ on GitHub](https://github.com/gnagel/redux-ab-test)!
 ```bash
 npm install redux-ab-test
 ```
+
+## Usage
+
+### Standalone Component
+
+Try it [on JSFiddle](https://jsfiddle.net/pushtell/m14qvy7r/)
+
+```js
+
+var Experiment = require("redux-ab-test/src/experiment");
+var Variant = require("redux-ab-test/src/variation");
+var emitter = require("redux-ab-test/src/emitter");
+
+var App = React.createClass({
+  onButtonClick: function(e){
+    this.refs.experiment.win();
+  },
+  render: function(){
+    return <div>
+      <Experiment ref="experiment" name="My Example">
+        <Variant name="A">
+          <div>Section A</div>
+        </Variant>
+        <Variant name="B">
+          <div>Section B</div>
+        </Variant>
+      </Experiment>
+      <button onClick={this.onButtonClick}>Emit a win</button>
+    </div>;
+  }
+});
+
+// Called when the experiment is displayed to the user.
+emitter.addPlayListener(function(experimentName, variantName){
+  console.log("Displaying experiment ‘" + experimentName + "’ variant ‘" + variantName + "’");
+});
+
+// Called when a 'win' is emitted, in this case by this.refs.experiment.win()
+emitter.addWinListener(function(experimentName, variantName){
+  console.log("Variant ‘" + variantName + "’ of experiment ‘" + experimentName + "’  was clicked");
+});
+
+```
+
+### Coordinate Multiple Components
+
+Try it [on JSFiddle](http://jsfiddle.net/pushtell/pcutps9q/)
+
+```js
+
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var emitter = require("redux-ab-test/src/emitter");
+
+// Define variants in advance.
+emitter.defineVariants("My Example", ["A", "B", "C"]);
+
+var Component1 = React.createClass({
+  render: function(){
+    return <Experiment name="My Example">
+      <Variant name="A">
+        <div>Section A</div>
+      </Variant>
+      <Variant name="B">
+        <div>Section B</div>
+      </Variant>
+    </Experiment>;
+  }
+});
+
+var Component2 = React.createClass({
+  render: function(){
+    return <Experiment name="My Example">
+      <Variant name="A">
+        <div>Subsection A</div>
+      </Variant>
+      <Variant name="B">
+        <div>Subsection B</div>
+      </Variant>
+      <Variant name="C">
+        <div>Subsection C</div>
+      </Variant>
+    </Experiment>;
+  }
+});
+
+var Component3 = React.createClass({
+  onButtonClick: function(e){
+    emitter.emitWin("My Example");
+  },
+  render: function(){
+    return <button onClick={this.onButtonClick}>Emit a win</button>;
+  }
+});
+
+var App = React.createClass({
+  render: function(){
+    return <div>
+      <Component1 />
+      <Component2 />
+      <Component3 />
+    </div>;
+  }
+});
+
+// Called when the experiment is displayed to the user.
+emitter.addPlayListener(function(experimentName, variantName){
+  console.log("Displaying experiment ‘" + experimentName + "’ variant ‘" + variantName + "’");
+});
+
+// Called when a 'win' is emitted, in this case by emitter.emitWin()
+emitter.addWinListener(function(experimentName, variantName){
+  console.log("Variant ‘" + variantName + "’ of experiment ‘" + experimentName + "’ was clicked");
+});
+
+```
+
+### Weighting Variants
+
+Try it [on JSFiddle](http://jsfiddle.net/pushtell/e2q7xe4f/)
+
+Use [emitter.defineVariants()](#emitterdefinevariantsexperimentname-variantnames--variantweights) to optionally define the ratios by which variants are chosen.
+
+```js
+
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var emitter = require("redux-ab-test/src/emitter");
+
+// Define variants and weights in advance.
+emitter.defineVariants("My Example", ["A", "B", "C"], [10, 40, 40]);
+
+var App = React.createClass({
+  render: function(){
+    return <div>
+      <Experiment ref="experiment" name="My Example">
+        <Variant name="A">
+          <div>Section A</div>
+        </Variant>
+        <Variant name="B">
+          <div>Section B</div>
+        </Variant>
+        <Variant name="C">
+          <div>Section C</div>
+        </Variant>
+      </Experiment>
+    </div>;
+  }
+});
+
+```
+
+### Debugging
+
+The [debugger](#experimentdebugger) attaches a fixed-position panel to the bottom of the `<body>` element that displays mounted experiments and enables the user to change active variants in real-time.
+
+The debugger is wrapped in a conditional `if(process.env.NODE_ENV === "production") {...}` and will not display on production builds using [envify](https://github.com/hughsk/envify).
+
+<img src="https://cdn.rawgit.com/gnagel/redux-ab-test/master/documentation-images/debugger-animated-2.gif" width="325" height="325" />
+
+Try it [on JSFiddle](http://jsfiddle.net/pushtell/vs9kkxLd/)
+
+```js
+
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+var experimentDebugger = require("redux-ab-test/src/debugger");
+
+experimentDebugger.enable();
+
+var App = React.createClass({
+  render: function(){
+    return <div>
+      <Experiment ref="experiment" name="My Example">
+        <Variant name="A">
+          <div>Section A</div>
+        </Variant>
+        <Variant name="B">
+          <div>Section B</div>
+        </Variant>
+      </Experiment>
+    </div>;
+  }
+});
+
+```
+### Server Rendering
+
+A [`<Experiment />`](#experiment-) with a `userIdentifier` property will choose a consistent [`<Variant />`](#variant-) suitable for server side rendering.
+
+See [`./examples/isomorphic`](https://github.com/gnagel/redux-ab-test/tree/develop/examples/isomorphic) for a working example.
+
+#### Example
+
+The component in [`Component.jsx`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/Component.jsx):
+
+```js
+
+var React = require("react");
+var Experiment = require("redux-ab-test/src/Experiment");
+var Variant = require("redux-ab-test/src/Variant");
+
+module.exports = React.createClass({
+  propTypes: {
+    userIdentifier: React.PropTypes.string.isRequired
+  },
+  render: function(){
+    return <div>
+      <Experiment ref="experiment" name="My Example" userIdentifier={this.props.userIdentifier}>
+        <Variant name="A">
+          <div>Section A</div>
+        </Variant>
+        <Variant name="B">
+          <div>Section B</div>
+        </Variant>
+      </Experiment>
+    </div>;
+  }
+});
+
+```
+
+We use a session ID for the `userIdentifier` property in this example, although a long-lived user ID would be preferable. See [`server.js`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/server.js):
+
+```js
+require("babel/register")({only: /jsx/});
+
+var express = require('express');
+var session = require('express-session');
+var React = require("react");
+var ReactDOMServer = require("react-dom/server");
+var Component = require("./Component.jsx");
+
+var app = express();
+
+app.set('view engine', 'ejs');
+
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.get('/', function (req, res) {
+  var reactElement = React.createElement(Component, {userIdentifier: req.sessionID});
+  var reactString = ReactDOMServer.renderToString(reactElement);
+  res.render('template', {
+    sessionID: req.sessionID,
+    reactOutput: reactString
+  });
+});
+
+app.use(express.static('www'));
+
+app.listen(8080);
+```
+
+An [EJS](https://github.com/mde/ejs) template in [`template.ejs`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/views/template.ejs):
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>Isomorphic Rendering Example</title>
+  </head>
+  <script type="text/javascript">
+    var SESSION_ID = <%- JSON.stringify(sessionID) %>;
+  </script>
+  <body>
+    <div id="react-mount"><%- reactOutput %></div>
+    <script type="text/javascript" src="bundle.js"></script>
+  </body>
+</html>
+```
+
+On the client in [`app.jsx`](https://github.com/gnagel/redux-ab-test/blob/master/examples/isomorphic/www/app.jsx):
+
+```js
+var React = require('react');
+var ReactDOM = require('react-dom');
+var Component = require("../Component.jsx");
+
+var container = document.getElementById("react-mount");
+
+ReactDOM.render(<Component userIdentifier={SESSION_ID} />, container);
+```
+
+### With Babel
+
+Code from [`./src`](https://github.com/gnagel/redux-ab-test/tree/master/src) is written in [JSX](https://facebook.github.io/jsx/) and transpiled into [`./lib`](https://github.com/gnagel/redux-ab-test/tree/master/lib) using [Babel](https://babeljs.io/). If your project uses Babel you may want to include files from [`./src`](https://github.com/gnagel/redux-ab-test/tree/master/src) directly.
 
 ## Alternative Libraries
 * [**react-experiments**](https://github.com/HubSpot/react-experiments) - “A JavaScript library that assists in defining and managing UI experiments in React” by [Hubspot](https://github.com/HubSpot). Uses Facebook's [PlanOut framework](http://facebook.github.io/planout/) via [Hubspot's javascript port](https://github.com/HubSpot/PlanOut.js).
