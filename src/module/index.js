@@ -177,6 +177,17 @@ const reducers = {
     const route = Immutable.fromJS({ path: (path || pathname), pathName: pathname, search, action, query, params });
     return computeAvailableExperiments(state.set('route', route));
   },
+  ['@@router/LOCATION_CHANGE']: (state, { payload }) => {
+    const { pathname, search, query } = payload;
+    const path = Immutable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
+    const route = Immutable.fromJS({
+      path: pathname,
+      pathName: pathname,
+      search,
+      query
+    });
+    return computeAvailableExperiments(state.set('route', route));
+  },
 
 
   /**
