@@ -17,6 +17,7 @@ import { immutableExperiment, immutableExperimentVariation } from '../utils/wrap
 export const RESET          = 'redux-ab-test/RESET';
 export const LOAD           = 'redux-ab-test/LOAD';
 export const SET_AUDIENCE   = 'redux-ab-test/SET_AUDIENCE';
+export const SET_LOCATION   = 'redux-ab-test/SET_LOCATION';
 export const SET_ACTIVE     = 'redux-ab-test/SET_ACTIVE';
 export const ACTIVATE       = 'redux-ab-test/ACTIVATE';
 export const DEACTIVATE     = 'redux-ab-test/DEACTIVATE';
@@ -31,6 +32,7 @@ export const reset         = createAction(RESET,            ()              => I
 export const load          = createAction(LOAD,             (opts = {})     => Immutable.fromJS(opts) );
 export const setAudience   = createAction(SET_AUDIENCE,     (audience = {}) => Immutable.fromJS({audience}));
 export const setActive     = createAction(SET_ACTIVE,       (active = {})   => Immutable.fromJS({active}));
+export const setLocation   = createAction(SET_LOCATION,     (locationBeforeTransitions = {}) => Immutable.fromJS({locationBeforeTransitions}));
 export const activate      = createAction(ACTIVATE,         immutableExperiment );
 export const deactivate    = createAction(DEACTIVATE,       immutableExperiment );
 export const play          = createAction(PLAY,             immutableExperimentVariation );
@@ -45,7 +47,7 @@ export const initialState = Immutable.fromJS({
   active:               { /** "experiment id" => "variation id" */                    },
   winners:              { /** "experiment id" => "variation id" */                    },
   audience:             { /** Any props you want to use for user/session targeting */ },
-  route:                { pathName: null, search: null, action: null, query: {}, params: {} },
+  route:                { pathName: null, search: null, query: {} },
   key_path:             ['key'],
   fulfilled_path:       ['fulfilled_action_types'],
   types_path:           ['win_action_types'],
@@ -72,6 +74,28 @@ export const middleware = (store:Object) => (next:Function) => (action:Object) =
       actionPayload: action.payload
     });
     actions.forEach( action => next(action) );
+  }
+
+  switch(action.type) {
+    /**
+     * Intercept the react-router events, this is for v4.x.x react-router integration
+     */
+    case '@@router/LOCATION_CHANGE': {
+      const { pathname, search, query } = action.payload || {};
+      const locationBeforeTransitions = { pathname, search, query };
+      next(setLocation(locationBeforeTransitions));
+      break;
+    }
+    /**
+     * Intercept the redux-router events, this is specifically for react-router integration
+     */
+    case '@@reduxReactRouter/routerDidChange': {
+      const { location = {} } = action.payload || {};
+      const { pathname, search, query = {} } = location;
+      const locationBeforeTransitions = { pathname, search, query };
+      next(setLocation(locationBeforeTransitions));
+      break;
+    }
   }
 
   // Return the original action's output
@@ -167,25 +191,15 @@ const reducers = {
     return computeAvailableExperiments(state.set('audience', audience));
   },
 
+
   /**
-   * Intercept the redux-router events, this is specifically for reac-router integration
+   * Set the Audience for the experiments
    */
-  ['@@reduxReactRouter/routerDidChange']: (state, { payload }) => {
-    const { location = {}, params = {}, routes = [] } = payload;
-    const { pathname, search, action, query = {} } = location;
-    const path = Immutable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
-    const route = Immutable.fromJS({ path: (path || pathname), pathName: pathname, search, action, query, params });
-    return computeAvailableExperiments(state.set('route', route));
-  },
-  ['@@router/LOCATION_CHANGE']: (state, { payload }) => {
-    const { pathname, search, query } = payload;
-    const path = Immutable.fromJS(routes).map( route => route.get('path') ).filter( path => path ).last(null);
-    const route = Immutable.fromJS({
-      path: pathname,
-      pathName: pathname,
-      search,
-      query
-    });
+  [SET_LOCATION]: (state, { payload }) => {
+    const pathName = payload.get('pathname');
+    const search = payload.get('search')
+    const query = payload.get('query', Immutable.Map());
+    const route = Immutable.Map({ pathName, search, query });
     return computeAvailableExperiments(state.set('route', route));
   },
 
