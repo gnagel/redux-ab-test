@@ -27,6 +27,7 @@ import {
   load,
   setAudience,
   setActive,
+  setLocation,
   /**
    * Redux Action Types
    */
@@ -47,6 +48,7 @@ describe('(Root) src/index.js', () => {
   it('module export load',                    () => { expect(load                   ).to.exist; });
   it('module export setActive',               () => { expect(setActive              ).to.exist; });
   it('module export setAudience',             () => { expect(setAudience            ).to.exist; });
+  it('module export setLocation',             () => { expect(setLocation            ).to.exist; });
   it('module export WIN',                     () => { expect(WIN                    ).to.exist; });
   it('module export PLAY',                    () => { expect(PLAY                   ).to.exist; });
 });
