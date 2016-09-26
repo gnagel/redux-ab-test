@@ -196,9 +196,9 @@ const reducers = {
    * Set the Audience for the experiments
    */
   [SET_LOCATION]: (state, { payload }) => {
-    const pathName = payload.get('pathname');
-    const search = payload.get('search')
-    const query = payload.get('query', Immutable.Map());
+    const pathName = payload.getIn(['locationBeforeTransitions', 'pathname']);
+    const search = payload.getIn(['locationBeforeTransitions', 'search']);
+    const query = payload.getIn(['locationBeforeTransitions', 'query'], Immutable.Map());
     const route = Immutable.Map({ pathName, search, query });
     return computeAvailableExperiments(state.set('route', route));
   },
