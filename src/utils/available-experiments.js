@@ -31,7 +31,6 @@ export const matchesField = (hash, field, operator, value) => {
     }
     const valueList = Immutable.fromJS([value]).flatten().toSet();
     const hashList  = Immutable.fromJS([hash.get(field, undefined)]).flatten().toSet();
-    console.log(`valueList=${valueList}.size=${valueList.size}, hashList=${hashList}.size=${hashList.size}, hashList.intersect(valueList).size=${hashList.intersect(valueList)}`);
     return hashList.intersect(valueList).size == valueList.size;
   }
   default: throw new Error(`Unknown operator=${operator} for field=${field} &, value=${value}`);
@@ -79,7 +78,6 @@ export const matchesRoute = (route, routeProps) => {
   return routeProps.filterNot((value, field) => {
     if (['query', 'params'].includes(field)) {
       const hash = route.get(field);
-      // console.log(`hash=${hash}, field=${field}, value=${value}, output=${value.filterNot((value, field) => filterNotHash(hash, value, field)).isEmpty()}`);
       return value.filterNot((value, field) => filterNotHash(hash, value, field)).isEmpty();
     }
     return filterNotHash(route, value, field);
