@@ -101,7 +101,7 @@
     "shipit": "npm run build && npm publish && npm run clean",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
-  "version": "5.0.3",
+  "version": "5.1.0",
   "release": {
     "verifyConditions": {
       "path": "./test/release"
