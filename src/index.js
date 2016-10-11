@@ -2,7 +2,7 @@ import Debugger from './containers/debugger';
 import Experiment from './containers/experiment';
 import Variation from './containers/variation';
 
-import reduxAbTest, { initialState, middleware, reset, load, play, win, setActive, setAudience, setLocation, WIN, PLAY } from './module';
+import reduxAbTest, { initialState, middleware, reset, load, play, win, fulfilled, setActive, setAudience, setLocation, WIN, PLAY, FULFILLED } from './module';
 
 
 export default {
@@ -25,6 +25,7 @@ export default {
   load,
   play,
   win,
+  fulfilled,
   setActive,
   setAudience,
   setLocation,
@@ -33,4 +34,5 @@ export default {
    */
   WIN,
   PLAY,
+  FULFILLED,
 };

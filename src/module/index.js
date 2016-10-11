@@ -1,15 +1,14 @@
 /** @flow */
-import React                             from "react"; // eslint-disable-line no-unused-vars
 import Immutable                         from 'immutable';
 import _flattenDeep                      from 'lodash/flattenDeep';
 import _compact                          from 'lodash/compact';
 import { createAction, handleActions }   from 'redux-actions';
 import { cacheStore }                    from '../utils/create-cache-store';
 import availableExperiments              from '../utils/available-experiments';
-import fulfilledExperiments              from '../utils/fulfilled-experiments';
 import getKey                            from '../utils/get-key';
 import generateWinActions                from '../utils/generate-win-actions';
 import { immutableExperiment, immutableExperimentVariation } from '../utils/wraps-immutable';
+
 
 //
 // Redux Action Types
@@ -23,6 +22,7 @@ export const ACTIVATE       = 'redux-ab-test/ACTIVATE';
 export const DEACTIVATE     = 'redux-ab-test/DEACTIVATE';
 export const PLAY           = 'redux-ab-test/PLAY';
 export const WIN            = 'redux-ab-test/WIN';
+export const FULFILLED      = 'redux-ab-test/FULFILLED';
 
 
 //
@@ -37,6 +37,7 @@ export const activate      = createAction(ACTIVATE,         immutableExperiment 
 export const deactivate    = createAction(DEACTIVATE,       immutableExperiment );
 export const play          = createAction(PLAY,             immutableExperimentVariation );
 export const win           = createAction(WIN,              ({experiment, variation, actionType, actionPayload}) => Immutable.fromJS({experiment, variation, actionType, actionPayload}) );
+export const fulfilled     = createAction(FULFILLED,        ({experiment, variation, actionType, actionPayload}) => Immutable.fromJS({experiment, variation, actionType, actionPayload}) );
 
 
 export const initialState = Immutable.fromJS({
@@ -60,6 +61,23 @@ export const initialState = Immutable.fromJS({
 });
 
 
+export const generateFulfilledActions = (winActions, state) => {
+  return winActions.map(winAction => {
+    const { payload } = winAction;
+    // Get the action types from the experiment
+    const experiment    = payload.get('experiment');
+    const variation     = payload.get('variation');
+    const actionType    = payload.get('actionType');
+    const actionPayload = payload.get('actionPayload');
+    const types         = flattenCompact(experiment.getIn(state.get('fulfilled_path')));
+    if (!types.isEmpty() && actionType && types.includes(actionType)) {
+      return fulfilled({ experiment, variation, actionType, actionPayload });
+    }
+    return null;
+  }).filter( action => action );
+};
+
+
 export const middleware = (store:Object) => (next:Function) => (action:Object) => {
   // Process the input action
   const output = next(action);
@@ -67,35 +85,37 @@ export const middleware = (store:Object) => (next:Function) => (action:Object) =
   // Multi-plex the action output if we are listening for any wins
   const reduxAbTest = store.getState().reduxAbTest;
   if (reduxAbTest) {
-    const actions = generateWinActions({
+    const winActions = generateWinActions({
       reduxAbTest,
       win,
       actionType:    action.type,
       actionPayload: action.payload
     });
-    actions.forEach( action => next(action) );
+    const fulfilledActions = generateFulfilledActions(winActions, reduxAbTest);
+    winActions.forEach( action => next(action) );
+    fulfilledActions.forEach( action => next(action) );
   }
 
   switch(action.type) {
-    /**
-     * Intercept the react-router events, this is for v4.x.x react-router integration
-     */
-    case '@@router/LOCATION_CHANGE': {
-      const { pathname, search, query } = action.payload || {};
-      const locationBeforeTransitions = { pathname, search, query };
-      next(setLocation(locationBeforeTransitions));
-      break;
-    }
-    /**
-     * Intercept the redux-router events, this is specifically for react-router integration
-     */
-    case '@@reduxReactRouter/routerDidChange': {
-      const { location = {} } = action.payload || {};
-      const { pathname, search, query = {} } = location;
-      const locationBeforeTransitions = { pathname, search, query };
-      next(setLocation(locationBeforeTransitions));
-      break;
-    }
+  /**
+   * Intercept the react-router events, this is for v4.x.x react-router integration
+   */
+  case '@@router/LOCATION_CHANGE': {
+    const { pathname, search, query } = action.payload || {};
+    const locationBeforeTransitions = { pathname, search, query };
+    next(setLocation(locationBeforeTransitions));
+    break;
+  }
+  /**
+   * Intercept the redux-router events, this is specifically for react-redux-router integration
+   */
+  case '@@reduxReactRouter/routerDidChange': {
+    const { location = {} } = action.payload || {};
+    const { pathname, search, query = {} } = location;
+    const locationBeforeTransitions = { pathname, search, query };
+    next(setLocation(locationBeforeTransitions));
+    break;
+  }
   }
 
   // Return the original action's output
@@ -106,17 +126,17 @@ export const middleware = (store:Object) => (next:Function) => (action:Object) =
 export const flattenCompact = (list) => Immutable.List( _compact(_flattenDeep(Immutable.fromJS([list]).toJS())) );
 
 const computeAvailableExperiments = (state) => state.set('availableExperiments', availableExperiments({
-  experiments:          state.get('experiments'),
-  fulfilled:            state.get('fulfilled'),
-  key_path:             state.get('key_path'),
-  active:               state.get('active'),
-  winners:              state.get('winners'),
-  persistent_path:      state.get('persistent_path'),
-  audience_path:        state.get('audience_path'),
-  audience:             state.get('audience'),
-  route:                state.get('route'),
-  route_path:           state.get('route_path'),
-  single_success_path:  state.get('single_success_path'),
+  experiments:         state.get('experiments'),
+  fulfilled:           state.get('fulfilled'),
+  key_path:            state.get('key_path'),
+  active:              state.get('active'),
+  winners:             state.get('winners'),
+  persistent_path:     state.get('persistent_path'),
+  audience_path:       state.get('audience_path'),
+  audience:            state.get('audience'),
+  route:               state.get('route'),
+  route_path:          state.get('route_path'),
+  single_success_path: state.get('single_success_path'),
 }));
 
 
@@ -262,7 +282,7 @@ const reducers = {
     const experiment     = payload.get('experiment');
     const types          = flattenCompact(experiment.getIn(state.get('fulfilled_path')));
     if (!types.isEmpty() && actionType && types.includes(actionType)) {
-      fulfilled = Immutable.List([...Immutable.fromJS(fulfilled).toJS(), experimentKey])
+      fulfilled = Immutable.List([...Immutable.fromJS(fulfilled).toJS(), experimentKey]);
     }
     return computeAvailableExperiments(state.set('winners', winners).set('fulfilled', fulfilled));
   },
