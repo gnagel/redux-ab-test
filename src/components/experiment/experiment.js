@@ -194,7 +194,7 @@ export default class Experiment extends React.Component {
    */
   render() {
     const { children, defaultVariationName } = this.props;
-    const { experiment } = this.state;
+    const experiment = this.state.experiment || Immutable.Map({ name: null, id: null });
     const variation = this.state.variation || Immutable.Map({ name: defaultVariationName, id: null });
 
     const childrenArray = React.Children.toArray(children);
