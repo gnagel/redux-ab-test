@@ -1,8 +1,8 @@
 /** @flow */
 import React from 'react';
 import Immutable from 'immutable';
-import VariationComponent from '../../components/variation';
-import VariationContainer from '../../containers/variation';
+import { isVariationComponent } from '../../components/variation';
+import Variation, { isVariationContainer } from '../../containers/variation';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
 import getKey from '../../utils/get-key';
@@ -82,6 +82,8 @@ type State = {
   played: ?bool,
 };
 
+const isValid = (child) => (isVariationContainer(child) || isVariationComponent(child));
+
 
 export default class Experiment extends React.Component {
   props: Props;
@@ -108,6 +110,8 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
+    console.log('-----');
+    console.log(`componentWillMount children.count=${React.Children.count(this.props.children)}`);
     const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
 
@@ -135,6 +139,7 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
+    console.log(`componentWillReceiveProps children.count=${React.Children.count(this.props.children)}`);
     const { selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
     if (!experiment) {
@@ -174,12 +179,6 @@ export default class Experiment extends React.Component {
     return experiment;
   }
 
-  isNotVariationChildren() {
-    const { children } = this.props;
-    return (React.Children.count(children) === 1 && (!React.isValidElement(children) || React.Children.only(children).type !== VariationComponent || React.Children.only(children).type !== VariationContainer));
-  }
-
-
   /**
    * Deactivate the variation from the state
    */
@@ -197,63 +196,42 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
+    console.log(`render children.count=${React.Children.count(this.props.children)}`);
     const { children } = this.props;
     const { experiment, variation } = this.state;
 
-    const notVariationChildren = this.isNotVariationChildren();
-    if (!variation) {
-      return notVariationChildren ? children : null;
-    }
+    const childrenArray = React.Children.toArray(children);
 
-    // If you specified something other than a `Variation` as the children,
-    // then we should wrap the children in a Variation component automatically for you.
-    //
-    // This is handy for experiments where you have programmable variations but don't want to hard-code each of them.
-    // Ex:
-    //   Component on your page:
-    //     <Experiment name="...">
-    //       <h1>My fancy text here ...</h1>
-    //     </Experiment>
-    //
-    //   Redux experiment:
-    //     { name: "...",
-    //       variations: [
-    //         { name: "Control"   componentProps: {} },
-    //         { name: "Version A" componentProps: { children: "Even fancier text!" } },
-    //         { name: "Version B" componentProps: { children: "BOLD fancy text!", style: { {fontStyle: 'bold'} } } },
-    //         ...
-    //       ]
-    //     }
-    //
-    //   Equivalent component:
-    //     <Experiment name="...">
-    //       <Variation name="Control">    <h1>My fancy text here ...</h1>          </Variation>
-    //       <Variation name="Version A">  <h1>Even fancier text!</h1>              </Variation>
-    //       <Variation name="Version B">  <h1 style={{...}}>BOLD fancy text!</h1>  </Variation>
-    //     </Experiment>
-    //
-    if (notVariationChildren) {
-      return (
-        <VariationContainer
-          id={variation.get('id')}
-          name={variation.get('name')}
-          experiment={experiment}
-          variation={variation}>
-          {children}
-        </VariationContainer>
-      );
-    }
-
-    // Hash of "name" => Variation element
-    const variationElements = mapChildrenToVariationElements(children);
-    // Find the name in the hash
-    const variationChildElement = variationElements[variation.get('name')];
-    if (!variationChildElement) {
+    // If there are no children, render nothing
+    if (childrenArray.length === 0) {
       return null;
     }
 
+    // If the first child is text or an unknown component, simply wrap it in a Variation
+    if (childrenArray.length === 1 && !isValid(childrenArray[0])) {
+      return (
+        <Variation id={variation.get('id')} name={variation.get('name')} experiment={experiment} variation={variation}>
+          {children}
+        </Variation>
+      );
+    }
+
+    const selectedChild = childrenArray.find( child => (child.props.id === variation.get('id') && variation.get('id')) ) || childrenArray.find( child => (child.props.name === variation.get('name') && variation.get('name')) );
+    if (!selectedChild) {
+      throw new Error(`Expected to find a Variation child matching id=${variation.get('id')} or name=${variation.get('name')}`);
+    }
+
+    //
+    // // Hash of "name" => Variation element
+    // const variationElements = mapChildrenToVariationElements(children);
+    // // Find the name in the hash
+    // const variationChildElement = variationElements[variation.get('name')];
+    // if (!variationChildElement) {
+    //   return null;
+    // }
+
     // Inject the helper `handleWin` into the child element
-    return React.cloneElement(variationChildElement, {
+    return React.cloneElement(selectedChild, {
       experiment,
       variation,
       id:   variation.get('id'),

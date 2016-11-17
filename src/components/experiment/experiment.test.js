@@ -1,6 +1,6 @@
-import React from "react"; // eslint-disable-line no-unused-vars
-import Experiment from "./experiment";
-import Variation from "../../containers/variation";
+import React from 'react'; // eslint-disable-line no-unused-vars
+import Experiment from './experiment';
+import Variation from '../../containers/variation';
 import { initialState } from '../../module';
 import { expect, renderContainer, spy } from 'test_helper';
 
@@ -90,9 +90,17 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     expect(component.find(Variation)).to.have.prop('variation');
   });
 
+  it('renders null on blank children', () => {
+    props['children'] = [];
+    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
+    expect(component).to.exist;
+    expect(component.children).to.have.length(1);
+    expect(component.childAt(0)).to.have.length(0);
+  });
+
   it('creates Ad-hoc experiments');
 
-  it("should update on componentWillReceiveProps");
+  it('should update on componentWillReceiveProps');
 
   describe('find by :id', () => {
     const reduxAbTest = initialState.merge({
@@ -107,13 +115,13 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         },
       ],
       'availableExperiments': { 'Test-id': 'Test-id' },
-      'active': { 'Test-id': 'Variation B' }
+      'active':               { 'Test-id': 'Variation B' }
     });
 
     beforeEach(() => {
       props = {
         reduxAbTest,
-        id: 'Test-id',
+        id:       'Test-id',
         children: [
           <Variation name="Original">Test Original</Variation>,
           <Variation name="Variation B">Test Variation B</Variation>
@@ -142,8 +150,8 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     const reduxAbTest = initialState.merge({
       experiments: [
         {
-          id:         'Test-id',
-          name:       'Test-experimentName',
+          id:        'Test-id',
+          name:      'Test-experimentName',
           component: {
             key: 'Example component key selector',
           },
@@ -156,7 +164,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
       availableExperiments: {
         'Example component key selector': 'Test-id',
       },
-      active: { 'Test-id': 'Variation B' },
+      active:   { 'Test-id': 'Variation B' },
       key_path: ['component', 'key'],
     });
 
