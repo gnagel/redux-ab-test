@@ -48,7 +48,7 @@ export default class Variation extends React.Component {
 
   render() {
     const { reduxAbTest, experiment, id, name, children } = this.props;
-    const variation       = this.props.variation || experiment.get('variations').find( variation => (variation.get('id') === id || variation.get('name') === name) );
+    const variation       = this.props.variation || experiment.get('variations').find( variation => (variation.get('id') === id || variation.get('name') === name) ) || Immutable.Map();
     const experimentProps = experiment.getIn( reduxAbTest.get('props_path'), Immutable.Map({})).toJS();
     const variationProps  = variation.getIn(  reduxAbTest.get('props_path'), Immutable.Map({})).toJS();
 

@@ -193,7 +193,7 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
-    const { children } = this.props;
+    const { children, defaultVariationName } = this.props;
     const { experiment, variation } = this.state;
 
     const childrenArray = React.Children.toArray(children);
@@ -212,7 +212,11 @@ export default class Experiment extends React.Component {
       );
     }
 
-    const selectedChild = childrenArray.find( child => (child.props.id === variation.get('id') && variation.get('id')) ) || childrenArray.find( child => (child.props.name === variation.get('name') && variation.get('name')) );
+    const selectedChild = [
+      childrenArray.find( child => (variation && variation.get('id')   && child.props.id   === variation.get('id'))   ),
+      childrenArray.find( child => (variation && variation.get('name') && child.props.name === variation.get('name')) ),
+      childrenArray.find( child => (defaultVariationName               && child.props.name === defaultVariationName ) ),
+    ].filter( value => value ).find( value => value );
     if (!selectedChild) {
       throw new Error(`Expected to find a Variation child matching id=${variation.get('id')} or name=${variation.get('name')}`);
     }
