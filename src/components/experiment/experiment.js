@@ -110,8 +110,6 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    console.log('-----');
-    console.log(`componentWillMount children.count=${React.Children.count(this.props.children)}`);
     const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
 
@@ -139,7 +137,6 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    console.log(`componentWillReceiveProps children.count=${React.Children.count(this.props.children)}`);
     const { selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
     if (!experiment) {
@@ -196,7 +193,6 @@ export default class Experiment extends React.Component {
    * Render one of the variations or `null`
    */
   render() {
-    console.log(`render children.count=${React.Children.count(this.props.children)}`);
     const { children } = this.props;
     const { experiment, variation } = this.state;
 
@@ -221,15 +217,6 @@ export default class Experiment extends React.Component {
       throw new Error(`Expected to find a Variation child matching id=${variation.get('id')} or name=${variation.get('name')}`);
     }
 
-    //
-    // // Hash of "name" => Variation element
-    // const variationElements = mapChildrenToVariationElements(children);
-    // // Find the name in the hash
-    // const variationChildElement = variationElements[variation.get('name')];
-    // if (!variationChildElement) {
-    //   return null;
-    // }
-
     // Inject the helper `handleWin` into the child element
     return React.cloneElement(selectedChild, {
       experiment,
@@ -239,13 +226,3 @@ export default class Experiment extends React.Component {
     });
   }
 }
-
-
-/**
- * Helper function: Convert `children` to a hash of { `name` => variation }
- */
-const mapChildrenToVariationElements = (children) => {
-  const variationElements = {};
-  React.Children.forEach(children, element => variationElements[element.props.name] = element);
-  return variationElements;
-};
