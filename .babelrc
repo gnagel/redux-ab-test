@@ -5,37 +5,5 @@
     "transform-runtime",
     "transform-react-display-name",
     "add-module-exports",
-  ],
-  "env": {
-    "test": {
-      "plugins": [
-        [
-          "react-transform",
-          {
-            "transforms": [
-              {
-                "transform": "react-transform-catch-errors",
-                "imports": ["react", "redbox-react"]
-              }
-            ]
-          }
-        ]
-      ]
-    },
-    "development": {
-      "plugins": [
-        [
-          "react-transform",
-          {
-            "transforms": [
-              {
-                "transform": "react-transform-catch-errors",
-                "imports": ["react", "redbox-react"]
-              }
-            ]
-          }
-        ]
-      ]
-    }
-  }
+  ]
 }

@@ -1,5 +1,5 @@
 /** @flow */
-import React from "react";
+import React from 'react';
 import Immutable from 'immutable';
 import VariationComponent from '../../components/variation';
 import VariationContainer from '../../containers/variation';
