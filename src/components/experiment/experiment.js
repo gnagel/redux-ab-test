@@ -103,6 +103,7 @@ export default class Experiment extends React.Component {
     variation:  null,
     experiment: null,
     played:     false,
+    mounted:    false,
   };
 
 
@@ -111,11 +112,14 @@ export default class Experiment extends React.Component {
    */
   componentWillMount() {
     const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
+    const { mounted } = this.state;
+    let { played } = this.state;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
 
     // If the experiment is unavailable, then record it wasn't played and move on
     if (!experiment) {
-      this.setState({ experiment: null, variation: null, played: false });
+      played = false;
+      this.setState({ experiment: null, variation: null, played, mounted });
       return;
     }
 
@@ -128,8 +132,11 @@ export default class Experiment extends React.Component {
 
     // These will trigger `componentWillReceiveProps`
     dispatchActivate({experiment});
-    dispatchPlay({experiment, variation});
-    this.setState({ experiment, variation, played: true });
+    if (mounted) {
+      played = true;
+      dispatchPlay({experiment, variation});
+    }
+    this.setState({ experiment, variation, played, mounted });
   }
 
 
@@ -138,11 +145,12 @@ export default class Experiment extends React.Component {
    */
   componentWillReceiveProps(nextProps:Props) {
     const { selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
+    const { mounted } = this.state;
     const experiment = this.getExperiment(reduxAbTest, selector, id, name);
     if (!experiment) {
       // If we no-longer have an experiment anymore, then update the internal state
       if (this.state.experiment) {
-        this.setState({ experiment: null, variation: null, played: false });
+        this.setState({ experiment: null, variation: null, played: false, mounted });
       }
       return;
     }
@@ -156,12 +164,27 @@ export default class Experiment extends React.Component {
 
     if (!experiment.equals(this.state.experiment) || !variation.equals(this.state.variation)) {
       // These will trigger `componentWillReceiveProps`
-      if (!this.state.played) {
+      if (!this.state.played && mounted) {
         dispatchActivate({experiment});
         dispatchPlay({experiment, variation});
+        this.setState({ experiment, variation, played: true, mounted });
       }
-      this.setState({ experiment, variation, played: true });
     }
+  }
+
+
+  /**
+   * Once the experiment is mounted, dispatch the play event
+   */
+  componentDidMount() {
+    const { dispatchPlay } = this.props;
+    const { experiment, variation, played } = this.state;
+    if (played || !experiment || !variation) {
+      return;
+    }
+
+    dispatchPlay({experiment, variation});
+    this.setState({ experiment, variation, played: true, mounted: true });
   }
 
   getExperiment(reduxAbTest, selector, id, name) {
