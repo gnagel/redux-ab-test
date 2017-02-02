@@ -3,9 +3,6 @@ import React from 'react';
 import Immutable from 'immutable';
 import { isVariationComponent } from '../../components/variation';
 import Variation, { isVariationContainer } from '../../containers/variation';
-import selectVariation from '../../utils/select-variation';
-import { cacheStore } from '../../utils/create-cache-store';
-import getKey from '../../utils/get-key';
 
 type Props = {
   /**
@@ -93,6 +90,8 @@ export default class Experiment extends React.Component {
     id:                   null,
     name:                 null,
     selector:             null,
+    experiment:           null,
+    variation:            null,
     defaultVariationName: null,
     dispatchActivate:     () => {},
     dispatchDeactivate:   () => {},
@@ -100,8 +99,6 @@ export default class Experiment extends React.Component {
     dispatchWin:          () => {},
   };
   state = {
-    variation:  null,
-    experiment: null,
     played:     false,
     mounted:    false,
   };
@@ -111,24 +108,16 @@ export default class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
+    const { experiment, variation, id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
     const { mounted } = this.state;
     let { played } = this.state;
-    const experiment = this.getExperiment(reduxAbTest, selector, id, name);
 
     // If the experiment is unavailable, then record it wasn't played and move on
     if (!experiment) {
       played = false;
-      this.setState({ experiment: null, variation: null, played, mounted });
+      this.setState({ played, mounted });
       return;
     }
-
-    const variation = selectVariation({
-      active: reduxAbTest.get('active'),
-      experiment,
-      defaultVariationName,
-      cacheStore
-    });
 
     // These will trigger `componentWillReceiveProps`
     dispatchActivate({experiment});
@@ -136,7 +125,7 @@ export default class Experiment extends React.Component {
       played = true;
       dispatchPlay({experiment, variation});
     }
-    this.setState({ experiment, variation, played, mounted });
+    this.setState({ played, mounted });
   }
 
 
@@ -144,30 +133,22 @@ export default class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
+    const { experiment, variation, selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
     const { mounted } = this.state;
-    const experiment = this.getExperiment(reduxAbTest, selector, id, name);
     if (!experiment) {
       // If we no-longer have an experiment anymore, then update the internal state
-      if (this.state.experiment) {
-        this.setState({ experiment: null, variation: null, played: false, mounted });
+      if (this.props.experiment) {
+        this.setState({ played: false, mounted });
       }
       return;
     }
 
-    const variation = selectVariation({
-      active: reduxAbTest.get('active'),
-      experiment,
-      defaultVariationName,
-      cacheStore
-    });
-
-    if (!experiment.equals(this.state.experiment) || !variation.equals(this.state.variation)) {
+    if (!experiment.equals(this.props.experiment) || !variation.equals(this.props.variation)) {
       // These will trigger `componentWillReceiveProps`
       if (!this.state.played && mounted) {
         dispatchActivate({experiment});
         dispatchPlay({experiment, variation});
-        this.setState({ experiment, variation, played: true, mounted });
+        this.setState({ played: true, mounted });
       }
     }
   }
@@ -177,34 +158,21 @@ export default class Experiment extends React.Component {
    * Once the experiment is mounted, dispatch the play event
    */
   componentDidMount() {
-    const { dispatchPlay } = this.props;
-    const { experiment, variation, played } = this.state;
+    const { experiment, variation, dispatchPlay } = this.props;
+    const { played } = this.state;
     if (played || !experiment || !variation) {
       return;
     }
 
     dispatchPlay({experiment, variation});
-    this.setState({ experiment, variation, played: true, mounted: true });
-  }
-
-  getExperiment(reduxAbTest, selector, id, name) {
-    // Find the key of the currently available experiment
-    const key = reduxAbTest.getIn(['availableExperiments', selector || id || name], null);
-    if (!key) {
-      return null;
-    }
-    // Select the experiment from the redux store
-    const experiment = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === key), null);
-    // Return the resulting experiment
-    return experiment;
+    this.setState({ played: true, mounted: true });
   }
 
   /**
    * Deactivate the variation from the state
    */
   componentWillUnmount() {
-    const { dispatchDeactivate } = this.props;
-    const { experiment } = this.state;
+    const { experiment, dispatchDeactivate } = this.props;
     // Dispatch the deactivation event
     if (experiment) {
       dispatchDeactivate({experiment});
@@ -217,8 +185,8 @@ export default class Experiment extends React.Component {
    */
   render() {
     const { children, defaultVariationName } = this.props;
-    const experiment = this.state.experiment || Immutable.Map({ name: null, id: null });
-    const variation = this.state.variation || Immutable.Map({ name: defaultVariationName, id: null });
+    const experiment = this.props.experiment || Immutable.Map({ name: null, id: null });
+    const variation = this.props.variation || Immutable.Map({ name: defaultVariationName, id: null });
 
     const childrenArray = React.Children.toArray(children);
 
