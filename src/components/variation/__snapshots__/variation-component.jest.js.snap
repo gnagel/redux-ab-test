@@ -1,6 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`(Component) src/components/variation/variation.js adds the props to the children component 1`] = `
+<div
+  data-experiment-id="test-experimentId"
+  data-experiment-name="Test-experimentName"
+  data-variation-id="test-id-variation-b"
+  data-variation-name="Variation B"
+  id="test-id"
+>
+  Test-children
+</div>
+`;
+
 exports[`(Component) src/components/variation/variation.js has the correct props 1`] = `
+<span
+  data-experiment-id="test-experimentId"
+  data-experiment-name="Test-experimentName"
+  data-variation-id="test-id-variation-b"
+  data-variation-name="Variation B"
+>
+  Test-children
+</span>
+`;
+
+exports[`(Component) src/components/variation/variation.js has the correct tagName 1`] = `
+<span
+  data-experiment-id="test-experimentId"
+  data-experiment-name="Test-experimentName"
+  data-variation-id="test-id-variation-b"
+  data-variation-name="Variation B"
+>
+  Test-children
+</span>
+`;
+
+exports[`(Component) src/components/variation/variation.js has the correct text 1`] = `
+<span
+  data-experiment-id="test-experimentId"
+  data-experiment-name="Test-experimentName"
+  data-variation-id="test-id-variation-b"
+  data-variation-name="Variation B"
+>
+  Test-children
+</span>
+`;
+
+exports[`(Component) src/components/variation/variation.js have the correct data-* props 1`] = `
 <span
   data-experiment-id="test-experimentId"
   data-experiment-name="Test-experimentName"
