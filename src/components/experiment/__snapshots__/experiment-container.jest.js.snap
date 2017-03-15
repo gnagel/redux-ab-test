@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`(Container) Experiment component exists 1`] = `undefined`;
+
+exports[`(Container) Experiment component has 1x Variation 1`] = `undefined`;

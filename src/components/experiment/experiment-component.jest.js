@@ -1,12 +1,13 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
+import renderer from 'react-test-renderer';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { spy } from 'sinon';
 import { Experiment } from './experiment';
 import Variation from '../variation';
-import { initialState } from '../../module';
-import { expect, renderContainer } from './test_helper';
-import { spy } from 'sinon';
+import reduxAbTest, { initialState } from '../../module';
 
-
-const reduxAbTest = initialState.merge({
+const reduxAbTestState = initialState.merge({
   experiments: [
     {
       name:       'Test-experimentName',
@@ -24,6 +25,7 @@ const reduxAbTest = initialState.merge({
 
 describe('(Component) src/components/experiment/experiment.js', () => {
   let component;
+  let tree;
   let props;
   let dispatchActivate;
   let dispatchDeactivate;
@@ -37,68 +39,96 @@ describe('(Component) src/components/experiment/experiment.js', () => {
     dispatchWin = spy();
 
     props = {
-      reduxAbTest,
+      reduxAbTest: reduxAbTestState,
       name:     'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
         <Variation name="Variation B">Test Variation B</Variation>,
       ],
-      experiment: reduxAbTest.getIn(['experiments', 0]),
-      variation:  reduxAbTest.getIn(['experiments', 0, 'variations', 1]),
+      experiment: reduxAbTestState.getIn(['experiments', 0]),
+      variation:  reduxAbTestState.getIn(['experiments', 0, 'variations', 1]),
       dispatchActivate,
       dispatchDeactivate,
       dispatchPlay,
       dispatchWin,
     };
-    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
+    component = renderer.create(
+      <Provider store={createStore(reduxAbTest, { reduxAbTest: reduxAbTestState })}>
+        <Experiment {...props} />
+      </Provider>
+    );
+    tree = component.toJSON();
   });
 
   it('exists', () => {
-    expect(component).to.exist;
-    expect(component.html()).to.be.present;
+    expect(component).not.toBeUndefined;
   });
 
   it('has 1x rendered Experiment', () => {
-    expect(component.find(Experiment)).to.have.length(1);
-    expect(component).to.have.tagName('span');
-    expect(component).to.have.text('Test Variation B');
+    expect(tree).toMatchSnapshot();
+    expect(tree.type).toEqual('span');
+    expect(tree.children).toEqual(['Test Variation B']);
   });
 
   it('has 1x rendered variation', () => {
-    expect(component.find(Variation)).to.have.length(1);
-    expect(component.find(Variation)).to.have.tagName('span');
-    expect(component.find(Variation)).to.have.prop('name', 'Variation B');
-    expect(component.find(Variation)).to.have.prop('experiment');
-    expect(component.find(Variation)).to.have.prop('variation');
-    expect(component.find(Variation)).to.have.text('Test Variation B');
+    expect(tree).toMatchSnapshot();
+    expect(tree.type).toEqual('span');
+    expect(tree.props['data-experiment-id']).toBeUndefined;
+    expect(tree.props['data-experiment-name']).toEqual('Test-experimentName');
+    expect(tree.props['data-variation-id']).toBeUndefined;
+    expect(tree.props['data-variation-name']).toEqual('Variation B');
+    expect(tree.children).toEqual(['Test Variation B']);
   });
 
   it('wraps the text children in a Variation', () => {
     props['children'] = 'Testing a single child';
-    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
-    expect(component).to.exist;
-    expect(component.find(Variation)).to.have.length(1);
-    expect(component.find(Variation)).to.have.tagName('span');
-    expect(component.find(Variation)).to.have.prop('experiment');
-    expect(component.find(Variation)).to.have.prop('variation');
+    component = renderer.create(
+      <Provider store={createStore(reduxAbTest, { reduxAbTest: reduxAbTestState })}>
+        <Experiment {...props} />
+      </Provider>
+    );
+    tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+
+    expect(tree.type).toEqual('span');
+    expect(tree.props['data-experiment-id']).toBeUndefined;
+    expect(tree.props['data-experiment-name']).toEqual('Test-experimentName');
+    expect(tree.props['data-variation-id']).toBeUndefined;
+    expect(tree.props['data-variation-name']).toEqual('Variation B');
+    expect(tree.children).toEqual(['Testing a single child']);
   });
 
   it('wraps the component children in a Variation', () => {
     props['children'] = <div>Testing a single child</div>;
-    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
-    expect(component).to.exist;
-    expect(component.find(Variation)).to.have.length(1);
-    expect(component.find(Variation)).to.have.tagName('div');
-    expect(component.find(Variation)).to.have.prop('experiment');
-    expect(component.find(Variation)).to.have.prop('variation');
+    component = renderer.create(
+      <Provider store={createStore(reduxAbTest, { reduxAbTest: reduxAbTestState })}>
+        <Experiment {...props} />
+      </Provider>
+    );
+    tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+
+    expect(component).not.toBeUndefined;
+    expect(tree.type).toEqual('div');
+    expect(tree.props['data-experiment-id']).toBeUndefined;
+    expect(tree.props['data-experiment-name']).toEqual('Test-experimentName');
+    expect(tree.props['data-variation-id']).toBeUndefined;
+    expect(tree.props['data-variation-name']).toEqual('Variation B');
+    expect(tree.children).toEqual(['Testing a single child']);
   });
 
   it('renders null on blank children', () => {
     props['children'] = [];
-    component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
-    expect(component).to.exist;
-    expect(component.children).to.have.length(1);
-    expect(component.childAt(0)).to.have.length(0);
+    component = renderer.create(
+      <Provider store={createStore(reduxAbTest, { reduxAbTest: reduxAbTestState })}>
+        <Experiment {...props} />
+      </Provider>
+    );
+    tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+
+    expect(component).not.toBeUndefined;
+    expect(tree).toBeNull;
   });
 
   it('creates Ad-hoc experiments');
@@ -106,7 +136,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
   it('should update on componentWillReceiveProps');
 
   describe.skip('find by :id', () => {
-    const reduxAbTest = initialState.merge({
+    const reduxAbTestState = initialState.merge({
       experiments: [
         {
           id:         'Test-id',
@@ -123,7 +153,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
 
     beforeEach(() => {
       props = {
-        reduxAbTest,
+        reduxAbTest: reduxAbTestState,
         id:       'Test-id',
         children: [
           <Variation name="Original">Test Original</Variation>,
@@ -134,23 +164,28 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         dispatchPlay,
         dispatchWin,
       };
-      component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
+      component = renderer.create(
+        <Provider store={createStore(reduxAbTest, { reduxAbTest: reduxAbTestState })}>
+          <Experiment {...props} />
+        </Provider>
+      );
+      tree = component.toJSON();
     });
 
     it('exists', () => {
-      expect(component).to.exist;
+      expect(component).not.toBeUndefined;
       expect(component.html()).to.be.present;
     });
 
     it('has 1x rendered Experiment', () => {
       expect(component.find(Experiment)).to.have.length(1);
-      expect(component).to.have.tagName('span');
-      expect(component).to.have.text('Test Variation B');
+      expect(tree.type).toEqual('span');
+      expect(tree.children).toEqual('Test Variation B');
     });
   });
 
   describe.skip('find by :selector', () => {
-    const reduxAbTest = initialState.merge({
+    const reduxAbTestState = initialState.merge({
       experiments: [
         {
           id:        'Test-id',
@@ -173,7 +208,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
 
     beforeEach(() => {
       props = {
-        reduxAbTest,
+        reduxAbTest: reduxAbTestState,
         selector: 'Example component key selector',
         children: [
           <Variation name="Original">Test Original</Variation>,
@@ -184,18 +219,23 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         dispatchPlay,
         dispatchWin,
       };
-      component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
+      component = renderer.create(
+        <Provider store={createStore(reduxAbTest, { reduxAbTest: reduxAbTestState })}>
+          <Experiment {...props} />
+        </Provider>
+      );
+      tree = component.toJSON();
     });
 
     it('exists', () => {
-      expect(component).to.exist;
+      expect(component).not.toBeUndefined;
       expect(component.html()).to.be.present;
     });
 
     it('has 1x rendered Experiment', () => {
       expect(component.find(Experiment)).to.have.length(1);
-      expect(component).to.have.tagName('span');
-      expect(component).to.have.text('Test Variation B');
+      expect(tree.type).toEqual('span');
+      expect(tree.children).toEqual('Test Variation B');
     });
 
   });

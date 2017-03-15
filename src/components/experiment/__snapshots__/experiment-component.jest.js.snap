@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`(Component) src/components/experiment/experiment.js has 1x rendered Experiment 1`] = `
+<span
+  data-experiment-id={undefined}
+  data-experiment-name="Test-experimentName"
+  data-variation-id={undefined}
+  data-variation-name="Variation B"
+>
+  Test Variation B
+</span>
+`;
+
+exports[`(Component) src/components/experiment/experiment.js has 1x rendered variation 1`] = `
+<span
+  data-experiment-id={undefined}
+  data-experiment-name="Test-experimentName"
+  data-variation-id={undefined}
+  data-variation-name="Variation B"
+>
+  Test Variation B
+</span>
+`;
+
+exports[`(Component) src/components/experiment/experiment.js renders null on blank children 1`] = `null`;
+
+exports[`(Component) src/components/experiment/experiment.js wraps the component children in a Variation 1`] = `
+<div
+  data-experiment-id={undefined}
+  data-experiment-name="Test-experimentName"
+  data-variation-id={undefined}
+  data-variation-name="Variation B"
+>
+  Testing a single child
+</div>
+`;
+
+exports[`(Component) src/components/experiment/experiment.js wraps the text children in a Variation 1`] = `
+<span
+  data-experiment-id={undefined}
+  data-experiment-name="Test-experimentName"
+  data-variation-id={undefined}
+  data-variation-name="Variation B"
+>
+  Testing a single child
+</span>
+`;

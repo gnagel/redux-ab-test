@@ -1,4 +1,3 @@
-import { expect } from './test_helper';
 import {
   /**
    * React Connected components
@@ -32,7 +31,7 @@ import {
   PLAY,
 } from './index';
 
-describe('(Root) src/index.js', () => {
+describe.skip('(Root) src/index.js', () => {
   it('module export Experiment',              () => { expect(Experiment             ).to.exist; });
   it('module export Variation',               () => { expect(Variation              ).to.exist; });
   it('module export Debugger',                () => { expect(Debugger               ).to.not.exist; });

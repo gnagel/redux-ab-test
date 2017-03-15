@@ -236,6 +236,9 @@ const reducers = {
    * ACTIVATE the experiment
    */
   [ACTIVATE]: (state, { payload }) => {
+    console.log(JSON.stringify(Object.keys(state)));
+    console.log(JSON.stringify(state));
+    console.log(JSON.stringify(Immutable.Map.isMap(state)));
     const experimentKey = getKey(payload.get('experiment'));
     const counter = (state.get('running').get(experimentKey) || 0) + 1;
     const running = state.get('running').set(experimentKey, counter);
