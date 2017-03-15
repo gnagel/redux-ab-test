@@ -1,6 +1,4 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from './test_helper';
 import { initialState } from '../module';
 import availableExperiments, { matchesField, matchesAudience, matchesRoute } from './available-experiments';
 
@@ -8,52 +6,52 @@ import availableExperiments, { matchesField, matchesAudience, matchesRoute } fro
 describe('utils/available-experiments.js', () => {
   describe('matchesField', () => {
     it('exists', () => {
-      expect(matchesField).to.exist;
-      expect(matchesField).to.be.a('function');
+      expect(matchesField).not.toBeUndefined;
+      expect(typeof matchesField).toEqual('function');
     });
 
     it('has the correct output for ===', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '===', 10)).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '===', 0)).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '===', 10)).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '===', 0)).toBeFalsy;
     });
 
     it('has the correct output for >=', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>=', 10)).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>=', 11  )).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>=', 10)).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>=', 11  )).toBeFalsy;
     });
 
     it('has the correct output for >', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>', 9)).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>', 10)).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>', 9)).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '>', 10)).toBeFalsy;
     });
 
     it('has the correct output for <=', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<=', 10)).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<=', 9)).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<=', 10)).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<=', 9)).toBeFalsy;
     });
 
     it('has the correct output for <', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<', 11)).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<', 10)).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<', 11)).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', '<', 10)).toBeFalsy;
     });
 
     it('has the correct output for in', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'in', [9, 10, 11])).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'in', [0])).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'in', [9, 10, 11])).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'in', [0])).toBeFalsy;
     });
 
     it('has the correct output for not in', () => {
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [1])).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [10])).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [1])).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10}), 'orders', 'not in', [10])).toBeFalsy;
     });
 
     it('has the correct output for not intersect', () => {
-      expect(matchesField(Immutable.fromJS({ orders: [1, 10, 20] }), 'orders', 'intersect', [10] )).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: [10]        }), 'orders', 'intersect',  10  )).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: 10          }), 'orders', 'intersect',  10  )).to.be.true;
-      expect(matchesField(Immutable.fromJS({ orders: [0, 15, 20] }), 'orders', 'intersect', [10] )).to.be.false;
-      expect(matchesField(Immutable.fromJS({ orders: []          }), 'orders', 'intersect', [10] )).to.be.false;
-      expect(matchesField(Immutable.fromJS({ orders: []          }), 'orders', 'intersect',  10  )).to.be.false;
+      expect(matchesField(Immutable.fromJS({ orders: [1, 10, 20] }), 'orders', 'intersect', [10] )).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: [10]        }), 'orders', 'intersect',  10  )).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: 10          }), 'orders', 'intersect',  10  )).toBeTruthy;
+      expect(matchesField(Immutable.fromJS({ orders: [0, 15, 20] }), 'orders', 'intersect', [10] )).toBeFalsy;
+      expect(matchesField(Immutable.fromJS({ orders: []          }), 'orders', 'intersect', [10] )).toBeFalsy;
+      expect(matchesField(Immutable.fromJS({ orders: []          }), 'orders', 'intersect',  10  )).toBeFalsy;
     });
   });
 
@@ -65,93 +63,93 @@ describe('utils/available-experiments.js', () => {
     const utmsRoute     = initialState.get('route').merge({ pathName: '/magic', query: { 'utm_campaign': 'test-campaignName', 'utm_source': 'harry-potter' } });
 
     it('exists', () => {
-      expect(matchesRoute).to.exist;
-      expect(matchesRoute).to.be.a('function');
+      expect(matchesRoute).not.toBeUndefined;
+      expect(typeof matchesRoute).toEqual('function');
     });
 
     it('undefined matches any route', () => {
-      expect(matchesRoute( blankRoute, undefined )).to.be.true;
+      expect(matchesRoute( blankRoute, undefined )).toBeTruthy;
     });
 
     it('null matches any route', () => {
-      expect(matchesRoute( blankRoute, null )).to.be.true;
+      expect(matchesRoute( blankRoute, null )).toBeTruthy;
     });
 
     it('empty hash matches any route', () => {
-      expect(matchesRoute( homepageRoute, Immutable.fromJS({}) )).to.be.true;
+      expect(matchesRoute( homepageRoute, Immutable.fromJS({}) )).toBeTruthy;
     });
 
     it('exactly matches pathName', () => {
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName:              '/'                }  ) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/']               } }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/', '/magic']     } }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/', '/404']       } }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'not in': ['/404', '/magic']  } }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName:              '/'                }  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/']               } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/', '/magic']     } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/', '/404']       } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'not in': ['/404', '/magic']  } }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('doesnt match pathName', () => {
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName:              '/404'              }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/404']             } }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/404', '/magic']   } }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/404', '/404']     } }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'not in': ['/', '/help']       } }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName:              '/404'              }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/404']             } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/404', '/magic']   } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'in':     ['/404', '/404']     } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(homepageRoute,   Immutable.fromJS({ pathName: { 'not in': ['/', '/help']       } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('exactly matches path', () => {
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path:              '/posts:id'              }  ) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/posts:id']             } }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/posts:id', '/magic']   } }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/posts:id', '/404']     } }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'not in': ['/404', '/help']         } }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path:              '/posts:id'              }  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/posts:id']             } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/posts:id', '/magic']   } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/posts:id', '/404']     } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'not in': ['/404', '/help']         } }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('doesnt match path', () => {
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path:              '/404'                 }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/404']                } }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/404', '/magic']      } }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/404', '/help']       } }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'not in': ['/posts:id', '/help']  } }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path:              '/404'                 }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/404']                } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/404', '/magic']      } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'in':     ['/404', '/help']       } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: { 'not in': ['/posts:id', '/help']  } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('exactly matches path with params', () => {
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id':              '2'              }}  ) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['2']             }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['2', 'slug']     }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['2', '3']        }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'not in': ['404']           }} }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id':              '2'              }}  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['2']             }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['2', 'slug']     }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['2', '3']        }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'not in': ['404']           }} }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('doesnt match path with missing params', () => {
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'invalid-param': 'n/a'              } }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'invalid-param': 'n/a'              } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('doesnt match path with params', () => {
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id':              '3'              }}  ) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['3']             }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['3', 'slug']     }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['3', '15']       }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'not in': ['2']             }} }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id':              '3'              }}  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['3']             }} }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['3', 'slug']     }} }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'in':     ['3', '15']       }} }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(dynamicRoute,    Immutable.fromJS({ path: '/posts:id', params: { 'id': { 'not in': ['2']             }} }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('exactly matches pathName with query', () => {
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign':              'test-campaignName'              }}  ) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName']             }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName', 'slug']     }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName', '3']        }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'not in': ['404']                           }} }) )).to.be.true; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'not in': ['2']                             }} }) )).to.be.true; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign':              'test-campaignName'              }}  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName']             }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName', 'slug']     }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'in':     ['test-campaignName', '3']        }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'not in': ['404']                           }} }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'not in': ['2']                             }} }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('doesnt match pathName with missing query', () => {
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'invalid-param': 'n/a'              } }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'invalid-param': 'n/a'              } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('doesnt match pathName with query', () => {
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':                        '3'                  }}  ) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3']                 }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3', 'slug']         }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3', '15']           }} }) )).to.be.false; // eslint-disable-line
-      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'not in': ['test-campaignName'] }} }) )).to.be.false; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':                        '3'                  }}  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3']                 }} }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3', 'slug']         }} }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'id':           { 'in':     ['3', '15']           }} }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesRoute(utmsRoute,    Immutable.fromJS({ pathName: '/magic', query: { 'utm_campaign': { 'not in': ['test-campaignName'] }} }) )).toBeFalsy; // eslint-disable-line
     });
   });
 
@@ -164,101 +162,101 @@ describe('utils/available-experiments.js', () => {
     const specialAudience = Immutable.fromJS({ type: 'vip', orders: 10, state: 'CA' });
 
     it('exists', () => {
-      expect(matchesAudience).to.exist;
-      expect(matchesAudience).to.be.a('function');
+      expect(matchesAudience).not.toBeUndefined;
+      expect(typeof matchesAudience).toEqual('function');
     });
 
     it('undefined matches any audience', () => {
-      expect(matchesAudience( blankAudience, undefined )).to.be.true;
+      expect(matchesAudience( blankAudience, undefined )).toBeTruthy;
     });
 
     it('null matches any audience', () => {
-      expect(matchesAudience( blankAudience, null )).to.be.true;
+      expect(matchesAudience( blankAudience, null )).toBeTruthy;
     });
 
     it('empty hash matches any audience', () => {
-      expect(matchesAudience( vipAudience, Immutable.fromJS({}) )).to.be.true;
+      expect(matchesAudience( vipAudience, Immutable.fromJS({}) )).toBeTruthy;
     });
 
     it('matches on state', () => {
-      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state:             'NY'           }  ) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'in':     ['NY']         } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'in':     ['NY', 'N/A']  } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'in':     ['NY', 'DC']   } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'not in': ['N/A']        } }) )).to.be.true; // eslint-disable-line
+      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state:             'NY'           }  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'in':     ['NY']         } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'in':     ['NY', 'N/A']  } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'in':     ['NY', 'DC']   } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(stateAudience,   Immutable.fromJS({ state: { 'not in': ['N/A']        } }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('doesnt match on state', () => {
-      expect(matchesAudience(blankAudience, Immutable.fromJS({ type:             'ny'           }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(stateAudience, Immutable.fromJS({ type:             'ny'           }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny']         } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny']         } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny', 'ca']   } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny', 'ca']   } }) )).to.be.false; // eslint-disable-line
-      // expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'not in': ['ny', 'NY']   } }) )).to.be.false; // eslint-disable-line TODO -> fixme?
+      expect(matchesAudience(blankAudience, Immutable.fromJS({ type:             'ny'           }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(stateAudience, Immutable.fromJS({ type:             'ny'           }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny']         } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny']         } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny', 'ca']   } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'in':     ['ny', 'ca']   } }) )).toBeFalsy; // eslint-disable-line
+      // expect(matchesAudience(stateAudience, Immutable.fromJS({ type: { 'not in': ['ny', 'NY']   } }) )).toBeFalsy; // eslint-disable-line TODO -> fixme?
     });
 
     it('matches on vip', () => {
       // Exactly matches on 'vip'
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type:             'vip'           }  ) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['vip']         } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['vip', '1pct'] } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['vip', '1pct'] } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'not in': ['loggedout']   } }) )).to.be.true; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type:             'vip'           }  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['vip']         } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['vip', '1pct'] } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['vip', '1pct'] } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'not in': ['loggedout']   } }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('doesnt match on VIP', () => {
       // Is case sensitive: 'vip' !=== 'VIP'
-      expect(matchesAudience(blankAudience, Immutable.fromJS({ type:             'VIP'           }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type:             'VIP'           }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP']         } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP']         } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP', '1PCT'] } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP', '1PCT'] } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'not in': ['vip']         } }) )).to.be.false; // eslint-disable-line
+      expect(matchesAudience(blankAudience, Immutable.fromJS({ type:             'VIP'           }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type:             'VIP'           }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP']         } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP']         } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP', '1PCT'] } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'in':     ['VIP', '1PCT'] } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(vipAudience,   Immutable.fromJS({ type: { 'not in': ['vip']         } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('matches on orders', () => {
       // Exactly matches on 'orders'
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders:              10           }  ) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '===':     10           } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=':      10           } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=':       0           } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':        0           } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':      10           } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':      11           } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'in':     [10, 11, 9]   } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'not in': [1, 2, 3]     } }) )).to.be.true; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders:              10           }  ) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '===':     10           } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=':      10           } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=':       0           } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':        0           } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':      10           } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':      11           } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'in':     [10, 11, 9]   } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'not in': [1, 2, 3]     } }) )).toBeTruthy; // eslint-disable-line
     });
 
     it('matches on a range of orders', () => {
       // Inside a range
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=': 5,  '<=': 15 } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':  9,  '<':  11 } }) )).to.be.true; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':  9,  '<':  11 } }) )).to.be.true; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=': 5,  '<=': 15 } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':  9,  '<':  11 } }) )).toBeTruthy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':  9,  '<':  11 } }) )).toBeTruthy; // eslint-disable-line
 
       // Outside of a range
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=': 5,  '>=': 15 } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':  9,  '>':  11 } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':  9,  '>':  11 } }) )).to.be.false; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=': 5,  '>=': 15 } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':  9,  '>':  11 } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':  9,  '>':  11 } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('doesnt match on orders', () => {
-      expect(matchesAudience(blankAudience,  Immutable.fromJS({ orders:               1           }  ) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '===':    -10           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=':      11           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':       11           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':       9           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':       0           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':        0           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':       10           } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'in':     [1, 2, 3]     } }) )).to.be.false; // eslint-disable-line
-      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'not in': [10, 11, 9]   } }) )).to.be.false; // eslint-disable-line
+      expect(matchesAudience(blankAudience,  Immutable.fromJS({ orders:               1           }  ) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '===':    -10           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>=':      11           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '>':       11           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':       9           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<=':       0           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':        0           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { '<':       10           } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'in':     [1, 2, 3]     } }) )).toBeFalsy; // eslint-disable-line
+      expect(matchesAudience(ordersAudience, Immutable.fromJS({ orders: { 'not in': [10, 11, 9]   } }) )).toBeFalsy; // eslint-disable-line
     });
 
     it('exactly matches vip, orders, and state', () => {
-      expect(matchesAudience(specialAudience, Immutable.fromJS({}) )).to.be.true;
-      expect(matchesAudience(specialAudience, Immutable.fromJS({ type: 'vip', orders: { '>=': 5, '<=': 15 }, state: { 'in': ['NY', 'CA', 'FL'] } }) )).to.be.true;
+      expect(matchesAudience(specialAudience, Immutable.fromJS({}) )).toBeTruthy;
+      expect(matchesAudience(specialAudience, Immutable.fromJS({ type: 'vip', orders: { '>=': 5, '<=': 15 }, state: { 'in': ['NY', 'CA', 'FL'] } }) )).toBeTruthy;
     });
   });
 
@@ -351,8 +349,8 @@ describe('utils/available-experiments.js', () => {
 
 
     it('exists', () => {
-      expect(availableExperiments).to.exist;
-      expect(availableExperiments).to.be.a('function');
+      expect(availableExperiments).not.toBeUndefined;
+      expect(typeof availableExperiments).toEqual('function');
     });
 
     it('undefined/blank matches any audience', () => {
@@ -367,8 +365,8 @@ describe('utils/available-experiments.js', () => {
         route_path:         initialState.get('route_path'),
         route:              initialState.get('route'),
       });
-      expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(output.toJS()).toEqual({
         'No Audience': 'No Audience',
         'BlankAudienceComponent': 'Blank Audience 1',
       });
@@ -388,8 +386,8 @@ describe('utils/available-experiments.js', () => {
         route_path:         initialState.get('route_path'),
         route:              initialState.get('route'),
       });
-      expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(output.toJS()).toEqual({
         'No Audience': 'No Audience',
         'BlankAudienceComponent': 'Blank Audience 2',
       });
@@ -407,8 +405,8 @@ describe('utils/available-experiments.js', () => {
         route_path:         initialState.get('route_path'),
         route:              initialState.get('route').merge({pathName: '/magic'}),
       });
-      expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(output.toJS()).toEqual({
         'No Audience': 'No Audience',
         'BlankAudienceComponent': 'Blank Audience 1',
         'SimpleAudienceComponent': 'Simple Audience Type',
@@ -427,8 +425,8 @@ describe('utils/available-experiments.js', () => {
         route_path:         initialState.get('route_path'),
         route:              initialState.get('route').merge({pathName: '/magic'}),
       });
-      expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(output.toJS()).toEqual({
         'No Audience': 'No Audience',
         'BlankAudienceComponent': 'Blank Audience 1',
         'SimpleAudienceComponent': 'Simple Audience Type',
@@ -449,8 +447,8 @@ describe('utils/available-experiments.js', () => {
         route:              initialState.get('route').merge({pathName: '/magic'}),
       };
       let output = availableExperiments(args);
-      expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(output.toJS()).toEqual({
         'ComplexAudienceComponent': 'Single Success Type',
       });
 
@@ -459,8 +457,8 @@ describe('utils/available-experiments.js', () => {
         ...args,
         fulfilled:          Immutable.List('Single Success Type'),
       });
-      expect(output).to.be.an.instanceOf(Immutable.Map);
-      expect(output.toJS()).to.deep.equal({
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(output.toJS()).toEqual({
         // Remove this if you un-comment the winner and single_success_path params to availableExperiments
         //   'Single Success Type': 'Original',
         'ComplexAudienceComponent': 'Single Success Type',

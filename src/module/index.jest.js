@@ -1,4 +1,3 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import { spy } from 'sinon';
 import { cacheStore } from '../utils/create-cache-store';

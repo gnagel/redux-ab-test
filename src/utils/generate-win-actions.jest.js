@@ -1,6 +1,4 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from './test_helper';
 import { spy } from 'sinon';
 
 import generateWinActions from './generate-win-actions';
@@ -32,8 +30,8 @@ describe('utils/generate-win-actions.js', () => {
   });
 
   it('exists', () => {
-    expect(generateWinActions).to.exist;
-    expect(generateWinActions).to.be.a('function');
+    expect(generateWinActions).not.toBeUndefined;
+    expect(typeof generateWinActions).toEqual('function');
   });
 
   it('has empty output', () => {
@@ -43,9 +41,9 @@ describe('utils/generate-win-actions.js', () => {
       actionType:  null,
       next,
     });
-    expect(output).to.exist;
-    expect(output).to.be.an.instanceof(Immutable.List);
-    expect(output.toJS()).to.deep.equal([]);
+    expect(output).not.toBeUndefined;
+    expect(Immutable.List.isList(output)).toBeTruthy;
+    expect(output.toJS()).toEqual([]);
   });
 
   it('has one action', () => {
@@ -63,9 +61,9 @@ describe('utils/generate-win-actions.js', () => {
       actionType: 'Test-action-1',
       next,
     });
-    expect(output).to.exist;
-    expect(output).to.be.an.instanceof(Immutable.List);
-    expect(output.toJS()).to.deep.equal([
+    expect(output).not.toBeUndefined;
+    expect(Immutable.List.isList(output)).toBeTruthy;
+    expect(output.toJS()).toEqual([
       {
         experiment,
         variation:  { name: 'Original', weight: 5000 },
@@ -89,9 +87,9 @@ describe('utils/generate-win-actions.js', () => {
       actionType: 'Test-action-1',
       next,
     });
-    expect(output).to.exist;
-    expect(output).to.be.an.instanceof(Immutable.List);
-    expect(output.toJS()).to.deep.equal([
+    expect(output).not.toBeUndefined;
+    expect(Immutable.List.isList(output)).toBeTruthy;
+    expect(output.toJS()).toEqual([
       {
         experiment,
         variation:  { name: 'Original', weight: 5000 },
@@ -116,9 +114,9 @@ describe('utils/generate-win-actions.js', () => {
       actionType: 'Test-action-1',
       next,
     });
-    expect(output).to.exist;
-    expect(output).to.be.an.instanceof(Immutable.List);
-    expect(output.toJS()).to.deep.equal([
+    expect(output).not.toBeUndefined;
+    expect(Immutable.List.isList(output)).toBeTruthy;
+    expect(output.toJS()).toEqual([
       {
         experiment,
         variation:  { name: 'Original', weight: 5000 },

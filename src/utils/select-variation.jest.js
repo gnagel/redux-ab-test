@@ -1,6 +1,4 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from './test_helper';
 import createCacheStore from './create-cache-store';
 import selectVariation from './select-variation';
 
@@ -29,8 +27,8 @@ const experiment = {
 describe('utils/select-variation.js', () => {
 
   it('exists', () => {
-    expect(selectVariation).to.exist;
-    expect(selectVariation).to.be.a('function');
+    expect(selectVariation).not.toBeUndefined;
+    expect(typeof selectVariation).toEqual('function');
   });
 
   it('chooses the active variation from redux store w/o cacheStore', () => {
@@ -39,8 +37,8 @@ describe('utils/select-variation.js', () => {
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
     });
-    expect(output).to.exist;
-    expect(output.toJSON()).to.deep.equal(variation_b);
+    expect(output).not.toBeUndefined;
+    expect(output.toJSON()).toEqual(variation_b);
   });
 
   it('chooses the active variation from redux store w/cacheStore', () => {
@@ -51,10 +49,10 @@ describe('utils/select-variation.js', () => {
       defaultVariationName: null,
       cacheStore:           cacheStore,
     });
-    expect(output).to.exist;
-    expect(output.toJSON()).to.deep.equal(variation_b);
+    expect(output).not.toBeUndefined;
+    expect(output.toJSON()).toEqual(variation_b);
     // Cache does not have the selected variation, since it is stored in redux state!
-    expect(cacheStore.cache()).to.be.empty;
+    expect(Object.keys(cacheStore.cache()).length).toEqual(0);
   });
 
   it('chooses the defaultVariationName variation', () => {
@@ -65,11 +63,11 @@ describe('utils/select-variation.js', () => {
       defaultVariationName: 'Variation #B',
       cacheStore:           cacheStore,
     });
-    expect(output).to.exist;
-    expect(output.toJSON()).to.deep.equal(variation_b);
+    expect(output).not.toBeUndefined;
+    expect(output.toJSON()).toEqual(variation_b);
     // Cache has the selected variation
-    expect(cacheStore.cache()).to.not.be.empty;
-    expect(cacheStore.cache()[experiment.name]).to.be.equal(output.toJSON().name);
+    expect(cacheStore.cache().length).not.toEqual(0);
+    expect(cacheStore.cache()[experiment.name]).toEqual(output.toJSON().name);
   });
 
   it('chooses the active variation from :cacheStore', () => {
@@ -81,11 +79,11 @@ describe('utils/select-variation.js', () => {
       defaultVariationName: null,
       cacheStore:           cacheStore,
     });
-    expect(output).to.exist;
-    expect(output.toJSON()).to.deep.equal(variation_b);
+    expect(output).not.toBeUndefined;
+    expect(output.toJSON()).toEqual(variation_b);
     // Cache has the selected variation
-    expect(cacheStore.cache()).to.not.be.empty;
-    expect(cacheStore.cache()[experiment.name]).to.be.equal(output.toJSON().name);
+    expect(cacheStore.cache().length).not.toEqual(0);
+    expect(cacheStore.cache()[experiment.name]).toEqual(output.toJSON().name);
   });
 
   it('randomly assigns a variation, ignoring weight=0 records', () => {
@@ -96,10 +94,10 @@ describe('utils/select-variation.js', () => {
       defaultVariationName: null,
       cacheStore,
     });
-    expect(output).to.exist;
-    expect(output.toJSON()).to.not.deep.equal(variation_b);
+    expect(output).not.toBeUndefined;
+    expect(output.toJSON()).not.toEqual(variation_b);
     // Cache has the selected variation
-    expect(cacheStore.cache()).to.not.be.empty;
-    expect(cacheStore.cache()[experiment.name]).to.be.equal(output.toJSON().name);
+    expect(cacheStore.cache().length).not.toEqual(0);
+    expect(cacheStore.cache()[experiment.name]).toEqual(output.toJSON().name);
   });
 });

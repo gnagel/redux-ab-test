@@ -1,55 +1,53 @@
-import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from './test_helper';
 
 import randomVariation, { toWeight, toTotal, toRange, toRanges } from './random-variation';
 
 describe('utils/random-variation.js', () => {
   describe('toWeight', () => {
     it('exists', () => {
-      expect(toWeight).to.exist;
+      expect(toWeight).not.toBeUndefined;
     });
 
     it('has the correct weight', () => {
-      expect(toWeight(Immutable.Map({weight: 100}))).to.equal(100);
-      expect(toWeight(Immutable.Map({weight: -100}))).to.equal(-100);
+      expect(toWeight(Immutable.Map({weight: 100}))).toEqual(100);
+      expect(toWeight(Immutable.Map({weight: -100}))).toEqual(-100);
     });
 
     it('has the default weight', () => {
-      expect(toWeight(Immutable.Map({}))).to.equal(0);
-      expect(toWeight(Immutable.Map({weight: undefined}))).to.equal(0);
+      expect(toWeight(Immutable.Map({}))).toEqual(0);
+      expect(toWeight(Immutable.Map({weight: undefined}))).toEqual(0);
     });
   });
 
   describe('toTotal', () => {
     it('exists', () => {
-      expect(toTotal).to.exist;
+      expect(toTotal).not.toBeUndefined;
     });
 
     it('has the correct total', () => {
-      expect(toTotal(Immutable.fromJS([{weight: 100}]))).to.equal(100);
-      expect(toTotal(Immutable.fromJS([{weight: 100}, {weight: 200}]))).to.equal(300);
-      expect(toTotal(Immutable.fromJS([{weight: 100}, {weight: 200}, {weight: 300}]))).to.equal(600);
+      expect(toTotal(Immutable.fromJS([{weight: 100}]))).toEqual(100);
+      expect(toTotal(Immutable.fromJS([{weight: 100}, {weight: 200}]))).toEqual(300);
+      expect(toTotal(Immutable.fromJS([{weight: 100}, {weight: 200}, {weight: 300}]))).toEqual(600);
     });
 
     it('has the default total', () => {
-      expect(toTotal(Immutable.fromJS([]))).to.equal(0);
+      expect(toTotal(Immutable.fromJS([]))).toEqual(0);
     });
   });
 
   describe('toRange', () => {
     it('exists', () => {
-      expect(toRange).to.exist;
+      expect(toRange).not.toBeUndefined;
     });
 
     it('has the correct range[0]', () => {
       let list = Immutable.List([]);
       list = toRange(list, 5000);
-      expect(list).to.exist;
-      expect(list.count()).to.have.eq(1);
+      expect(list).not.toBeUndefined;
+      expect(list.count()).toEqual(1);
       const range = list.last();
-      expect(range.first()).to.equal(0);
-      expect(range.last()).to.equal(4999);
+      expect(range.first()).toEqual(0);
+      expect(range.last()).toEqual(4999);
     });
 
     it('has the correct range[1]', () => {
@@ -57,11 +55,11 @@ describe('utils/random-variation.js', () => {
         Immutable.Range(0, 5000),
       ]);
       list = toRange(list, 5000);
-      expect(list).to.exist;
-      expect(list.count()).to.have.eq(2);
+      expect(list).not.toBeUndefined;
+      expect(list.count()).toEqual(2);
       const range = list.last();
-      expect(range.first()).to.equal(5000);
-      expect(range.last()).to.equal(9999);
+      expect(range.first()).toEqual(5000);
+      expect(range.last()).toEqual(9999);
     });
 
     it('has the correct range[2]', () => {
@@ -70,11 +68,11 @@ describe('utils/random-variation.js', () => {
         Immutable.Range(5000, 10000),
       ]);
       list = toRange(list, 10000);
-      expect(list).to.exist;
-      expect(list.count()).to.have.eq(3);
+      expect(list).not.toBeUndefined;
+      expect(list.count()).toEqual(3);
       const range = list.last();
-      expect(range.first()).to.equal(10000);
-      expect(range.last()).to.equal(19999);
+      expect(range.first()).toEqual(10000);
+      expect(range.last()).toEqual(19999);
     });
 
     it('has the correct range[3]', () => {
@@ -84,17 +82,17 @@ describe('utils/random-variation.js', () => {
         Immutable.Range(10000, 20000),
       ]);
       list = toRange(list, 0);
-      expect(list).to.exist;
-      expect(list.count()).to.have.eq(4);
+      expect(list).not.toBeUndefined;
+      expect(list.count()).toEqual(4);
       const range = list.last();
-      expect(range.first()).to.be.undefined;
-      expect(range.last()).to.be.undefined;
+      expect(range.first()).toBeUndefined;
+      expect(range.last()).toBeUndefined;
     });
   });
 
   describe('toRanges', () => {
     it('exists', () => {
-      expect(toRanges).to.exist;
+      expect(toRanges).not.toBeUndefined;
     });
 
     it('has the correct ranges', () => {
@@ -105,17 +103,17 @@ describe('utils/random-variation.js', () => {
         { weight: 0 },
       ]);
       const ranges = toRanges(weights);
-      expect(ranges).to.exist;
-      expect(ranges.count()).to.have.eq(4);
-      expect(JSON.stringify(ranges.map( i => `${i.first()}/${i.last()}`))).to.be.equal('["0/4999","5000/9999","10000/19999","undefined/undefined"]');
-      expect(ranges.get(0).first()).to.equal(0);
-      expect(ranges.get(0).last()).to.equal(4999);
-      expect(ranges.get(1).first()).to.equal(5000);
-      expect(ranges.get(1).last()).to.equal(9999);
-      expect(ranges.get(2).first()).to.equal(10000);
-      expect(ranges.get(2).last()).to.equal(19999);
-      expect(ranges.get(3).first()).to.be.undefined;
-      expect(ranges.get(3).last()).to.be.undefined;
+      expect(ranges).not.toBeUndefined;
+      expect(ranges.count()).toEqual(4);
+      expect(JSON.stringify(ranges.map( i => `${i.first()}/${i.last()}`))).toEqual('["0/4999","5000/9999","10000/19999","undefined/undefined"]');
+      expect(ranges.get(0).first()).toEqual(0);
+      expect(ranges.get(0).last()).toEqual(4999);
+      expect(ranges.get(1).first()).toEqual(5000);
+      expect(ranges.get(1).last()).toEqual(9999);
+      expect(ranges.get(2).first()).toEqual(10000);
+      expect(ranges.get(2).last()).toEqual(19999);
+      expect(ranges.get(3).first()).toBeUndefined;
+      expect(ranges.get(3).last()).toBeUndefined;
     });
 
     it('has the correct ranges', () => {
@@ -128,27 +126,27 @@ describe('utils/random-variation.js', () => {
         { weight: 0 },
       ]);
       const ranges = toRanges(weights);
-      expect(ranges).to.exist;
-      expect(ranges.count()).to.have.eq(6);
-      expect(JSON.stringify(ranges.map( i => `${i.first()}/${i.last()}`))).to.be.equal('["0/4999","5000/9999","10000/19999","undefined/undefined","undefined/undefined","undefined/undefined"]');
-      expect(ranges.get(0).first()).to.equal(0);
-      expect(ranges.get(0).last()).to.equal(4999);
-      expect(ranges.get(1).first()).to.equal(5000);
-      expect(ranges.get(1).last()).to.equal(9999);
-      expect(ranges.get(2).first()).to.equal(10000);
-      expect(ranges.get(2).last()).to.equal(19999);
-      expect(ranges.get(3).first()).to.be.undefined;
-      expect(ranges.get(3).last()).to.be.undefined;
-      expect(ranges.get(4).first()).to.be.undefined;
-      expect(ranges.get(4).last()).to.be.undefined;
-      expect(ranges.get(5).first()).to.be.undefined;
-      expect(ranges.get(5).last()).to.be.undefined;
+      expect(ranges).not.toBeUndefined;
+      expect(ranges.count()).toEqual(6);
+      expect(JSON.stringify(ranges.map( i => `${i.first()}/${i.last()}`))).toEqual('["0/4999","5000/9999","10000/19999","undefined/undefined","undefined/undefined","undefined/undefined"]');
+      expect(ranges.get(0).first()).toEqual(0);
+      expect(ranges.get(0).last()).toEqual(4999);
+      expect(ranges.get(1).first()).toEqual(5000);
+      expect(ranges.get(1).last()).toEqual(9999);
+      expect(ranges.get(2).first()).toEqual(10000);
+      expect(ranges.get(2).last()).toEqual(19999);
+      expect(ranges.get(3).first()).toBeUndefined;
+      expect(ranges.get(3).last()).toBeUndefined;
+      expect(ranges.get(4).first()).toBeUndefined;
+      expect(ranges.get(4).last()).toBeUndefined;
+      expect(ranges.get(5).first()).toBeUndefined;
+      expect(ranges.get(5).last()).toBeUndefined;
     });
 
     it('has the default ranges', () => {
       const weights = Immutable.fromJS([]);
       const ranges = toRanges(weights);
-      expect(ranges.count()).to.equal(0);
+      expect(ranges.count()).toEqual(0);
     });
   });
 
@@ -163,34 +161,34 @@ describe('utils/random-variation.js', () => {
     });
 
     it('exists', () => {
-      expect(randomVariation).to.exist;
+      expect(randomVariation).not.toBeUndefined;
     });
 
     it('sorts the variations by weight descending', () => {
       const output = experiment.get('variations').sortBy(toWeight).reverse();
-      expect(output).to.exist;
-      expect(output).to.be.an.instanceof(Immutable.List);
-      expect(output.get(0).get('name')).to.equal('Original');
-      expect(output.get(1).get('name')).to.equal('Variation B');
-      expect(output.get(2).get('name')).to.equal('Variation A');
-      expect(output.get(3).get('name')).to.equal('Variation Disabled');
+      expect(output).not.toBeUndefined;
+      expect(Immutable.List.isList(output)).toBeTruthy;
+      expect(output.get(0).get('name')).toEqual('Original');
+      expect(output.get(1).get('name')).toEqual('Variation B');
+      expect(output.get(2).get('name')).toEqual('Variation A');
+      expect(output.get(3).get('name')).toEqual('Variation Disabled');
     });
 
     it('returns an Immutable.Map', () => {
       const output = randomVariation(experiment);
-      expect(output).to.exist;
-      expect(output).to.be.an.instanceof(Immutable.Map);
-      expect(output.toJS()).to.have.keys('name', 'weight');
+      expect(output).not.toBeUndefined;
+      expect(Immutable.Map.isMap(output)).toBeTruthy;
+      expect(Object.keys(output.toJS())).toEqual(['name', 'weight']);
     });
 
     const sharedContext = (i, variationName) => {
       it(`returns the expected variation for i=${i}`, () => {
         const random = () => i;
         const output = randomVariation(experiment, random);
-        expect(output).to.exist;
-        expect(output).to.be.an.instanceof(Immutable.Map);
-        expect(output.toJS()).to.have.keys('name', 'weight');
-        expect(output.get('name')).to.equal(variationName);
+        expect(output).not.toBeUndefined;
+        expect(Immutable.Map.isMap(output)).toBeTruthy;
+        expect(Object.keys(output.toJS())).toEqual(['name', 'weight']);
+        expect(output.get('name')).toEqual(variationName);
       });
     };
 
