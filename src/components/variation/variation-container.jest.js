@@ -1,7 +1,10 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import renderer from 'react-test-renderer';
 import Variation, { mapStateToProps } from './variation';
-import { initialState } from '../../module';
+import reduxAbTest, { initialState } from '../../module';
 
 
 describe('(Container) Variation', () => {
@@ -10,15 +13,16 @@ describe('(Container) Variation', () => {
       expect(mapStateToProps).not.toBeUndefined;
     });
     it('has correct keys', () => {
-      expect(mapStateToProps({reduxAbTest: 'test-state'})).to.have.keys(['reduxAbTest']);
+      expect(Object.keys(mapStateToProps({reduxAbTest: 'test-state'}))).toEqual(['reduxAbTest']);
     });
     it('has correct state', () => {
-      expect(mapStateToProps({reduxAbTest: 'test-state'})).to.deep.equal({reduxAbTest: 'test-state'});
+      expect(mapStateToProps({reduxAbTest: 'test-state'})).toEqual({reduxAbTest: 'test-state'});
     });
   });
 
   describe('component', () => {
     let component;
+    let tree;
     beforeEach(() => {
       const props = {
         name:       'Variation B',
@@ -31,7 +35,7 @@ describe('(Container) Variation', () => {
         }),
         children: 'Test Variation B',
       };
-      const store = {
+      const state = {
         reduxAbTest: initialState.merge({
           experiments: [
             {
@@ -44,23 +48,22 @@ describe('(Container) Variation', () => {
           ],
         }),
       };
-      component = renderContainer(Variation, props, store).find(Variation);
-    });
-
-    it('exists', () => {
-      expect(component).not.toBeUndefined;
-      expect(component.html()).to.be.present;
-    });
-
-    it('has 1x Variation', () => {
-      expect(component).to.have.length(1);
+      component = renderer.create(
+        <Provider store={createStore(reduxAbTest, state)}>
+          <Variation {...props} />
+        </Provider>
+      );
+      tree = component.toJSON();
     });
 
     it('variation has expected props', () => {
-      expect(component).to.have.length(1);
-      expect(component).to.have.prop('name', 'Variation B');
-      expect(component).to.have.tagName('span');
-      expect(component).to.have.text('Test Variation B');
+      expect(tree).toMatchSnapshot();
+      expect(tree.type).toEqual('span');
+      expect(tree.props['data-experiment-id']).toBeUndefined;
+      expect(tree.props['data-experiment-name']).toEqual('Test-experimentName');
+      expect(tree.props['data-variation-id']).toBeUndefined;
+      expect(tree.props['data-variation-name']).toEqual('Variation B');
+      expect(tree.children).toEqual(['Test Variation B']);
     });
   });
 });

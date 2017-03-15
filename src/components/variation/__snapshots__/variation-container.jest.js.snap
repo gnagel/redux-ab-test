@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`(Container) Variation component variation has expected props 1`] = `
+<span
+  data-experiment-id={undefined}
+  data-experiment-name="Test-experimentName"
+  data-variation-id={undefined}
+  data-variation-name="Variation B"
+>
+  Test Variation B
+</span>
+`;
