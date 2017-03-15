@@ -1,0 +1,14 @@
+{
+  "verbose": true,
+  "modulePaths": [
+    "node_modules",
+    "src"
+  ],
+  "notify": true,
+  "testRegex": "\\.jest\\.(js|jsx)$",
+  "moduleNameMapper": {
+  },
+  "setupTestFrameworkScriptFile": "./test/setup.js",
+  "globals": {
+  }
+}
