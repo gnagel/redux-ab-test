@@ -1,7 +1,4 @@
-
-import React from "react"; // eslint-disable-line no-unused-vars
 import { expect } from 'test_helper';
-
 import {
   /**
    * React Connected components
@@ -33,12 +30,12 @@ import {
    */
   WIN,
   PLAY,
-} from "./index";
+} from './index';
 
 describe('(Root) src/index.js', () => {
   it('module export Experiment',              () => { expect(Experiment             ).to.exist; });
   it('module export Variation',               () => { expect(Variation              ).to.exist; });
-  it('module export Debugger',                () => { expect(Debugger               ).to.exist; });
+  it('module export Debugger',                () => { expect(Debugger               ).to.not.exist; });
   it.skip('module export VariationType',      () => { expect(VariationType          ).to.exist; });
   it.skip('module export ExperimentType',     () => { expect(ExperimentType         ).to.exist; });
   it('module export reduxAbTest',             () => { expect(reduxAbTest            ).to.exist; });

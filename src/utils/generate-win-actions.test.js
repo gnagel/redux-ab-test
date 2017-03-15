@@ -1,6 +1,7 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect, spy } from 'test_helper';
+import { expect } from 'test_helper';
+import { spy } from 'sinon';
 
 import generateWinActions from './generate-win-actions';
 

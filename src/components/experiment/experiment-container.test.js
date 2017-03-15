@@ -1,12 +1,12 @@
-import React from "react"; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
-import Experiment, { mapStateToProps, mapDispatchToProps } from "./experiment";
+import React from 'react'; // eslint-disable-line no-unused-vars
+import Experiment, { mapStateToProps, mapDispatchToProps } from './experiment';
 import Variation from '../variation';
 import { initialState } from '../../module';
-import { expect, renderContainer, spy } from 'test_helper';
+import { expect, renderContainer } from 'test_helper';
+import { spy } from 'sinon';
 
 
-describe.only('(Container) Experiment', () => {
+describe('(Container) Experiment', () => {
   describe('mapStateToProps', () => {
     it('exists', () => {
       expect(mapStateToProps).to.exist;
@@ -24,7 +24,7 @@ describe.only('(Container) Experiment', () => {
         reduxAbTest: initialState.merge({
           experiments: [
             {
-              name: 'Test-experimentName',
+              name:       'Test-experimentName',
               variations: [
                 { name: 'Original', weight: 10000 },
                 { name: 'Variation B', weight: 0 }

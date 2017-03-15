@@ -1,6 +1,5 @@
-import React from "react"; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
-import Variation from "./variation";
+import React from 'react'; // eslint-disable-line no-unused-vars
+import { Variation } from './variation';
 import { initialState } from '../../module';
 import { expect, renderComponent } from 'test_helper';
 
@@ -25,9 +24,9 @@ describe('(Component) src/components/variation/variation.js', () => {
     });
 
     props = {
-      name:         'Variation B',
-      experiment:   reduxAbTest.getIn(['experiments', 0]),
-      children:     'Test-children',
+      name:       'Variation B',
+      experiment: reduxAbTest.getIn(['experiments', 0]),
+      children:   'Test-children',
       reduxAbTest,
     };
     component = renderComponent(Variation, props);

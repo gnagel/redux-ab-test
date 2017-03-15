@@ -1,6 +1,8 @@
 /** @flow */
-import React          from 'react';
-import Immutable      from 'immutable';
+import React       from 'react';
+import Immutable   from 'immutable';
+import { connect } from 'react-redux';
+
 
 type Props = {
   /**
@@ -36,7 +38,7 @@ type Props = {
  * - The children can be any JSX component, including plain text.
  * - The child component will recieve 4x data-* attributes with the `id` and `name` of the experiment & variation.
  */
-export default class Variation extends React.Component {
+export class Variation extends React.Component {
   props: Props;
   static defaultProps = {
     id:          null,
@@ -73,3 +75,9 @@ export default class Variation extends React.Component {
     return React.cloneElement(children, additionalProps);
   }
 }
+
+
+// Map the Redux Store to the Experiment's props
+export const mapStateToProps = ({ reduxAbTest }) => ({ reduxAbTest });
+// Export the new React Container.
+export default connect(mapStateToProps)(Variation);

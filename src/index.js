@@ -1,6 +1,5 @@
-import Debugger from './containers/debugger';
-import Experiment from './containers/experiment';
-import Variation from './containers/variation';
+import Experiment from './components/experiment';
+import Variation from './components/variation';
 
 import reduxAbTest, { initialState, middleware, reset, load, play, win, fulfilled, setActive, setAudience, setLocation, WIN, PLAY, FULFILLED } from './module';
 
@@ -11,7 +10,6 @@ export default {
    */
   Experiment,
   Variation,
-  Debugger,
   /**
    * Redux Reducer
    */

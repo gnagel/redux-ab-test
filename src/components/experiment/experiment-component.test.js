@@ -1,8 +1,9 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
-import Experiment from './experiment';
-import Variation from '../../containers/variation';
+import { Experiment } from './experiment';
+import Variation from '../variation';
 import { initialState } from '../../module';
-import { expect, renderContainer, spy } from 'test_helper';
+import { expect, renderContainer } from 'test_helper';
+import { spy } from 'sinon';
 
 
 const reduxAbTest = initialState.merge({
@@ -43,7 +44,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         <Variation name="Variation B">Test Variation B</Variation>
       ],
       experiment: reduxAbTest.getIn(['experiments', 0]),
-      variation: reduxAbTest.getIn(['experiments', 0, 'variations', 1]),
+      variation:  reduxAbTest.getIn(['experiments', 0, 'variations', 1]),
       dispatchActivate,
       dispatchDeactivate,
       dispatchPlay,

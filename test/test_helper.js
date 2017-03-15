@@ -1,15 +1,12 @@
 
 // Core React libraries:
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import { createStore, combineReducers } from 'redux';
 
 // Core testing libraries
-import configureStore from 'redux-mock-store';
 import chai, { expect } from 'chai';
 import { shallow, mount } from 'enzyme';
-import sinon, { spy } from 'sinon';
 import chaiEnzyme from 'chai-enzyme';
 chai.use(chaiEnzyme()); // Note the invocation at the end
 
@@ -24,7 +21,6 @@ function renderContainer(ComponentClass, props, state) {
       <ComponentClass {...props} />
     </Provider>
   );
-  return null;
 }
 
 // Build 'renderContainer' helper that should render a given react class
@@ -46,4 +42,4 @@ function renderStatelessComponent(ComponentClass, props) {
   return mount(<WrapsStatelessComponent><ComponentClass {...props} /></WrapsStatelessComponent>).childAt(0);
 }
 
-export default { renderContainer, renderComponent, renderStatelessComponent, expect, shallow, mount, spy };
+export default { renderContainer, renderComponent, renderStatelessComponent, expect, shallow, mount };

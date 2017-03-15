@@ -3,6 +3,7 @@ import { storiesOf } from '@kadira/storybook';
 import { decorateStore } from '../../../.storybook/store';
 import Variation from './variation'; //eslint-disable-line
 
+
 const __state__ = {
   experiments: [
     {

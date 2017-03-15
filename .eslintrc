@@ -1,70 +1,94 @@
 {
   "env": {
     "browser": true,
-    "es6":true
+    "es6": true
   },
-
   "globals": {
-    "Raven": true,
-    "react": true,
-    "Stripe":true,
-    "process":true,
-    "module":true,
-    "jest":true,
-    "require":true,
-    "__DEV__":true,
-    "__COMPONENT_DEV__": true,
-    "__STRIPE_KEY__":true,
-    "__STAGING__":true,
-    "__PRODUCTION__":true,
-    "__ENV__":true,
-    "_":true,
-    "global": true,
-    "__dirname": true,
+    "_": true,
     "describe": true,
     "it": true,
-    "__CLIENT__": true,
-    "__SERVER__": true,
-    "__DEVELOPMENT__": true,
-    "__OFFLINE__": true,
-    "__state__": true
+    "test": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "expect": true,
+    "global": true,
+    "jest": true,
+    "module": true,
+    "process": true,
+    "react": true,
+    "require": true
   },
-  "ecmaFeatures": {
-    "blockBindings": true,
-    "jsx": true,
-    "classes": true
+ "parserOptions": {
+   "ecmaFeatures": {
+      "blockBindings": true,
+      "jsx": true,
+      "classes": true
+    }
   },
   "plugins": [
-    "react"
+    "import",
+    "react",
+    "flowtype",
+    "jsx-a11y"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:react/recommended"
   ],
   "parser": "babel-eslint",
   "rules": {
-    "quotes": ["error", "single"],
-    "no-underscore-dangle": [0],
-    "no-console":[0],
-    "strict": [0],
-    "global-strict":[0],
-    "no-constant-condition":[1],
-    "valid-jsdoc":[0],
-    "no-throw-literal":[1],
+    "comma-dangle": [1, "always-multiline"],
+    "comma-spacing": [1],
+    "consistent-return": [1],
+    "eol-last": [0],
+    "flowtype/require-parameter-type": [0],
+    "flowtype/require-return-type": [0, "always", {"annotateUndefined": "never"}],
+    "flowtype/space-after-type-colon": 0,
+    "flowtype/space-before-type-colon": 0,
+    "flowtype/type-id-match": [0, "^([A-Z][a-z0-9]+)+[Type|Props]$"],
+    "global-strict": [0],
     "indent": [2, 2],
-    "no-dupe-keys": ["error"],
-    "no-unused-vars": ["error"],
-    "consistent-return":[1],
-    "semi":[1],
-    "no-trailing-spaces":["error"],
-    "no-debugger":["error"],
-    "no-multi-spaces": [0],
-    "key-spacing": ["error", { "align": "value" }],
-    "no-extra-semi": ["error"],
-    "comma-dangle":["error", "only-multiline"],
-    "comma-spacing":["error"],
-    "react/jsx-no-undef": 1,
-    "react/no-did-mount-set-state": "error",
-    "react/no-did-update-set-state": "error",
-    "space-infix-ops": [0],
+    "import/named": 2,
+    "key-spacing": [0],
     "new-cap": [0],
+    "no-case-declarations": [1],
+    "no-console": [0],
+    "no-constant-condition": [1],
+    "no-debugger": [1],
+    "no-dupe-keys": [2],
+    "no-extra-semi": [1],
+    "no-irregular-whitespace": [1],
+    "no-multi-spaces": [0],
+    "no-redeclare": [1],
+    "no-throw-literal": [1],
+    "no-trailing-spaces": [1],
+    "no-undef": [1],
+    "no-underscore-dangle": [0],
+    "no-unreachable": [1],
+    "no-unused-vars": [1],
     "no-var": [0],
-    "eol-last": ["error"]
+    "quotes": [0, "single"],
+    "react/display-name": [1],
+    "react/jsx-no-undef": 1,
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/no-danger": [0],
+    "react/no-did-mount-set-state": 1,
+    "react/no-did-update-set-state": 1,
+    "react/no-direct-mutation-state": [1],
+    "react/no-find-dom-node": 0,
+    "react/prop-types": 0,
+    "semi": [1],
+    "space-infix-ops": [0],
+    "strict": [0],
+    "valid-jsdoc": [0],
+    "eqeqeq": [2]
+  },
+  "settings": {
+    "flowtype": { "onlyFilesWithFlowAnnotation": false },
+    "import/resolver": {
+      "node": { "moduleDirectory": ["node_modules", "app"] }
+    }
   }
 }

@@ -1,6 +1,6 @@
-import React from "react"; // eslint-disable-line no-unused-vars
+import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import Variation, { mapStateToProps } from "./variation";
+import Variation, { mapStateToProps } from './variation';
 import { initialState } from '../../module';
 import { expect, renderContainer } from 'test_helper';
 
@@ -22,9 +22,9 @@ describe('(Container) Variation', () => {
     let component;
     beforeEach(() => {
       const props = {
-        name: 'Variation B',
+        name:       'Variation B',
         experiment: Immutable.fromJS({
-          name: 'Test-experimentName',
+          name:       'Test-experimentName',
           variations: [
             { name: 'Original',  weight: 10000 },
             { name: 'Variation B', weight: 0 },
@@ -36,7 +36,7 @@ describe('(Container) Variation', () => {
         reduxAbTest: initialState.merge({
           experiments: [
             {
-              name: 'Test-experimentName',
+              name:       'Test-experimentName',
               variations: [
                 { name: 'Original', weight: 10000 },
                 { name: 'Variation B', weight: 0 }
