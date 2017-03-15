@@ -113,7 +113,7 @@ describe('(Redux) src/module/index.js', () => {
 
         it('has correct keys', () => {
           const output = action(args);
-          expect(output).to.have.keys('type', 'payload');
+          expect(Object.keys(output)).toEqual(['type', 'payload']);
         });
 
         it('has correct type', () => {
@@ -123,7 +123,7 @@ describe('(Redux) src/module/index.js', () => {
 
         it('has correct payload', () => {
           const output = action(args);
-          expect(output.payload).to.be.an.instanceof(Immutable.Map);
+          expect(Immutable.Map.is(output.payload)).toBeTruthy;
           expect(output.payload).toEqual(payload);
         });
       });
