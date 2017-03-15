@@ -1,12 +1,15 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
+import renderer from 'react-test-renderer';
+import { shallow } from 'enzyme';
 import { Variation } from './variation';
 import { initialState } from '../../module';
-import { expect, renderComponent } from './test_helper';
 
 
 
 describe('(Component) src/components/variation/variation.js', () => {
+  let shallowComponent;
   let component;
+  let tree;
   let props;
   beforeEach(() => {
     const reduxAbTest = initialState.merge({
@@ -29,17 +32,26 @@ describe('(Component) src/components/variation/variation.js', () => {
       children:   'Test-children',
       reduxAbTest,
     };
-    component = renderComponent(Variation, props);
+    shallowComponent = shallow(
+      <Variation {...props} />
+    );
+    component = renderer.create(
+      <Variation {...props} />
+    );
+    tree = component.toJSON();
   });
 
   it('exists', () => {
-    expect(component).to.exist;
+    expect(component).not.toBeUndefined;
   });
 
   it('has the correct props', () => {
-    expect(component).to.have.prop('name', 'Variation B');
-    expect(component).to.have.prop('experiment');
-    expect(component).to.have.prop('reduxAbTest');
+    expect(tree).toMatchSnapshot();
+    expect(tree.props['data-experiment-id']).toEqual('test-experimentId');
+    expect(tree.props['data-experiment-name']).toEqual('Test-experimentName');
+    expect(tree.props['data-variation-id']).toEqual('test-id-variation-b');
+    expect(tree.props['data-variation-name']).toEqual('Variation B');
+    expect(tree.children).toEqual(['Test-children']);
   });
 
   it('has the correct text', () => {
@@ -47,7 +59,7 @@ describe('(Component) src/components/variation/variation.js', () => {
   });
 
   it('has the correct tagName', () => {
-    expect(component).to.have.tagName('span');
+    expect(shallowComponent).to.have.tagName('span');
   });
 
   it('wraps the text in a span', () => {
@@ -57,7 +69,7 @@ describe('(Component) src/components/variation/variation.js', () => {
   });
 
   it('have the correct data-* props', () => {
-    const child = component.find('span');
+    const child = shallowComponent.find('span');
     expect(child).to.have.prop('data-variation-id', 'test-id-variation-b');
     expect(child).to.have.prop('data-variation-name', 'Variation B');
     expect(child).to.have.prop('data-experiment-id', 'test-experimentId');
@@ -65,7 +77,7 @@ describe('(Component) src/components/variation/variation.js', () => {
   });
 
   it('has the correct data-* attrs', () => {
-    const child = component.find('span');
+    const child = shallowComponent.find('span');
     expect(child).to.have.data('variation-id', 'test-id-variation-b');
     expect(child).to.have.data('variation-name', 'Variation B');
     expect(child).to.have.data('experiment-id', 'test-experimentId');
@@ -74,7 +86,9 @@ describe('(Component) src/components/variation/variation.js', () => {
 
   it('adds the props to the children component', () => {
     props = { ...props, children: (<div id="test-id">Test-children</div>) };
-    component = renderComponent(Variation, props);
+    component = shallow(
+      <Variation {...props} />
+    );
     expect(component).to.have.tagName('div');
     expect(component).to.have.attr('id', 'test-id');
     expect(component).to.have.data('variation-id', 'test-id-variation-b');

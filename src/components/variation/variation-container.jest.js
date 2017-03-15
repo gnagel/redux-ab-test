@@ -2,13 +2,12 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import Variation, { mapStateToProps } from './variation';
 import { initialState } from '../../module';
-import { expect, renderContainer } from './test_helper';
 
 
 describe('(Container) Variation', () => {
   describe('mapStateToProps', () => {
     it('exists', () => {
-      expect(mapStateToProps).to.exist;
+      expect(mapStateToProps).not.toBeUndefined;
     });
     it('has correct keys', () => {
       expect(mapStateToProps({reduxAbTest: 'test-state'})).to.have.keys(['reduxAbTest']);
@@ -49,7 +48,7 @@ describe('(Container) Variation', () => {
     });
 
     it('exists', () => {
-      expect(component).to.exist;
+      expect(component).not.toBeUndefined;
       expect(component.html()).to.be.present;
     });
 

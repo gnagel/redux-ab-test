@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`(Component) src/components/variation/variation.js has the correct props 1`] = `
+<span
+  data-experiment-id="test-experimentId"
+  data-experiment-name="Test-experimentName"
+  data-variation-id="test-id-variation-b"
+  data-variation-name="Variation B"
+>
+  Test-children
+</span>
+`;
