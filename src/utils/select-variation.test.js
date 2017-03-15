@@ -1,23 +1,23 @@
-import React from "react"; // eslint-disable-line no-unused-vars
+import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from '../../test/test_helper';
+import { expect } from './test_helper';
 import createCacheStore from './create-cache-store';
 import selectVariation from './select-variation';
 
 const variation_original = {
-  name:   "Original",
+  name:   'Original',
   weight: 5000,
 };
 const variation_a = {
-  name:   "Variation #A",
+  name:   'Variation #A',
   weight: 5000,
 };
 const variation_b = {
-  name:   "Variation #B",
+  name:   'Variation #B',
   weight: 0,
 };
 const experiment = {
-  name:       "Test-Name",
+  name:       'Test-Name',
   variations: [
     variation_original,
     variation_a,
@@ -35,7 +35,7 @@ describe('utils/select-variation.js', () => {
 
   it('chooses the active variation from redux store w/o cacheStore', () => {
     const output = selectVariation({
-      active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
+      active:               Immutable.fromJS({'Test-Name': 'Variation #B'}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
     });
@@ -46,7 +46,7 @@ describe('utils/select-variation.js', () => {
   it('chooses the active variation from redux store w/cacheStore', () => {
     const cacheStore = createCacheStore();
     const output = selectVariation({
-      active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
+      active:               Immutable.fromJS({'Test-Name': 'Variation #B'}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
       cacheStore:           cacheStore,
@@ -62,7 +62,7 @@ describe('utils/select-variation.js', () => {
     const output = selectVariation({
       active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
-      defaultVariationName: "Variation #B",
+      defaultVariationName: 'Variation #B',
       cacheStore:           cacheStore,
     });
     expect(output).to.exist;

@@ -1,6 +1,6 @@
-import React from "react"; // eslint-disable-line no-unused-vars
+import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from '../../test/test_helper';
+import { expect } from './test_helper';
 
 import randomVariation, { toWeight, toTotal, toRange, toRanges } from './random-variation';
 

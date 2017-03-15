@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from '../../test/test_helper';
+import { expect } from './test_helper';
 import { initialState } from '../module';
 import availableExperiments, { matchesField, matchesAudience, matchesRoute } from './available-experiments';
 

@@ -1,5 +1,5 @@
 /** @flow */
-import React            from "react"; // eslint-disable-line no-unused-vars
+import React            from 'react'; // eslint-disable-line no-unused-vars
 import Immutable        from 'immutable';
 import randomVariation  from './random-variation';
 import createCacheStore from './create-cache-store';

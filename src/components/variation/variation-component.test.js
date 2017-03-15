@@ -1,7 +1,7 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import { Variation } from './variation';
 import { initialState } from '../../module';
-import { expect, renderComponent } from '../../../test/test_helper';
+import { expect, renderComponent } from './test_helper';
 
 
 

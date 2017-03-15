@@ -1,6 +1,6 @@
 /** @flow */
-import React from "react"; // eslint-disable-line no-unused-vars
-import { expect } from '../../test/test_helper';
+import React from 'react'; // eslint-disable-line no-unused-vars
+import { expect } from './test_helper';
 
 import createCacheStore from './create-cache-store';
 

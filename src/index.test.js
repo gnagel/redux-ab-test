@@ -1,4 +1,4 @@
-import { expect } from '../../../test/test_helper';
+import { expect } from './test_helper';
 import {
   /**
    * React Connected components

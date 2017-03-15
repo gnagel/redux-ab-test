@@ -2,7 +2,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import { Experiment } from './experiment';
 import Variation from '../variation';
 import { initialState } from '../../module';
-import { expect, renderContainer } from '../../../test/test_helper';
+import { expect, renderContainer } from './test_helper';
 import { spy } from 'sinon';
 
 

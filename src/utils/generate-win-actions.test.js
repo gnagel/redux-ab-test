@@ -1,6 +1,6 @@
-import React from "react"; // eslint-disable-line no-unused-vars
+import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from '../../test/test_helper';
+import { expect } from './test_helper';
 import { spy } from 'sinon';
 
 import generateWinActions from './generate-win-actions';
@@ -15,11 +15,11 @@ describe('utils/generate-win-actions.js', () => {
   });
 
   const experiment = {
-    name:       "Test-Name",
+    name:       'Test-Name',
     variations: [
-      { name: "Original", weight: 5000 },
-      { name: "Variation #A", weight: 5000 },
-      { name: "Variation #B", weight: 0 },
+      { name: 'Original', weight: 5000 },
+      { name: 'Variation #A', weight: 5000 },
+      { name: 'Variation #B', weight: 0 },
     ],
     win_action_types: ['Test-action-1', 'Test-action-2'],
   };
@@ -68,7 +68,7 @@ describe('utils/generate-win-actions.js', () => {
     expect(output.toJS()).to.deep.equal([
       {
         experiment,
-        variation:  { name: "Original", weight: 5000 },
+        variation:  { name: 'Original', weight: 5000 },
         actionType: 'Test-action-1',
       },
     ]);
@@ -94,7 +94,7 @@ describe('utils/generate-win-actions.js', () => {
     expect(output.toJS()).to.deep.equal([
       {
         experiment,
-        variation:  { name: "Original", weight: 5000 },
+        variation:  { name: 'Original', weight: 5000 },
         actionType: 'Test-action-1',
       },
     ]);
@@ -121,12 +121,12 @@ describe('utils/generate-win-actions.js', () => {
     expect(output.toJS()).to.deep.equal([
       {
         experiment,
-        variation:  { name: "Original", weight: 5000 },
+        variation:  { name: 'Original', weight: 5000 },
         actionType: 'Test-action-1',
       },
       {
         experiment: {...experiment, name: 'Test-exeriment-2'},
-        variation:  { name: "Variation #A", weight: 5000 },
+        variation:  { name: 'Variation #A', weight: 5000 },
         actionType: 'Test-action-1',
       },
     ]);

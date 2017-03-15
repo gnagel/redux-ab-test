@@ -2,7 +2,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import Variation, { mapStateToProps } from './variation';
 import { initialState } from '../../module';
-import { expect, renderContainer } from '../../../test/test_helper';
+import { expect, renderContainer } from './test_helper';
 
 
 describe('(Container) Variation', () => {

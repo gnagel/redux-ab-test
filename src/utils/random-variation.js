@@ -1,5 +1,5 @@
 /** @flow */
-import React     from "react"; // eslint-disable-line no-unused-vars
+import React     from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 
 // Helper to convert variation => weight:number
