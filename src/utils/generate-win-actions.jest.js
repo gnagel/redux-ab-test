@@ -147,6 +147,6 @@ describe('utils/generate-win-actions.js', () => {
         next,
       });
     };
-    expect(output).to.throw(Error);
+    expect(output).toThrow(Error);
   });
 });

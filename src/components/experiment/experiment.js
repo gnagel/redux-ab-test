@@ -232,35 +232,18 @@ export class Experiment extends React.Component {
 const getExperiment = (reduxAbTest, selector, id, name) => {
   // Find the key of the currently available experiment
   const key = reduxAbTest.getIn(['availableExperiments', selector || id || name], null);
-  // console.log(`key=${key}, selector=${selector} || id=${id} || name=${name}`)
   if (!key) {
     return null;
   }
   // Select the experiment from the redux store
   const experiment = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === key), null);
-  // console.log(`key=${key}, selector=${selector} || id=${id} || name=${name} => experiment=${experiment}`)
   // Return the resulting experiment
   return experiment;
 };
 
 
 // Map the Redux Store to the Experiment's props
-export const mapStateToProps = (state:Object, ownProps:Object) => {
-  const { reduxAbTest } = state;
-  const { selector, id, name, defaultVariationName } = ownProps;
-  const experiment = getExperiment(reduxAbTest, selector, id, name);
-  let variation = null;
-  if (experiment) {
-    variation = selectVariation({
-      active: reduxAbTest.get('active'),
-      experiment,
-      defaultVariationName,
-      cacheStore,
-    });
-  }
-  return { reduxAbTest, experiment, variation };
-};
-
+export const mapStateToProps = ({ reduxAbTest }) => ({ reduxAbTest });
 // Map the action creators to the the Experiment's props.
 export const mapDispatchToProps = (dispatch:Function) => bindActionCreators(
   {
@@ -273,4 +256,33 @@ export const mapDispatchToProps = (dispatch:Function) => bindActionCreators(
 );
 
 // Export the new React Container.
-export default connect(mapStateToProps, mapDispatchToProps)(Experiment);
+export default connect(mapStateToProps, mapDispatchToProps)((props) => {
+  const experiment = getExperiment(props.reduxAbTest, props.selector, props.id, props.name);
+  let variation = null;
+  if (experiment) {
+    variation = selectVariation({
+      experiment,
+      active: props.reduxAbTest.get('active'),
+      defaultVariationName: props.defaultVariationName,
+      cacheStore: props.cacheStore,
+    });
+  }
+
+  return (
+    <Experiment
+      name={props.name}
+      id={props.id}
+      selector={props.selector}
+      experiment={experiment}
+      variation={variation}
+      defaultVariationName={props.defaultVariationName}
+      cacheStore={props.cacheStore}
+      dispatchActivate={props.dispatchActivate}
+      dispatchDeactivate={props.dispatchDeactivate}
+      dispatchPlay={props.dispatchPlay}
+      dispatchWin={props.dispatchWin}
+      >
+      {props.children}
+    </Experiment>
+  );
+});
