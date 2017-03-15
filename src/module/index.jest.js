@@ -41,7 +41,8 @@ const experiment = {
 
 describe('(Redux) src/module/index.js', () => {
   it('exists', () => {
-    expect(reduxAbTest).to.exist;
+    expect(reduxAbTest).not.toBeUndefined;
+    expect(reduxAbTest).not.toBeNull;
   });
   beforeEach(() => {
     cacheStore.clear();
@@ -51,50 +52,50 @@ describe('(Redux) src/module/index.js', () => {
   });
 
   describe('flattenCompact', () => {
-    it('exists', () => { expect(flattenCompact).to.exist; });
-    it('has the correct type', () => { expect(flattenCompact).to.be.a('function'); });
-    it('has the correct output', () => { expect(flattenCompact().toJS()).to.deep.equal([]); });
-    it('has the correct output', () => { expect(flattenCompact(null).toJS()).to.deep.equal([]); });
-    it('has the correct output', () => { expect(flattenCompact(undefined).toJS()).to.deep.equal([]); });
-    it('has the correct output', () => { expect(flattenCompact([null]).toJS()).to.deep.equal([]); });
-    it('has the correct output', () => { expect(flattenCompact([undefined]).toJS()).to.deep.equal([]); });
-    it('has the correct output', () => { expect(flattenCompact([]).toJS()).to.deep.equal([]); });
-    it('has the correct output', () => { expect(flattenCompact('a').toJS()).to.deep.equal(['a']); });
-    it('has the correct output', () => { expect(flattenCompact(['a', 'b']).toJS()).to.deep.equal(['a', 'b']); });
-    it('has the correct output', () => { expect(flattenCompact(['a', null, false, 0, '', undefined, 'b']).toJS()).to.deep.equal(['a', 'b']); });
+    it('exists', () => { expect(flattenCompact).not.toBeUndefined; });
+    it('has the correct type', () => { expect(typeof flattenCompact).toEqual('function'); });
+    it('has the correct output', () => { expect(flattenCompact().toJS()).toEqual([]); });
+    it('has the correct output', () => { expect(flattenCompact(null).toJS()).toEqual([]); });
+    it('has the correct output', () => { expect(flattenCompact(undefined).toJS()).toEqual([]); });
+    it('has the correct output', () => { expect(flattenCompact([null]).toJS()).toEqual([]); });
+    it('has the correct output', () => { expect(flattenCompact([undefined]).toJS()).toEqual([]); });
+    it('has the correct output', () => { expect(flattenCompact([]).toJS()).toEqual([]); });
+    it('has the correct output', () => { expect(flattenCompact('a').toJS()).toEqual(['a']); });
+    it('has the correct output', () => { expect(flattenCompact(['a', 'b']).toJS()).toEqual(['a', 'b']); });
+    it('has the correct output', () => { expect(flattenCompact(['a', null, false, 0, '', undefined, 'b']).toJS()).toEqual(['a', 'b']); });
   });
 
   describe('constants', () => {
     it('RESET', () => {
-      expect(RESET).to.be.equal('redux-ab-test/RESET');
+      expect(RESET).toEqual('redux-ab-test/RESET');
     });
 
     it('LOAD', () => {
-      expect(LOAD).to.be.equal('redux-ab-test/LOAD');
+      expect(LOAD).toEqual('redux-ab-test/LOAD');
     });
 
     it('SET_ACTIVE', () => {
-      expect(SET_ACTIVE).to.be.equal('redux-ab-test/SET_ACTIVE');
+      expect(SET_ACTIVE).toEqual('redux-ab-test/SET_ACTIVE');
     });
 
     it('SET_AUDIENCE', () => {
-      expect(SET_AUDIENCE).to.be.equal('redux-ab-test/SET_AUDIENCE');
+      expect(SET_AUDIENCE).toEqual('redux-ab-test/SET_AUDIENCE');
     });
 
     it('ACTIVATE', () => {
-      expect(ACTIVATE).to.be.equal('redux-ab-test/ACTIVATE');
+      expect(ACTIVATE).toEqual('redux-ab-test/ACTIVATE');
     });
 
     it('DEACTIVATE', () => {
-      expect(DEACTIVATE).to.be.equal('redux-ab-test/DEACTIVATE');
+      expect(DEACTIVATE).toEqual('redux-ab-test/DEACTIVATE');
     });
 
     it('PLAY', () => {
-      expect(PLAY).to.be.equal('redux-ab-test/PLAY');
+      expect(PLAY).toEqual('redux-ab-test/PLAY');
     });
 
     it('WIN', () => {
-      expect(WIN).to.be.equal('redux-ab-test/WIN');
+      expect(WIN).toEqual('redux-ab-test/WIN');
     });
   });
 
@@ -106,8 +107,8 @@ describe('(Redux) src/module/index.js', () => {
     const sharedActionExamples = ({action, type, args, payload}) => {
       describe(type.split('/')[1], () => {
         it('exists', () => {
-          expect(action).to.exist;
-          expect(action).to.be.a('function');
+          expect(action).not.toBeUndefined;
+          expect(typeof action).toEqual('function');
         });
 
         it('has correct keys', () => {
@@ -117,13 +118,13 @@ describe('(Redux) src/module/index.js', () => {
 
         it('has correct type', () => {
           const output = action(args);
-          expect(output.type).to.be.equal(type);
+          expect(output.type).toEqual(type);
         });
 
         it('has correct payload', () => {
           const output = action(args);
           expect(output.payload).to.be.an.instanceof(Immutable.Map);
-          expect(output.payload).to.deep.equal(payload);
+          expect(output.payload).toEqual(payload);
         });
       });
     };
@@ -242,13 +243,13 @@ describe('(Redux) src/module/index.js', () => {
   //
   describe('initialState', () => {
     it('exists', () => {
-      expect(initialState).to.exist;
+      expect(initialState).not.toBeUndefined;
       expect(initialState).to.be.an.instanceof(Immutable.Map);
     });
 
     const sharedDescribe = (field, type) => {
       it(field, () => {
-        expect(initialState.toJS()[field]).to.exist;
+        expect(initialState.toJS()[field]).not.toBeUndefined;
         expect(initialState.toJS()[field]).to.be.a(type);
         expect(initialState.toJS()[field]).to.be.blank;
       });
@@ -272,8 +273,8 @@ describe('(Redux) src/module/index.js', () => {
     const sharedReducerExamples = ({type, state, payload, newState}) => {
       describe(type, () => {
         it('exists', () => {
-          expect(reduxAbTest).to.exist;
-          expect(reduxAbTest).to.be.a('function');
+          expect(reduxAbTest).not.toBeUndefined;
+          expect(typeof reduxAbTest).toEqual('function');
         });
 
         it('has the correct initialState', () => {
@@ -283,15 +284,15 @@ describe('(Redux) src/module/index.js', () => {
 
         it('has correct type', () => {
           const output = reduxAbTest(state, { type, payload });
-          expect(output).to.exist;
+          expect(output).not.toBeUndefined;
           expect(output).to.be.an.instanceof(Immutable.Map);
         });
 
         it('has correct newState', () => {
           const output = reduxAbTest(state, { type, payload });
-          expect(output).to.exist;
-          expect(output.toJSON()).to.deep.equal(newState.toJSON());
-          // expect(output).to.deep.equal(newState);
+          expect(output).not.toBeUndefined;
+          expect(output.toJSON()).toEqual(newState.toJSON());
+          // expect(output).toEqual(newState);
         });
       });
     };
@@ -451,8 +452,8 @@ describe('(Redux) src/module/index.js', () => {
 
     describe('selectVariation', () => {
       it('exists', () => {
-        expect(selectVariation).to.exist;
-        expect(selectVariation).to.be.a('function');
+        expect(selectVariation).not.toBeUndefined;
+        expect(typeof selectVariation).toEqual('function');
       });
 
       it('chooses the active variation from redux store', () => {
@@ -462,8 +463,8 @@ describe('(Redux) src/module/index.js', () => {
           defaultVariationName: null,
           cacheStore,
         });
-        expect(output).to.exist;
-        expect(output.toJSON()).to.deep.equal(variation_b);
+        expect(output).not.toBeUndefined;
+        expect(output.toJSON()).toEqual(variation_b);
       });
 
       it('chooses the defaultVariationName variation', () => {
@@ -473,8 +474,8 @@ describe('(Redux) src/module/index.js', () => {
           defaultVariationName: 'Variation #B',
           cacheStore,
         });
-        expect(output).to.exist;
-        expect(output.toJSON()).to.deep.equal(variation_b);
+        expect(output).not.toBeUndefined;
+        expect(output.toJSON()).toEqual(variation_b);
       });
 
       it('chooses the active variation from localcache', () => {
@@ -485,8 +486,8 @@ describe('(Redux) src/module/index.js', () => {
           defaultVariationName: null,
           cacheStore,
         });
-        expect(output).to.exist;
-        expect(output.toJSON()).to.deep.equal(variation_b);
+        expect(output).not.toBeUndefined;
+        expect(output.toJSON()).toEqual(variation_b);
       });
 
       it('randomly assigns a variation, ignoring weight=0 records', () => {
@@ -496,8 +497,8 @@ describe('(Redux) src/module/index.js', () => {
           defaultVariationName: null,
           cacheStore,
         });
-        expect(output).to.exist;
-        expect(output.toJSON()).to.not.deep.equal(variation_b);
+        expect(output).not.toBeUndefined;
+        expect(output.toJSON()).not.toEqual(variation_b);
       });
     });
 
@@ -519,8 +520,8 @@ describe('(Redux) src/module/index.js', () => {
     });
 
     it('exists', () => {
-      expect(middleware).to.exist;
-      expect(middleware).to.be.a('function');
+      expect(middleware).not.toBeUndefined;
+      expect(typeof middleware).toEqual('function');
     });
 
     it('doesnt generate new actions', () => {
@@ -546,8 +547,8 @@ describe('(Redux) src/module/index.js', () => {
       });
       const action = {type: 'Test-action-type'};
       middleware(store)(next)(action);
-      expect(recordedActions).to.not.be.empty;
-      expect(recordedActions).to.deep.equal([
+      expect(recordedActions.length).not.toEqual(0);
+      expect(recordedActions).toEqual([
         action,
       ]);
     });
@@ -564,11 +565,11 @@ describe('(Redux) src/module/index.js', () => {
       });
       const action = { type: 'Test-action-type', payload: { example: 'payload' } };
       middleware(store)(next)(action);
-      expect(recordedActions).to.have.length(2);
+      expect(recordedActions.length).toEqual(2);
       // 1st action is our input `action` above
-      expect(recordedActions[0]).to.deep.equal(action);
+      expect(recordedActions[0]).toEqual(action);
       // 2nd action is the generated action from the win:
-      expect(recordedActions[1]).to.deep.equal({
+      expect(recordedActions[1]).toEqual({
         type:    WIN,
         payload: Immutable.fromJS({
           experiment:    experiment,
