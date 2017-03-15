@@ -89,7 +89,7 @@ export const middleware = (store:Object) => (next:Function) => (action:Object) =
       reduxAbTest,
       win,
       actionType:    action.type,
-      actionPayload: action.payload
+      actionPayload: action.payload,
     });
     const fulfilledActions = generateFulfilledActions(winActions, reduxAbTest);
     winActions.forEach( action => next(action) );
@@ -144,7 +144,7 @@ const reducers = {
   /**
    * RESET the experiments state.
    */
-  [RESET]: (state, { }) => {
+  [RESET]: () => {
     cacheStore.clear();
     return initialState;
   },

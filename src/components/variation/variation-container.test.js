@@ -2,7 +2,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
 import Variation, { mapStateToProps } from './variation';
 import { initialState } from '../../module';
-import { expect, renderContainer } from 'test_helper';
+import { expect, renderContainer } from '../../../test/test_helper';
 
 
 describe('(Container) Variation', () => {
@@ -28,7 +28,7 @@ describe('(Container) Variation', () => {
           variations: [
             { name: 'Original',  weight: 10000 },
             { name: 'Variation B', weight: 0 },
-          ]
+          ],
         }),
         children: 'Test Variation B',
       };
@@ -39,10 +39,10 @@ describe('(Container) Variation', () => {
               name:       'Test-experimentName',
               variations: [
                 { name: 'Original', weight: 10000 },
-                { name: 'Variation B', weight: 0 }
-              ]
+                { name: 'Variation B', weight: 0 },
+              ],
             },
-          ]
+          ],
         }),
       };
       component = renderContainer(Variation, props, store).find(Variation);

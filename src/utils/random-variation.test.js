@@ -1,6 +1,6 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from 'test_helper';
+import { expect } from '../../test/test_helper';
 
 import randomVariation, { toWeight, toTotal, toRange, toRanges } from './random-variation';
 
@@ -54,7 +54,7 @@ describe('utils/random-variation.js', () => {
 
     it('has the correct range[1]', () => {
       let list = Immutable.List([
-        Immutable.Range(0, 5000)
+        Immutable.Range(0, 5000),
       ]);
       list = toRange(list, 5000);
       expect(list).to.exist;
@@ -67,7 +67,7 @@ describe('utils/random-variation.js', () => {
     it('has the correct range[2]', () => {
       let list = Immutable.List([
         Immutable.Range(0, 5000),
-        Immutable.Range(5000, 10000)
+        Immutable.Range(5000, 10000),
       ]);
       list = toRange(list, 10000);
       expect(list).to.exist;
@@ -81,7 +81,7 @@ describe('utils/random-variation.js', () => {
       let list = Immutable.List([
         Immutable.Range(0, 5000),
         Immutable.Range(5000, 10000),
-        Immutable.Range(10000, 20000)
+        Immutable.Range(10000, 20000),
       ]);
       list = toRange(list, 0);
       expect(list).to.exist;
@@ -102,7 +102,7 @@ describe('utils/random-variation.js', () => {
         { weight: 5000 },
         { weight: 5000 },
         { weight: 10000 },
-        { weight: 0 }
+        { weight: 0 },
       ]);
       const ranges = toRanges(weights);
       expect(ranges).to.exist;
@@ -125,7 +125,7 @@ describe('utils/random-variation.js', () => {
         { weight: 10000 },
         { weight: 0 },
         { weight: 0 },
-        { weight: 0 }
+        { weight: 0 },
       ]);
       const ranges = toRanges(weights);
       expect(ranges).to.exist;
@@ -158,8 +158,8 @@ describe('utils/random-variation.js', () => {
           { name: 'Variation A', weight: 5000 },
           { name: 'Variation B', weight: 5000 },
           { name: 'Original', weight: 10000 },
-          { name: 'Variation Disabled', weight: 0 }
-      ]
+          { name: 'Variation Disabled', weight: 0 },
+      ],
     });
 
     it('exists', () => {

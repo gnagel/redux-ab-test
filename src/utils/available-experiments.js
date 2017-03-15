@@ -109,7 +109,7 @@ const availableExperiments = ({experiments, active, fulfilled, key_path, persist
       if (active.has(getKey(experiment)) && experiment.getIn(persistent_path)) {
         return true;
       }
-      return matchesAudience(audience, experiment.getIn(audience_path, null))
+      return matchesAudience(audience, experiment.getIn(audience_path, null));
     },
   );
 

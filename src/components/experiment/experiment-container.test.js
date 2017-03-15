@@ -2,7 +2,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import Experiment, { mapStateToProps, mapDispatchToProps } from './experiment';
 import Variation from '../variation';
 import { initialState } from '../../module';
-import { expect, renderContainer } from 'test_helper';
+import { expect, renderContainer } from '../../../test/test_helper';
 import { spy } from 'sinon';
 
 
@@ -27,15 +27,15 @@ describe('(Container) Experiment', () => {
               name:       'Test-experimentName',
               variations: [
                 { name: 'Original', weight: 10000 },
-                { name: 'Variation B', weight: 0 }
-              ]
-            }
+                { name: 'Variation B', weight: 0 },
+              ],
+            },
           ],
           availableExperiments: {
             'Test-experimentName': 'Test-experimentName',
           },
           active: { 'Test-experimentName': 'Variation B' },
-        })
+        }),
       };
       const output = mapStateToProps(store, props);
       expect(output).to.have.keys(['reduxAbTest', 'experiment', 'variation']);
@@ -72,7 +72,7 @@ describe('(Container) Experiment', () => {
         name:     'Test-experimentName',
         children: [
           <Variation name="Original">Test Original</Variation>,
-          <Variation name="Variation B">Test Variation B</Variation>
+          <Variation name="Variation B">Test Variation B</Variation>,
         ],
       };
       const store = {
@@ -82,14 +82,14 @@ describe('(Container) Experiment', () => {
               name:       'Test-experimentName',
               variations: [
                 { name: 'Original', weight: 10000 },
-                { name: 'Variation B', weight: 0 }
-              ]
-            }
+                { name: 'Variation B', weight: 0 },
+              ],
+            },
           ],
           availableExperiments: {
             'Test-experimentName': 'Test-experimentName',
-          }
-        })
+          },
+        }),
       };
       component = renderContainer(Experiment, props, store);
     });
@@ -117,12 +117,12 @@ describe('(Container) Experiment', () => {
             name:       'Test-experimentName',
             variations: [
               { name: 'Original', weight: 10000 },
-              { name: 'Variation B', weight: 0 }
+              { name: 'Variation B', weight: 0 },
             ],
           },
         ],
         'availableExperiments': { 'Test-id': 'Test-id' },
-        'active':               { 'Test-id': 'Variation B' }
+        'active':               { 'Test-id': 'Variation B' },
       });
 
       beforeEach(() => {
@@ -136,7 +136,7 @@ describe('(Container) Experiment', () => {
           id:       'Test-id',
           children: [
             <Variation name="Original">Test Original</Variation>,
-            <Variation name="Variation B">Test Variation B</Variation>
+            <Variation name="Variation B">Test Variation B</Variation>,
           ],
           dispatchActivate,
           dispatchDeactivate,
@@ -175,7 +175,7 @@ describe('(Container) Experiment', () => {
             },
             variations: [
               { name: 'Original', weight: 10000 },
-              { name: 'Variation B', weight: 0 }
+              { name: 'Variation B', weight: 0 },
             ],
           },
         ],
@@ -197,7 +197,7 @@ describe('(Container) Experiment', () => {
           selector: 'Example component key selector',
           children: [
             <Variation name="Original">Test Original</Variation>,
-            <Variation name="Variation B">Test Variation B</Variation>
+            <Variation name="Variation B">Test Variation B</Variation>,
           ],
           dispatchActivate,
           dispatchDeactivate,

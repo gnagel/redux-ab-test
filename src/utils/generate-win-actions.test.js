@@ -1,6 +1,6 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from 'test_helper';
+import { expect } from '../../test/test_helper';
 import { spy } from 'sinon';
 
 import generateWinActions from './generate-win-actions';
@@ -11,17 +11,17 @@ describe('utils/generate-win-actions.js', () => {
     plays:            {},
     active:           {},
     winners:          {},
-    win_action_types: {}
+    win_action_types: {},
   });
 
-  const experiment:ExperimentType = {
+  const experiment = {
     name:       "Test-Name",
     variations: [
       { name: "Original", weight: 5000 },
       { name: "Variation #A", weight: 5000 },
-      { name: "Variation #B", weight: 0 }
+      { name: "Variation #B", weight: 0 },
     ],
-    win_action_types: ['Test-action-1', 'Test-action-2']
+    win_action_types: ['Test-action-1', 'Test-action-2'],
   };
 
   let next;
@@ -41,7 +41,7 @@ describe('utils/generate-win-actions.js', () => {
       reduxAbTest: initialState,
       win,
       actionType:  null,
-      next
+      next,
     });
     expect(output).to.exist;
     expect(output).to.be.an.instanceof(Immutable.List);
@@ -53,15 +53,15 @@ describe('utils/generate-win-actions.js', () => {
       reduxAbTest: initialState.merge({
         experiments:      [experiment],
         win_action_types: {
-          'Test-action-1': [experiment.name]
+          'Test-action-1': [experiment.name],
         },
         active: {
-          'Test-Name': 'Original'
-        }
+          'Test-Name': 'Original',
+        },
       }),
       win,
       actionType: 'Test-action-1',
-      next
+      next,
     });
     expect(output).to.exist;
     expect(output).to.be.an.instanceof(Immutable.List);
@@ -69,8 +69,8 @@ describe('utils/generate-win-actions.js', () => {
       {
         experiment,
         variation:  { name: "Original", weight: 5000 },
-        actionType: 'Test-action-1'
-      }
+        actionType: 'Test-action-1',
+      },
     ]);
   });
 
@@ -79,15 +79,15 @@ describe('utils/generate-win-actions.js', () => {
       reduxAbTest: initialState.merge({
         experiments:      [experiment, {...experiment, name: 'Test-exeriment-2'}],
         win_action_types: {
-          'Test-action-1': [experiment.name]
+          'Test-action-1': [experiment.name],
         },
         active: {
-          'Test-Name': 'Original'
-        }
+          'Test-Name': 'Original',
+        },
       }),
       win,
       actionType: 'Test-action-1',
-      next
+      next,
     });
     expect(output).to.exist;
     expect(output).to.be.an.instanceof(Immutable.List);
@@ -95,8 +95,8 @@ describe('utils/generate-win-actions.js', () => {
       {
         experiment,
         variation:  { name: "Original", weight: 5000 },
-        actionType: 'Test-action-1'
-      }
+        actionType: 'Test-action-1',
+      },
     ]);
   });
 
@@ -105,16 +105,16 @@ describe('utils/generate-win-actions.js', () => {
       reduxAbTest: initialState.merge({
         experiments:      [experiment, {...experiment, name: 'Test-exeriment-2'}],
         win_action_types: {
-          'Test-action-1': [experiment.name, 'Test-exeriment-2']
+          'Test-action-1': [experiment.name, 'Test-exeriment-2'],
         },
         active: {
           'Test-Name':        'Original',
-          'Test-exeriment-2': 'Variation #A'
-        }
+          'Test-exeriment-2': 'Variation #A',
+        },
       }),
       win,
       actionType: 'Test-action-1',
-      next
+      next,
     });
     expect(output).to.exist;
     expect(output).to.be.an.instanceof(Immutable.List);
@@ -122,13 +122,13 @@ describe('utils/generate-win-actions.js', () => {
       {
         experiment,
         variation:  { name: "Original", weight: 5000 },
-        actionType: 'Test-action-1'
+        actionType: 'Test-action-1',
       },
       {
         experiment: {...experiment, name: 'Test-exeriment-2'},
         variation:  { name: "Variation #A", weight: 5000 },
-        actionType: 'Test-action-1'
-      }
+        actionType: 'Test-action-1',
+      },
     ]);
   });
 
@@ -138,15 +138,15 @@ describe('utils/generate-win-actions.js', () => {
         reduxAbTest: initialState.merge({
           experiments:      [],
           win_action_types: {
-            'Test-action-1': [experiment.name]
+            'Test-action-1': [experiment.name],
           },
           active: {
-            'Test-Name': 'Original'
-          }
+            'Test-Name': 'Original',
+          },
         }),
         win,
         actionType: 'Test-action-1',
-        next
+        next,
       });
     };
     expect(output).to.throw(Error);

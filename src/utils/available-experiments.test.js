@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from 'test_helper';
+import { expect } from '../../test/test_helper';
 import { initialState } from '../module';
 import availableExperiments, { matchesField, matchesAudience, matchesRoute } from './available-experiments';
 
@@ -269,7 +269,7 @@ describe('utils/available-experiments.js', () => {
       variations: [
         { name: 'Original', weight: 5000 },
         { name: 'Variation #A', weight: 5000 },
-        { name: 'Variation #B', weight: 0 }
+        { name: 'Variation #B', weight: 0 },
       ],
     });
 
@@ -280,7 +280,7 @@ describe('utils/available-experiments.js', () => {
       variations:    [
         { name: 'Original', weight: 5000 },
         { name: 'Variation #A', weight: 5000 },
-        { name: 'Variation #B', weight: 0 }
+        { name: 'Variation #B', weight: 0 },
       ],
     });
 
@@ -292,7 +292,7 @@ describe('utils/available-experiments.js', () => {
       variations:    [
         { name: 'Original', weight: 5000 },
         { name: 'Variation #A', weight: 5000 },
-        { name: 'Variation #B', weight: 0 }
+        { name: 'Variation #B', weight: 0 },
       ],
     });
 
@@ -303,12 +303,12 @@ describe('utils/available-experiments.js', () => {
         type: 'vip',
       },
       routeProps: {
-        pathName: { in: ['/magic', '/'] }
+        pathName: { in: ['/magic', '/'] },
       },
       variations: [
         { name: 'Original', weight: 5000 },
         { name: 'Variation #A', weight: 5000 },
-        { name: 'Variation #B', weight: 0 }
+        { name: 'Variation #B', weight: 0 },
       ],
     });
 
@@ -326,7 +326,7 @@ describe('utils/available-experiments.js', () => {
       variations: [
         { name: 'Original', weight: 5000 },
         { name: 'Variation #A', weight: 5000 },
-        { name: 'Variation #B', weight: 0 }
+        { name: 'Variation #B', weight: 0 },
       ],
     });
 
@@ -345,7 +345,7 @@ describe('utils/available-experiments.js', () => {
       variations: [
         { name: 'Original', weight: 5000 },
         { name: 'Variation #A', weight: 5000 },
-        { name: 'Variation #B', weight: 0 }
+        { name: 'Variation #B', weight: 0 },
       ],
     });
 

@@ -19,7 +19,7 @@ export default function createCacheStore() {
     },
     clear: ():void => {
       cache = {};
-    }
+    },
   };
   return noopStore;
 }

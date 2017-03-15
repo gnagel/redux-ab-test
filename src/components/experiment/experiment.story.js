@@ -12,7 +12,7 @@ const __state__ = {
       name:       'Test-experimentName',
       variations: [
         { name: 'Original', weight: 10000 },
-        { name: 'Variation B', weight: 0 }
+        { name: 'Variation B', weight: 0 },
       ],
     },
   ],

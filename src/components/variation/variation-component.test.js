@@ -1,7 +1,7 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import { Variation } from './variation';
 import { initialState } from '../../module';
-import { expect, renderComponent } from 'test_helper';
+import { expect, renderComponent } from '../../../test/test_helper';
 
 
 
@@ -16,11 +16,11 @@ describe('(Component) src/components/variation/variation.js', () => {
           name:       'Test-experimentName',
           variations: [
             { id: 'test-id-original',    name: 'Original',    weight: 10000 },
-            { id: 'test-id-variation-b', name: 'Variation B', weight: 0 }
-          ]
+            { id: 'test-id-variation-b', name: 'Variation B', weight: 0 },
+          ],
         },
       ],
-      'active': { 'Test-experimentName': 'Variation B' }
+      'active': { 'Test-experimentName': 'Variation B' },
     });
 
     props = {

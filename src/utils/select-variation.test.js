@@ -1,28 +1,28 @@
 import React from "react"; // eslint-disable-line no-unused-vars
 import Immutable from 'immutable';
-import { expect } from 'test_helper';
+import { expect } from '../../test/test_helper';
 import createCacheStore from './create-cache-store';
 import selectVariation from './select-variation';
 
-const variation_original:VariationType = {
+const variation_original = {
   name:   "Original",
-  weight: 5000
+  weight: 5000,
 };
-const variation_a:VariationType = {
+const variation_a = {
   name:   "Variation #A",
-  weight: 5000
+  weight: 5000,
 };
-const variation_b:VariationType = {
+const variation_b = {
   name:   "Variation #B",
-  weight: 0
+  weight: 0,
 };
-const experiment:ExperimentType = {
+const experiment = {
   name:       "Test-Name",
   variations: [
     variation_original,
     variation_a,
-    variation_b
-  ]
+    variation_b,
+  ],
 };
 
 
@@ -37,7 +37,7 @@ describe('utils/select-variation.js', () => {
     const output = selectVariation({
       active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
       experiment:           Immutable.fromJS(experiment),
-      defaultVariationName: null
+      defaultVariationName: null,
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -49,7 +49,7 @@ describe('utils/select-variation.js', () => {
       active:               Immutable.fromJS({"Test-Name": "Variation #B"}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
-      cacheStore:           cacheStore
+      cacheStore:           cacheStore,
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -63,7 +63,7 @@ describe('utils/select-variation.js', () => {
       active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: "Variation #B",
-      cacheStore:           cacheStore
+      cacheStore:           cacheStore,
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -79,7 +79,7 @@ describe('utils/select-variation.js', () => {
       active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
-      cacheStore:           cacheStore
+      cacheStore:           cacheStore,
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.deep.equal(variation_b);
@@ -94,7 +94,7 @@ describe('utils/select-variation.js', () => {
       active:               Immutable.fromJS({}),
       experiment:           Immutable.fromJS(experiment),
       defaultVariationName: null,
-      cacheStore
+      cacheStore,
     });
     expect(output).to.exist;
     expect(output.toJSON()).to.not.deep.equal(variation_b);

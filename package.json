@@ -74,7 +74,7 @@
     "test": "NODE_PATH=src:./test ./node_modules/.bin/mocha",
     "test:watch": "npm run test -- --watch",
     "clean": "rm -rf ./dist",
-    "lint": "./node_modules/.bin/eslint ./src",
+    "lint": "./node_modules/.bin/eslint --fix ./src",
     "build": "babel --out-dir=./dist src",
     "shipit": "npm run build && npm publish && npm run clean"
   },

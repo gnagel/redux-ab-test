@@ -2,7 +2,7 @@ import React from 'react'; // eslint-disable-line no-unused-vars
 import { Experiment } from './experiment';
 import Variation from '../variation';
 import { initialState } from '../../module';
-import { expect, renderContainer } from 'test_helper';
+import { expect, renderContainer } from '../../../test/test_helper';
 import { spy } from 'sinon';
 
 
@@ -12,14 +12,14 @@ const reduxAbTest = initialState.merge({
       name:       'Test-experimentName',
       variations: [
         { name: 'Original', weight: 10000 },
-        { name: 'Variation B', weight: 0 }
+        { name: 'Variation B', weight: 0 },
       ],
     },
   ],
   'availableExperiments': {
     'Test-experimentName': 'Test-experimentName',
   },
-  'active': { 'Test-experimentName': 'Variation B' }
+  'active': { 'Test-experimentName': 'Variation B' },
 });
 
 describe('(Component) src/components/experiment/experiment.js', () => {
@@ -41,14 +41,14 @@ describe('(Component) src/components/experiment/experiment.js', () => {
       name:     'Test-experimentName',
       children: [
         <Variation name="Original">Test Original</Variation>,
-        <Variation name="Variation B">Test Variation B</Variation>
+        <Variation name="Variation B">Test Variation B</Variation>,
       ],
       experiment: reduxAbTest.getIn(['experiments', 0]),
       variation:  reduxAbTest.getIn(['experiments', 0, 'variations', 1]),
       dispatchActivate,
       dispatchDeactivate,
       dispatchPlay,
-      dispatchWin
+      dispatchWin,
     };
     component = renderContainer(Experiment, props, { reduxAbTest }).find(Experiment);
   });
@@ -113,12 +113,12 @@ describe('(Component) src/components/experiment/experiment.js', () => {
           name:       'Test-experimentName',
           variations: [
             { name: 'Original', weight: 10000 },
-            { name: 'Variation B', weight: 0 }
+            { name: 'Variation B', weight: 0 },
           ],
         },
       ],
       'availableExperiments': { 'Test-id': 'Test-id' },
-      'active':               { 'Test-id': 'Variation B' }
+      'active':               { 'Test-id': 'Variation B' },
     });
 
     beforeEach(() => {
@@ -127,7 +127,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         id:       'Test-id',
         children: [
           <Variation name="Original">Test Original</Variation>,
-          <Variation name="Variation B">Test Variation B</Variation>
+          <Variation name="Variation B">Test Variation B</Variation>,
         ],
         dispatchActivate,
         dispatchDeactivate,
@@ -160,7 +160,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
           },
           variations: [
             { name: 'Original', weight: 10000 },
-            { name: 'Variation B', weight: 0 }
+            { name: 'Variation B', weight: 0 },
           ],
         },
       ],
@@ -177,7 +177,7 @@ describe('(Component) src/components/experiment/experiment.js', () => {
         selector: 'Example component key selector',
         children: [
           <Variation name="Original">Test Original</Variation>,
-          <Variation name="Variation B">Test Variation B</Variation>
+          <Variation name="Variation B">Test Variation B</Variation>,
         ],
         dispatchActivate,
         dispatchDeactivate,

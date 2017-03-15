@@ -7,7 +7,7 @@ import getKey from '../../utils/get-key';
 import selectVariation from '../../utils/select-variation';
 import { cacheStore } from '../../utils/create-cache-store';
 import { activate, deactivate, play, win } from '../../module';
-import { isVariation } from '../../components/variation';
+import Variation, { isVariation } from '../../components/variation';
 
 
 type Props = {
@@ -74,11 +74,11 @@ type State = {
   /**
    * The currenly active experiment
    */
-  experiment: ?ExperimentType,
+  experiment: ?Immutable.Map,
   /**
    * The currenly active variation
    */
-  variation: ?VariationType,
+  variation: ?Immutable.Map,
   /**
    * The experient was played
    */
@@ -114,7 +114,7 @@ export class Experiment extends React.Component {
    * Activate the variation
    */
   componentWillMount() {
-    const { experiment, variation, id, name, selector, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = this.props;
+    const { experiment, variation, dispatchActivate, dispatchPlay } = this.props;
     const { mounted } = this.state;
     let { played } = this.state;
 
@@ -139,7 +139,7 @@ export class Experiment extends React.Component {
    * Update the component's state with the new properties
    */
   componentWillReceiveProps(nextProps:Props) {
-    const { experiment, variation, selector, id, name, defaultVariationName, reduxAbTest, dispatchActivate, dispatchPlay } = nextProps;
+    const { experiment, variation, dispatchActivate, dispatchPlay } = nextProps;
     const { mounted } = this.state;
     if (!experiment) {
       // If we no-longer have an experiment anymore, then update the internal state
@@ -255,7 +255,7 @@ export const mapStateToProps = (state:Object, ownProps:Object) => {
       active: reduxAbTest.get('active'),
       experiment,
       defaultVariationName,
-      cacheStore
+      cacheStore,
     });
   }
   return { reduxAbTest, experiment, variation };
