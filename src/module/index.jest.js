@@ -123,7 +123,7 @@ describe('(Redux) src/module/index.js', () => {
 
         it('has correct payload', () => {
           const output = action(args);
-          expect(Immutable.Map.is(output.payload)).toBeTruthy;
+          expect(Immutable.Map.isMap(output.payload)).toBeTruthy;
           expect(output.payload).toEqual(payload);
         });
       });
@@ -244,25 +244,25 @@ describe('(Redux) src/module/index.js', () => {
   describe('initialState', () => {
     it('exists', () => {
       expect(initialState).not.toBeUndefined;
-      expect(initialState).to.be.an.instanceof(Immutable.Map);
+      expect(Immutable.Map.isMap(initialState)).toBeTruthy;
     });
 
-    const sharedDescribe = (field, type) => {
+    const sharedDescribe = (field, defaultValue) => {
       it(field, () => {
-        expect(initialState.toJS()[field]).not.toBeUndefined;
-        expect(initialState.toJS()[field]).to.be.a(type);
-        expect(initialState.toJS()[field]).to.be.blank;
+        const value = initialState.toJS()[field];
+        expect(value).not.toBeUndefined;
+        expect(value).toEqual(defaultValue);
       });
     };
-    sharedDescribe('experiments', 'array');
-    sharedDescribe('availableExperiments', 'object');
-    sharedDescribe('types_path', 'array');
-    sharedDescribe('props_path', 'array');
-    sharedDescribe('audience_path', 'array');
-    sharedDescribe('running', 'object');
-    sharedDescribe('active', 'object');
-    sharedDescribe('winners', 'object');
-    sharedDescribe('win_action_types', 'object');
+    sharedDescribe('experiments', []);
+    sharedDescribe('availableExperiments', {});
+    sharedDescribe('types_path', ['win_action_types']);
+    sharedDescribe('props_path', ['componentProps']);
+    sharedDescribe('audience_path', ['audienceProps']);
+    sharedDescribe('running', {});
+    sharedDescribe('active', {});
+    sharedDescribe('winners', {});
+    sharedDescribe('win_action_types', {});
   });
 
 
@@ -279,13 +279,13 @@ describe('(Redux) src/module/index.js', () => {
 
         it('has the correct initialState', () => {
           const output = reduxAbTest(undefined, { type: '@@INIT' });
-          expect(output).to.eql(initialState);
+          expect(output).toEqual(initialState);
         });
 
         it('has correct type', () => {
           const output = reduxAbTest(state, { type, payload });
           expect(output).not.toBeUndefined;
-          expect(output).to.be.an.instanceof(Immutable.Map);
+          expect(Immutable.Map.isMap(output)).toBeTruthy;
         });
 
         it('has correct newState', () => {
@@ -528,7 +528,7 @@ describe('(Redux) src/module/index.js', () => {
       next = spy();
       const action = {type: 'Test-action-type'};
       middleware(store)(next)(action);
-      expect(next).to.have.been.calledOnce;
+      expect(next.called).toBeTruthy;
     });
 
     it('ignores wins if there are no matching experiments', () => {
@@ -538,7 +538,7 @@ describe('(Redux) src/module/index.js', () => {
       });
       const action = {type: 'Test-action-type'};
       middleware(store)(next)(action);
-      expect(next).to.have.been.calledOnce;
+      expect(next.called).toBeTruthy;
     });
 
     it('only generates one action', () => {
