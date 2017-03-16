@@ -177,10 +177,10 @@ export default connect(mapStateToProps, mapDispatchToProps)((props) => {
   // If not enabled, abort now
   const enabled = props.isEnabled();
   if (!enabled) {
-    logger(`Experiment name='${props.name}' is not enabled`)
+    logger(`Experiment name='${props.name}' is not enabled`);
     return null;
   } else {
-    logger(`Experiment name='${props.name}' is enabled`)
+    logger(`Experiment name='${props.name}' is enabled`);
     return <Experiment {...props} />;
   }
 });
