@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`src/components/experiments2/variation.js component children has the correct tagName 1`] = `
+<div>
+  Testing some text
+</div>
+`;
+
+exports[`src/components/experiments2/variation.js component children has the correct text 1`] = `
+<div>
+  Testing some text
+</div>
+`;
+
+exports[`src/components/experiments2/variation.js plain text has the correct tagName 1`] = `
+<span>
+  Testing some text
+</span>
+`;
+
+exports[`src/components/experiments2/variation.js plain text has the correct text 1`] = `
+<span>
+  Testing some text
+</span>
+`;

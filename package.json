@@ -22,7 +22,8 @@
   },
   "peerDependencies": {},
   "dependencies": {
-    "debug": "^2.6.3"
+    "debug": "^2.6.3",
+    "react-immutable-proptypes": "^2.1.0"
   },
   "devDependencies": {
     "babel": "6.23.0",
