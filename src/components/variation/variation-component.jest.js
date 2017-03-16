@@ -1,13 +1,11 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
 import renderer from 'react-test-renderer';
-import { shallow } from 'enzyme';
 import { Variation } from './variation';
 import { initialState } from '../../module';
 
 
 
 describe('(Component) src/components/variation/variation.js', () => {
-  let shallowComponent;
   let component;
   let tree;
   let props;
@@ -32,9 +30,6 @@ describe('(Component) src/components/variation/variation.js', () => {
       children:   'Test-children',
       reduxAbTest,
     };
-    shallowComponent = shallow(
-      <Variation {...props} />
-    );
     component = renderer.create(
       <Variation {...props} />
     );

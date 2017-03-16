@@ -31,7 +31,7 @@ export const matchesField = (hash, field, operator, value) => {
     }
     const valueList = Immutable.fromJS([value]).flatten().toSet();
     const hashList  = Immutable.fromJS([hash.get(field, undefined)]).flatten().toSet();
-    return hashList.intersect(valueList).size == valueList.size;
+    return hashList.intersect(valueList).size === valueList.size;
   }
   default: throw new Error(`Unknown operator=${operator} for field=${field} &, value=${value}`);
   }
