@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import getKey from '../../utils/get-key';
 import selectVariation from '../../utils/select-variation';
-import { cacheStore } from '../../utils/create-cache-store';
 import { activate, deactivate, play, win } from '../../module';
 import Variation, { isVariation } from '../../components/variation';
 
@@ -264,7 +263,6 @@ export default connect(mapStateToProps, mapDispatchToProps)((props) => {
       experiment,
       active: props.reduxAbTest.get('active'),
       defaultVariationName: props.defaultVariationName,
-      cacheStore: props.cacheStore,
     });
   }
 
@@ -276,7 +274,6 @@ export default connect(mapStateToProps, mapDispatchToProps)((props) => {
       experiment={experiment}
       variation={variation}
       defaultVariationName={props.defaultVariationName}
-      cacheStore={props.cacheStore}
       dispatchActivate={props.dispatchActivate}
       dispatchDeactivate={props.dispatchDeactivate}
       dispatchPlay={props.dispatchPlay}

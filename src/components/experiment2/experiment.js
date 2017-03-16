@@ -1,5 +1,4 @@
 import React                  from 'react';
-import Immutable              from 'immutable';
 import { connect }            from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -7,8 +6,13 @@ import {
   activate,
   deactivate,
 }                             from '../../module';
+import selectVariation        from '../../utils/select-variation';
 import Variation              from './variation';
 import { logger }             from './logger';
+import {
+  groupChildrenByName,
+  groupExperimentsByName,
+}                             from './selectors';
 
 
 class Experiment extends React.Component {
@@ -17,22 +21,22 @@ class Experiment extends React.Component {
     logger(`Rendering Experiment name='${name}'`);
 
     // Group the children by name
-    const childrenByName = this.groupChildrenByName();
+    const childrenByName = groupChildrenByName(children);
     logger(`Experiment name='${name}' has children with names='${Object.keys(childrenByName)}'`);
 
     // Lookup the experiment and variation for this experiment
-    const exeriment = this._experiment || this.getExperiment();
-    const variation = this._variation || this.getVariation(experiment);
-
-    // Find the attached exeriment & variation for this component
-    if (!exeriment) {
-      logger(`Experiment name='${name}' didn't have a valid exeriment`);
+    const experiment = this.props.experiment;
+    const variation = this.props.variation;
+    // Validate the attached experiment & variation for this component
+    if (!experiment) {
+      logger(`Experiment name='${name}' didn't have a valid experiment`);
       return null;
     }
     if (!variation) {
       logger(`Experiment name='${name}' didn't have a valid variation`);
       return null;
     }
+
     // Find the variation child with the matching name
     const variationName = variation.get('name');
     const child = childrenByName[variationName] || null;
@@ -44,48 +48,6 @@ class Experiment extends React.Component {
     logger(`Rendered Experiment name='${name}', variation.name='${variationName}'`);
     return child;
   }
-
-  //
-  // Helpers:
-  //
-
-  groupChildrenByName = () => {
-    const childrenByName = {};
-    if (React.Children.count(children) === 0) {
-      childrenByName[ children.props.name ] = children;
-    } else {
-      React.Children.map(child => {
-        child[child.props.name] = child;
-      });
-    }
-    return childrenByName;
-  };
-
-  groupExperimentsByName = () => {
-    const { reduxAbTest } = this.props;
-    const experiments = reduxAbTest.getIn(['experiments'], Immutable.List());
-    const experimentsByName = {};
-    experiments.forEach(e => {
-      experimentsByName[e.get('name', '').toLowerCase()] = e;
-    });
-    return experimentsByName;
-  };
-
-  getExperiment = () => {
-    const { name } = this.props;
-    return this.groupExperimentsByName()[name];
-  };
-
-  getVariation = (experiment) => {
-    if (!experiment) {
-      return null;
-    }
-    const variations = {};
-    experiment.get('variations', Immutable.List()).forEach(variation => {
-      variations[variation.get('name', '')] = variation;
-    });
-    return variations;
-  };
 
   //
   // Component Lifecycle
@@ -171,7 +133,10 @@ Experiment.propTypes = {
 };
 
 
-export const mapStateToProps = ({ reduxAbTest }) => ({ reduxAbTest });
+export const mapStateToProps = (state) => ({
+  reduxAbTest: state,
+  experimentsByName: groupExperimentsByName(state),
+});
 export const mapDispatchToProps = dispatch => bindActionCreators({ play, activate, deactivate }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)((props) => {
   // If not enabled, abort now
@@ -179,8 +144,24 @@ export default connect(mapStateToProps, mapDispatchToProps)((props) => {
   if (!enabled) {
     logger(`Experiment name='${props.name}' is not enabled`);
     return null;
-  } else {
-    logger(`Experiment name='${props.name}' is enabled`);
-    return <Experiment {...props} />;
   }
+
+  const experiment = props.experimentsByName[name];
+  if (!experiment) {
+    logger(`Experiment name='${props.name}' is enabled, but not in the store`);
+    return null;
+  }
+
+  const variation = selectVariation({
+    experiment:           experiment,
+    active:               props.reduxAbTest.get('active'),
+    defaultVariationName: props.defaultVariationName,
+  });
+  if (!variation) {
+    logger(`Experiment name='${props.name}' is enabled, but no variation is available`);
+    return null;
+  }
+
+  logger(`Experiment name='${props.name}' is enabled`);
+  return <Experiment experiment={experiment} variation={variation} {...props} />;
 });

@@ -75,7 +75,7 @@ describe('utils/generate-win-actions.js', () => {
   it('has 1x actions, selects the active experiment', () => {
     const output = generateWinActions({
       reduxAbTest: initialState.merge({
-        experiments:      [experiment, {...experiment, name: 'Test-exeriment-2'}],
+        experiments:      [experiment, {...experiment, name: 'Test-experiment-2'}],
         win_action_types: {
           'Test-action-1': [experiment.name],
         },
@@ -101,13 +101,13 @@ describe('utils/generate-win-actions.js', () => {
   it('has two actions', () => {
     const output = generateWinActions({
       reduxAbTest: initialState.merge({
-        experiments:      [experiment, {...experiment, name: 'Test-exeriment-2'}],
+        experiments:      [experiment, {...experiment, name: 'Test-experiment-2'}],
         win_action_types: {
-          'Test-action-1': [experiment.name, 'Test-exeriment-2'],
+          'Test-action-1': [experiment.name, 'Test-experiment-2'],
         },
         active: {
           'Test-Name':        'Original',
-          'Test-exeriment-2': 'Variation #A',
+          'Test-experiment-2': 'Variation #A',
         },
       }),
       win,
@@ -123,7 +123,7 @@ describe('utils/generate-win-actions.js', () => {
         actionType: 'Test-action-1',
       },
       {
-        experiment: {...experiment, name: 'Test-exeriment-2'},
+        experiment: {...experiment, name: 'Test-experiment-2'},
         variation:  { name: 'Variation #A', weight: 5000 },
         actionType: 'Test-action-1',
       },
