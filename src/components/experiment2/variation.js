@@ -1,10 +1,12 @@
-import React                  from 'react';
-import { connect }            from 'react-redux';
+import React       from 'react';
+import { connect } from 'react-redux';
+import { logger }  from './logger';
 
 
 class Variation extends React.Component {
   render() {
-    const { children } = this.props;
+    const { name, children } = this.props;
+    logger(`Rendering Variation name='${name}'`);
     return children;
   }
 }

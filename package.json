@@ -21,7 +21,9 @@
     "test": "test"
   },
   "peerDependencies": {},
-  "dependencies": {},
+  "dependencies": {
+    "debug": "^2.6.3"
+  },
   "devDependencies": {
     "babel": "6.23.0",
     "babel-cli": "6.24.0",

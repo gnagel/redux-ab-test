@@ -8,18 +8,48 @@ import {
   deactivate,
 }                             from '../../module';
 import Variation              from './variation';
+import { logger }             from './logger';
 
 
 class Experiment extends React.Component {
-  state = {
-    experiment: null,
-    variation:  null,
-  };
-
   render() {
-    const { children } = this.props;
+    const { name, children } = this.props;
+    logger(`Rendering Experiment name='${name}'`);
 
     // Group the children by name
+    const childrenByName = this.groupChildrenByName();
+    logger(`Experiment name='${name}' has children with names='${Object.keys(childrenByName)}'`);
+
+    // Lookup the experiment and variation for this experiment
+    const exeriment = this._experiment || this.getExperiment();
+    const variation = this._variation || this.getVariation(experiment);
+
+    // Find the attached exeriment & variation for this component
+    if (!exeriment) {
+      logger(`Experiment name='${name}' didn't have a valid exeriment`);
+      return null;
+    }
+    if (!variation) {
+      logger(`Experiment name='${name}' didn't have a valid variation`);
+      return null;
+    }
+    // Find the variation child with the matching name
+    const variationName = variation.get('name');
+    const child = childrenByName[variationName] || null;
+    if (!child) {
+      logger(`Experiment name='${name}' found no variation matching variation.name='${variationName}'`);
+      return null;
+    }
+    // Return the rendered child
+    logger(`Rendered Experiment name='${name}', variation.name='${variationName}'`);
+    return child;
+  }
+
+  //
+  // Helpers:
+  //
+
+  groupChildrenByName = () => {
     const childrenByName = {};
     if (React.Children.count(children) === 0) {
       childrenByName[ children.props.name ] = children;
@@ -28,40 +58,33 @@ class Experiment extends React.Component {
         child[child.props.name] = child;
       });
     }
+    return childrenByName;
+  };
 
-    // Find the child by name
-    const variation = this.variation();
-    if (variation) {
-      return childrenByName[variation.get('name')] || null;
-    }
-    return null;
-  }
-
-  //
-  // Helpers:
-  //
-
-  byName = () => {
+  groupExperimentsByName = () => {
     const { reduxAbTest } = this.props;
     const experiments = reduxAbTest.getIn(['experiments'], Immutable.List());
-    const byName = {};
+    const experimentsByName = {};
     experiments.forEach(e => {
-      byName[e.get('name', '').toLowerCase()] = e;
+      experimentsByName[e.get('name', '').toLowerCase()] = e;
     });
-    return byName;
+    return experimentsByName;
   };
 
-  experiment = () => {
-    return this.byName(this.props.name);
+  getExperiment = () => {
+    const { name } = this.props;
+    return this.groupExperimentsByName()[name];
   };
 
-  variation = () => {
-    const e = this.experiment();
-    if (!e) {
+  getVariation = (experiment) => {
+    if (!experiment) {
       return null;
     }
-    // TODO: return variation
-    return null;
+    const variations = {};
+    experiment.get('variations', Immutable.List()).forEach(variation => {
+      variations[variation.get('name', '')] = variation;
+    });
+    return variations;
   };
 
   //
@@ -73,11 +96,12 @@ class Experiment extends React.Component {
     const { play } = this.props;
     const experiment = this.experiment();
     const variation = this.variation();
-
+    // Record the experiment was shown
     if (play && experiment && variation) {
       play({ experiment, variation });
     }
-    this.setState({ experiment, variation });
+    this._experiment = experiment;
+    this._variation = variation;
   }
 
   // Activate the variation
@@ -87,6 +111,8 @@ class Experiment extends React.Component {
     if (activate && experiment) {
       activate({ experiment });
     }
+    this._experiment = null;
+    this._variation = null;
   }
 
   // Dispatch the deactivation event
@@ -96,6 +122,8 @@ class Experiment extends React.Component {
     if (deactivate && experiment) {
       deactivate({ experiment });
     }
+    this._experiment = null;
+    this._variation = null;
   }
 }
 
@@ -104,7 +132,7 @@ export const requireChildType = (componentName, index, child) => {
   if (child.type === Variation) {
     return undefined;
   }
-  return new Error(`'${componentName}' should have a children of the type: 'Variation': child.index=${index}, child.type=${child.type}`);
+  return new Error(`'${componentName}' should have a children of the type: 'Variation': child.index='${index}', child.type='${child.type}'`);
 };
 
 
@@ -114,7 +142,7 @@ export const validateChildren = (props, propName, componentName) => {
   const childrenCount = React.Children.count(children);
   switch(childrenCount) {
   case 0:
-    return new Error(`'${componentName}' should have at least one child of the type: 'Variation': children.count=${childrenCount}`);
+    return new Error(`'${componentName}' should have at least one child of the type: 'Variation': children.count='${childrenCount}'`);
   case 1:
     return requireChildType(componentName, 0, children);
   default: {
@@ -149,8 +177,10 @@ export default connect(mapStateToProps, mapDispatchToProps)((props) => {
   // If not enabled, abort now
   const enabled = props.isEnabled();
   if (!enabled) {
+    logger(`Experiment name='${props.name}' is not enabled`)
     return null;
   } else {
+    logger(`Experiment name='${props.name}' is enabled`)
     return <Experiment {...props} />;
   }
 });
