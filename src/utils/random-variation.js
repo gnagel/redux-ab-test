@@ -1,6 +1,6 @@
 /** @flow */
-import React     from 'react'; // eslint-disable-line no-unused-vars
-import Immutable from 'immutable';
+import Immutable  from 'immutable';
+import { logger } from './logger';
 
 // Helper to convert variation => weight:number
 export const toWeight = (variation:Immutable.Map) => { return variation.get('weight') || 0; };
@@ -23,11 +23,17 @@ export default function randomVariation(experiment:Immutable.Map, random:Functio
   const weightTotal = toTotal(variations);
   const weightRanges = toRanges(variations);
   const weightRandom = Math.round(weightTotal * random());
+  logger(`${__filename} randomVariation experiment.name='${experiment.get('name')}', variations='${JSON.stringify(variations)}'`);
+  logger(`${__filename} randomVariation experiment.name='${experiment.get('name')}', weightTotal='${JSON.stringify(weightTotal)}'`);
+  logger(`${__filename} randomVariation experiment.name='${experiment.get('name')}', weightRanges='${JSON.stringify(weightRanges)}'`);
+  logger(`${__filename} randomVariation experiment.name='${experiment.get('name')}', weightRandom='${JSON.stringify(weightRandom)}'`);
 
   // Find the range that contains our score
   const index = weightRanges.findIndex(range => range.includes(weightRandom));
+  logger(`${__filename} randomVariation experiment.name='${experiment.get('name')}', index='${JSON.stringify(index)}'`);
 
   // Return the matching variation.  Returns variations.last() if random() was out of range [0, 1)
   const variation = variations.get(index, variations.last());
+  logger(`${__filename} randomVariation experiment.name='${experiment.get('name')}', variation.name='${variation && variation.get('name')}'`);
   return variation;
 }

@@ -1,5 +1,6 @@
-import Immutable from 'immutable';
-import getKey from './get-key';
+import Immutable  from 'immutable';
+import getKey     from './get-key';
+import { logger } from './logger';
 
 /**
  * Returns true if the hash has the given field and the value matches the operator
@@ -92,15 +93,19 @@ export const matchesRoute = (route, routeProps) => {
  * 2. 'audience' matches the given experiment.getIn(audience_path)
  */
 const availableExperiments = ({experiments, active, fulfilled, key_path, persistent_path, audience_path, route_path, audience, route}) => {
+  logger(`${__filename} availableExperiments 01 experiments='${JSON.stringify(experiments)}'`);
   // Filter out experiments that were fulfilled completely
   experiments = experiments.filterNot(
     (experiment) => fulfilled.includes(getKey(experiment))
   );
 
+  logger(`${__filename} availableExperiments 02 experiments='${JSON.stringify(experiments)}'`);
+
   // Filter by routes
   experiments = experiments.filter(
     (experiment) => matchesRoute(route, experiment.getIn(route_path, null))
   );
+  logger(`${__filename} availableExperiments 03 experiments='${JSON.stringify(experiments)}'`);
 
   // Filter by audience
   experiments = experiments.filter(
@@ -112,6 +117,7 @@ const availableExperiments = ({experiments, active, fulfilled, key_path, persist
       return matchesAudience(audience, experiment.getIn(audience_path, null));
     },
   );
+  logger(`${__filename} availableExperiments 04 experiments='${JSON.stringify(experiments)}'`);
 
   // Map the results together into a hash of `selector` => `key` => `experiment`
   const output = experiments.reduce(
@@ -131,6 +137,7 @@ const availableExperiments = ({experiments, active, fulfilled, key_path, persist
     },
     Immutable.Map({}),
   );
+  logger(`${__filename} availableExperiments 05 output='${JSON.stringify(output)}'`);
   return output;
 };
 export default availableExperiments;

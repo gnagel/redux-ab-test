@@ -1,9 +1,9 @@
 /** @flow */
-import React            from 'react'; // eslint-disable-line no-unused-vars
 import Immutable        from 'immutable';
 import randomVariation  from './random-variation';
 import createCacheStore from './create-cache-store';
 import getKey           from './get-key';
+import { logger }       from './logger';
 
 type Props = {
   active:               Immutable.Map,
@@ -20,6 +20,7 @@ export default function selectVariation(props:Props) {
   const cache = cacheStore === undefined || cacheStore === null ? createCacheStore() : cacheStore;
 
   const experimentKey = getKey(experiment);
+  logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', experimentKey='${experimentKey}'`);
 
   // Hash of variation.name => VariationType
   const variationsMap = experiment.get('variations').reduce(
@@ -33,6 +34,8 @@ export default function selectVariation(props:Props) {
   // Match against the redux state
   let variationKey = active.get(experimentKey);
   if (variationKey && variationsMap[variationKey]) {
+    logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationKey='${variationKey}'`);
+    logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationsMap[variationKey]='${JSON.stringify(variationsMap[variationKey])}'`);
     return variationsMap[variationKey];
   }
 
@@ -41,12 +44,16 @@ export default function selectVariation(props:Props) {
   // It is wiped out with each pass of the RESET/LOAD/PLAY cycle
   variationKey = cache.getItem(experimentKey);
   if (variationKey && variationsMap[variationKey]) {
+    logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationKey='${variationKey}'`);
+    logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationsMap[variationKey]='${JSON.stringify(variationsMap[variationKey])}'`);
     return variationsMap[variationKey];
   }
 
   // Match against the defaultVariationName
   variationKey = defaultVariationName;
   if (variationKey && variationsMap[variationKey]) {
+    logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationKey='${variationKey}'`);
+    logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationsMap[variationKey]='${JSON.stringify(variationsMap[variationKey])}'`);
     cache.setItem(experimentKey, variationKey);
     return variationsMap[variationKey];
   }
@@ -57,6 +64,9 @@ export default function selectVariation(props:Props) {
   // Record the choice in the tmp cache
   variationKey = getKey(variation);
   cache.setItem(experimentKey, variationKey);
+
+  logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variationKey='${variationKey}'`);
+  logger(`${__filename} selectVariation experiment.name='${experiment.get('name')}', variation.name='${variation && variation.get('name')}'`);
 
   // Return the chosen variation
   return variation;
