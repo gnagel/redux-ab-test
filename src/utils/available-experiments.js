@@ -18,24 +18,57 @@ import { logger } from './logger';
  *   value    = 5
  */
 export const matchesField = (hash, field, operator, value) => {
+  logger(`${__filename} matchesField name='${name}'`);
+  logger(`${__filename} matchesField hash=${ JSON.stringify(hash) }`);
+  logger(`${__filename} matchesField field=${ JSON.stringify(field) }`);
+  logger(`${__filename} matchesField operator=${ JSON.stringify(operator) }`);
+  logger(`${__filename} matchesField value=${ JSON.stringify(value) }`);
+  let matches = false;
   switch(operator) {
-  case '===':     return hash.has(field) && hash.get(field, undefined) === value;
-  case '>=':      return hash.has(field) && hash.get(field, undefined) >=  value;
-  case '>':       return hash.has(field) && hash.get(field, undefined) >   value;
-  case '<=':      return hash.has(field) && hash.get(field, undefined) <=  value;
-  case '<':       return hash.has(field) && hash.get(field, undefined) <   value;
-  case 'in':      return hash.has(field) && Immutable.List(value).flatten().includes(hash.get(field, undefined));
-  case 'not in':  return !hash.has(field) || !Immutable.List(value).flatten().includes(hash.get(field, undefined));
+  case '===': {
+    matches = hash.has(field) && hash.get(field, undefined) === value;
+    break;
+  }
+  case '>=': {
+    matches = hash.has(field) && hash.get(field, undefined) >=  value;
+    break;
+  }
+  case '>': {
+    matches = hash.has(field) && hash.get(field, undefined) >   value;
+    break;
+  }
+  case '<=': {
+    matches = hash.has(field) && hash.get(field, undefined) <=  value;
+    break;
+  }
+  case '<': {
+    matches = hash.has(field) && hash.get(field, undefined) <   value;
+    break;
+  }
+  case 'in': {
+    matches = hash.has(field) && Immutable.List(value).flatten().includes(hash.get(field, undefined));
+    break;
+  }
+  case 'not in': {
+    matches = !hash.has(field) || !Immutable.List(value).flatten().includes(hash.get(field, undefined));
+    break;
+  }
   case 'intersect': {
     if (!hash.has(field)) {
-      return false;
+      matches = false;
+      break;
     }
     const valueList = Immutable.fromJS([value]).flatten().toSet();
     const hashList  = Immutable.fromJS([hash.get(field, undefined)]).flatten().toSet();
-    return hashList.intersect(valueList).size === valueList.size;
+    matches = hashList.intersect(valueList).size === valueList.size;
+    break;
   }
-  default: throw new Error(`Unknown operator=${operator} for field=${field} &, value=${value}`);
+  default: {
+    throw new Error(`Unknown operator=${operator} for field=${field} &, value=${value}`);
   }
+  }
+  logger(`${__filename} matchesField matches=${ JSON.stringify(matches) }`);
+  return matches;
 };
 
 
@@ -57,12 +90,17 @@ export const filterNotHash = (hash, value, field) => {
  * 2. `audienceProps` is exactly matches or is a sub-set of `audience`
  */
 export const matchesAudience = (audience, audienceProps) => {
+  logger(`${__filename} matchesAudience audience='${JSON.stringify(audience)}'`);
+  logger(`${__filename} matchesAudience audienceProps='${JSON.stringify(audienceProps)}'`);
   if (!audienceProps || audienceProps.isEmpty()) {
+    logger(`${__filename} matchesAudience matches='${true}'`);
     return true;
   }
-  return audienceProps.filterNot(
+  const matches = audienceProps.filterNot(
     (value, field) => filterNotHash(audience, value, field)
   ).isEmpty();
+  logger(`${__filename} matchesAudience matches='${matches}'`);
+  return matches;
 };
 
 
