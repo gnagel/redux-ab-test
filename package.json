@@ -1,6 +1,6 @@
 {
   "engines": {
-    "npm": "7.5.1"
+    "npm": "7.5.0"
   },
   "name": "redux-ab-test",
   "keywords": [
@@ -83,7 +83,7 @@
     "build": "babel --out-dir=./dist src",
     "shipit": "npm run build && npm publish && npm run clean"
   },
-  "version": "6.5.1-alpha",
+  "version": "6.6.0",
   "release": {
     "verifyConditions": {
       "path": "./test/release"
