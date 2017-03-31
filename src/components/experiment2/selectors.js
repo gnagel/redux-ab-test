@@ -1,23 +1,27 @@
-import React     from 'react';
-import Immutable from 'immutable';
-import Variation from './variation';
+import React      from 'react';
+import Immutable  from 'immutable';
+import Variation  from './variation';
+import { logger } from './logger';
 
 
 export const groupChildrenByName = (children) => {
   const childrenByName = {};
-  if (React.Children.count(children) === 0) {
+  const count = React.Children.count(children);
+  logger(`${__filename} groupChildrenByName: count=${count}`);
+  if (count === 1) {
     if (!children.props.name) {
-      throw new Error(`No name prop found on child=${JSON.stringify(children.props.name)}`);
+      throw new Error(`No name prop found on child=${JSON.stringify(children.props)}`);
     }
     childrenByName[ children.props.name ] = children;
   } else {
-    React.Children.map(child => {
+    React.Children.forEach(children, (child) => {
       if (!child.props.name) {
         throw new Error(`No name prop found on child=${JSON.stringify(child.props.name)}`);
       }
       childrenByName[child.props.name] = child;
     });
   }
+  logger(`${__filename} groupChildrenByName: count=${count} childrenByName='${Object.keys(childrenByName).join('|')}'`);
   return childrenByName;
 };
 

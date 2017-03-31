@@ -2,6 +2,7 @@
 import React       from 'react';
 import Immutable   from 'immutable';
 import { connect } from 'react-redux';
+import { logger } from '../../utils/logger';
 
 
 type Props = {
@@ -63,6 +64,8 @@ export class Variation extends React.Component {
       'data-variation-id':    variation.get('id'),
       'data-variation-name':  variation.get('name'),
     };
+
+    logger(`${__filename} Variation rendered experiment.name='${experiment.get('name')}', variation.name='${variation.get('name')}'`);
 
     // This is text or null content, wrap it in a span and return the contents
     if (!React.isValidElement(children)) {

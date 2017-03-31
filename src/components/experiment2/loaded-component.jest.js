@@ -8,7 +8,7 @@ import reduxAbTest, { initialState } from '../../module';
 import LoadedComponent from './loaded-component';
 import Variation from './variation';
 
-describe('src/components/experiments2/loaded-component.js', () => {
+describe.only('src/components/experiments2/loaded-component.js', () => {
   let component;
   let tree;
 

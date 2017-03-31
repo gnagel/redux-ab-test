@@ -5,6 +5,7 @@
   },
   "globals": {
     "_": true,
+    "__filename": true,
     "describe": true,
     "it": true,
     "test": true,

@@ -7,6 +7,7 @@ import getKey from '../../utils/get-key';
 import selectVariation from '../../utils/select-variation';
 import { activate, deactivate, play, win } from '../../module';
 import Variation, { isVariation } from '../../components/variation';
+import { logger } from '../../utils/logger';
 
 
 type Props = {
@@ -116,6 +117,7 @@ export class Experiment extends React.Component {
     const { experiment, variation, dispatchActivate, dispatchPlay } = this.props;
     const { mounted } = this.state;
     let { played } = this.state;
+    logger(`${__filename} componentWillMount experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
 
     // If the experiment is unavailable, then record it wasn't played and move on
     if (!experiment) {
@@ -140,6 +142,7 @@ export class Experiment extends React.Component {
   componentWillReceiveProps(nextProps:Props) {
     const { experiment, variation, dispatchActivate, dispatchPlay } = nextProps;
     const { mounted } = this.state;
+    logger(`${__filename} componentWillReceiveProps experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
     if (!experiment) {
       // If we no-longer have an experiment anymore, then update the internal state
       if (this.props.experiment) {
@@ -165,6 +168,7 @@ export class Experiment extends React.Component {
   componentDidMount() {
     const { experiment, variation, dispatchPlay } = this.props;
     const { played } = this.state;
+    logger(`${__filename} componentDidMount experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
     if (played || !experiment || !variation) {
       return;
     }
@@ -178,6 +182,7 @@ export class Experiment extends React.Component {
    */
   componentWillUnmount() {
     const { experiment, dispatchDeactivate } = this.props;
+    logger(`${__filename} componentWillUnmount experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
     // Dispatch the deactivation event
     if (experiment) {
       dispatchDeactivate({experiment});
@@ -197,6 +202,7 @@ export class Experiment extends React.Component {
 
     // If there are no children, render nothing
     if (childrenArray.length === 0) {
+      logger(`${__filename} No children for experiment selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
       return null;
     }
 
@@ -216,6 +222,8 @@ export class Experiment extends React.Component {
     if (!selectedChild) {
       throw new Error(`Expected to find a Variation child matching id=${variation.get('id')} or name=${variation.get('name')}`);
     }
+
+    logger(`${__filename} Rendered Experiment selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
 
     // Inject the helper `handleWin` into the child element
     return React.cloneElement(selectedChild, {
