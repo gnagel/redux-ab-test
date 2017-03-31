@@ -18,6 +18,8 @@
   "main": "dist/index.js",
   "description": "A/B testing React components with Redux and debug tools. Isomorphic with a simple, universal interface. Well documented and lightweight. Tested in popular browsers and Node.js. Includes helpers for React, Redux, and Segment.io",
   "directories": {
+    "src": "src",
+    "dist": "dist",
     "test": "test"
   },
   "peerDependencies": {},
@@ -83,7 +85,7 @@
     "build": "babel --out-dir=./dist src",
     "shipit": "npm run build && npm publish && npm run clean"
   },
-  "version": "6.6.3",
+  "version": "6.6.4",
   "release": {
     "verifyConditions": {
       "path": "./test/release"

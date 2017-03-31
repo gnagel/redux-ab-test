@@ -238,11 +238,27 @@ export class Experiment extends React.Component {
 
 const getExperiment = (reduxAbTest, selector, id, name) => {
   // Select the experiment from the redux store
-  const experiment =
-    reduxAbTest.get('experiments').find(experiment => (experiment.get('id', '') === selector || experiment.get('name', '') === selector), null) ||
-    reduxAbTest.get('experiments').find(experiment => (experiment.get('id', '') === id), null) ||
-    reduxAbTest.get('experiments').find(experiment => (experiment.get('name', '') === name), null);
-  logger(`${__filename} getExperiment selector='${selector}', id='${id}', name='${name}', experiment.name='${experiment && experiment.get('name')}'`);
+
+  const groupByName = {};
+  const groupById = {};
+  reduxAbTest.get('experiments').forEach(experiment => {
+    logger(`${__filename} getExperiment forEach experiment.id='${experiment.get('id')}'`);
+    logger(`${__filename} getExperiment forEach experiment.name='${experiment.get('name')}'`);
+    if (experiment.get('name')) {
+      groupByName[experiment.get('name')] = experiment;
+    }
+    if (experiment.get('id')) {
+      groupById[experiment.get('id')] = experiment;
+    }
+  });
+  const experimentById = groupById[id];
+  const experimentByName = groupByName[name];
+  const experimentBySelector = groupByName[selector] || groupById[selector];
+  const experiment = experimentById || experimentByName || experimentBySelector;
+  logger(`${__filename} getExperiment selector='${selector}'`);
+  logger(`${__filename} getExperiment id='${id}'`);
+  logger(`${__filename} getExperiment name='${name}'`);
+  logger(`${__filename} getExperiment experiment.name='${experiment && experiment.get('name')}'`);
   // Return the resulting experiment
   return experiment;
 };
