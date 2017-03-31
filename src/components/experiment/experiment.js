@@ -239,9 +239,9 @@ export class Experiment extends React.Component {
 const getExperiment = (reduxAbTest, selector, id, name) => {
   // Select the experiment from the redux store
   const experiment =
-    reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === selector), null) ||
-    reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === id), null) ||
-    reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === name), null);
+    reduxAbTest.get('experiments').find(experiment => (experiment.get('id', '') === selector || experiment.get('name', '') === selector), null) ||
+    reduxAbTest.get('experiments').find(experiment => (experiment.get('id', '') === id), null) ||
+    reduxAbTest.get('experiments').find(experiment => (experiment.get('name', '') === name), null);
   logger(`${__filename} getExperiment selector='${selector}', id='${id}', name='${name}', experiment.name='${experiment && experiment.get('name')}'`);
   // Return the resulting experiment
   return experiment;
