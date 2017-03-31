@@ -117,7 +117,7 @@ export class Experiment extends React.Component {
     const { experiment, variation, dispatchActivate, dispatchPlay } = this.props;
     const { mounted } = this.state;
     let { played } = this.state;
-    logger(`${__filename} componentWillMount experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
+    logger(`${__filename} componentWillMount experiment, selector='${this.props.selector}', experiment.name='${experiment && experiment.get('name')}'`);
 
     // If the experiment is unavailable, then record it wasn't played and move on
     if (!experiment) {
@@ -142,7 +142,7 @@ export class Experiment extends React.Component {
   componentWillReceiveProps(nextProps:Props) {
     const { experiment, variation, dispatchActivate, dispatchPlay } = nextProps;
     const { mounted } = this.state;
-    logger(`${__filename} componentWillReceiveProps experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
+    logger(`${__filename} componentWillReceiveProps experiment, selector='${this.props.selector}', experiment.name='${experiment && experiment.get('name')}'`);
     if (!experiment) {
       // If we no-longer have an experiment anymore, then update the internal state
       if (this.props.experiment) {
@@ -168,7 +168,7 @@ export class Experiment extends React.Component {
   componentDidMount() {
     const { experiment, variation, dispatchPlay } = this.props;
     const { played } = this.state;
-    logger(`${__filename} componentDidMount experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
+    logger(`${__filename} componentDidMount experiment, selector='${this.props.selector}', experiment.name='${experiment && experiment.get('name')}'`);
     if (played || !experiment || !variation) {
       return;
     }
@@ -182,7 +182,7 @@ export class Experiment extends React.Component {
    */
   componentWillUnmount() {
     const { experiment, dispatchDeactivate } = this.props;
-    logger(`${__filename} componentWillUnmount experiment, selector='${this.props.selector}', experiment.name='${experiment.get('name')}'`);
+    logger(`${__filename} componentWillUnmount experiment, selector='${this.props.selector}', experiment.name='${experiment && experiment.get('name')}'`);
     // Dispatch the deactivation event
     if (experiment) {
       dispatchDeactivate({experiment});
