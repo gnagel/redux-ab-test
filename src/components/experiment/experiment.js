@@ -237,13 +237,12 @@ export class Experiment extends React.Component {
 
 
 const getExperiment = (reduxAbTest, selector, id, name) => {
-  // Find the key of the currently available experiment
-  const key = reduxAbTest.getIn(['availableExperiments', selector || id || name], null);
-  if (!key) {
-    return null;
-  }
   // Select the experiment from the redux store
-  const experiment = reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === key), null);
+  const experiment =
+    reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === selector), null) ||
+    reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === id), null) ||
+    reduxAbTest.get('experiments').find(experiment => (getKey(experiment) === name), null);
+  logger(`${__filename} getExperiment selector='${selector}', id='${id}', name='${name}', experiment.name='${experiment && experiment.get('name')}'`);
   // Return the resulting experiment
   return experiment;
 };

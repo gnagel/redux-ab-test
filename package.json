@@ -83,7 +83,7 @@
     "build": "babel --out-dir=./dist src",
     "shipit": "npm run build && npm publish && npm run clean"
   },
-  "version": "6.6.0",
+  "version": "6.6.2",
   "release": {
     "verifyConditions": {
       "path": "./test/release"
