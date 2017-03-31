@@ -1,6 +1,6 @@
 {
   "engines": {
-    "npm": "7.5.0"
+    "npm": "7.5.1"
   },
   "name": "redux-ab-test",
   "keywords": [
