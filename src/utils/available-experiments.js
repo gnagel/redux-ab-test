@@ -18,7 +18,6 @@ import { logger } from './logger';
  *   value    = 5
  */
 export const matchesField = (hash, field, operator, value) => {
-  logger(`${__filename} matchesField name='${name}'`);
   logger(`${__filename} matchesField hash=${ JSON.stringify(hash) }`);
   logger(`${__filename} matchesField field=${ JSON.stringify(field) }`);
   logger(`${__filename} matchesField operator=${ JSON.stringify(operator) }`);
@@ -148,11 +147,14 @@ const availableExperiments = ({experiments, active, fulfilled, key_path, persist
   // Filter by audience
   experiments = experiments.filter(
     (experiment) => {
+      logger(`${__filename} availableExperiments 04 experiment.name='${experiment.get('name')}'`);
       // If it is active && is persistent, then this stays available to the system
       if (active.has(getKey(experiment)) && experiment.getIn(persistent_path)) {
         return true;
       }
-      return matchesAudience(audience, experiment.getIn(audience_path, null));
+      const matches = matchesAudience(audience, experiment.getIn(audience_path, null));
+      logger(`${__filename} availableExperiments 04 experiment.name='${experiment.get('name')}' matches=${matches}`);
+      return matches;
     },
   );
   logger(`${__filename} availableExperiments 04 experiments='${JSON.stringify(experiments)}'`);
